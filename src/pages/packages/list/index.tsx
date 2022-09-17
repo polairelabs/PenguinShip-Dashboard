@@ -304,14 +304,23 @@ const PackagesList = () => {
 
   const toggleAddPackageDrawer = () => setAddPackageOpen(!addPackageOpen)
 
+  const data = () => {
+    console.log(store.data);
+    if (store.data) {
+      return store.data
+    }
+    return "";
+  }
+
   return (
+    // <p>{data()}</p>
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <TableHeader value={width} handleFilter={handleWidthChange} toggle={toggleAddPackageDrawer} />
           <DataGrid
             autoHeight
-            rows={store.data}
+            rows={data()}
             columns={columns}
             checkboxSelection
             pageSize={value}
@@ -321,7 +330,6 @@ const PackagesList = () => {
           />
         </Card>
       </Grid>
-S
       <AddPackageDrawer open={addPackageOpen} toggle={toggleAddPackageDrawer} />
     </Grid>
   )

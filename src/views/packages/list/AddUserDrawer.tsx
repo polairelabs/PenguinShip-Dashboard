@@ -105,7 +105,8 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
   })
 
   const onSubmit = (data: UserData) => {
-    dispatch(addPackages({ ...data, role, currentPlan: plan }))
+    // old: dispatch(addPackages({ ...data, role, currentPlan: plan }))
+    dispatch(addPackages({ ...data}))
     toggle()
     reset()
   }

@@ -19,8 +19,7 @@ interface Redux {
 
 // ** Fetch Packages
 export const fetchData = createAsyncThunk('appPackages/fetchData', async (p) => {
-  const response = await axios.get('http://localhost:8080/apps/packages/', )
-
+  const response = await axios.get('http://localhost:8080/apps/packages/')
   return response.data
 })
 
@@ -28,9 +27,7 @@ export const fetchData = createAsyncThunk('appPackages/fetchData', async (p) => 
 export const addPackages = createAsyncThunk(
   'appPackages/addPackage',
   async (data: { [key: string]: number | string }, { getState, dispatch }: Redux) => {
-    const response = await axios.post('http://localhost:8080/apps/packages/', {
-      data
-    })
+    const response = await axios.post('http://localhost:8080/apps/packages/', data)
     dispatch(fetchData())
 
     return response.data
