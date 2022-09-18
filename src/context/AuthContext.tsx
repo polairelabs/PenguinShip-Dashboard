@@ -1,126 +1,156 @@
 // ** React Imports
-import { createContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useEffect, useState, ReactNode } from "react";
 
 // ** Next Import
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 
 // ** Axios
-import axios from 'axios'
+import axios from "axios";
 
 // ** Config
-import authConfig from 'src/configs/auth'
+import authConfig from "src/configs/auth";
 
 // ** Types
-import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
+import {
+    AuthValuesType,
+    RegisterParams,
+    LoginParams,
+    ErrCallbackType,
+    UserDataType
+} from "./types";
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
-  user: null,
-  loading: true,
-  setUser: () => null,
-  setLoading: () => Boolean,
-  isInitialized: false,
-  login: () => Promise.resolve(),
-  logout: () => Promise.resolve(),
-  setIsInitialized: () => Boolean,
-  register: () => Promise.resolve()
-}
+    user: null,
+    loading: true,
+    setUser: () => null,
+    setLoading: () => Boolean,
+    isInitialized: false,
+    login: () => Promise.resolve(),
+    logout: () => Promise.resolve(),
+    setIsInitialized: () => Boolean,
+    register: () => Promise.resolve()
+};
 
-const AuthContext = createContext(defaultProvider)
+const AuthContext = createContext(defaultProvider);
 
 type Props = {
-  children: ReactNode
-}
+    children: ReactNode;
+};
 
 const AuthProvider = ({ children }: Props) => {
-  // ** States
-  const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
-  const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
-  const [isInitialized, setIsInitialized] = useState<boolean>(defaultProvider.isInitialized)
+    // ** States
+    const [user, setUser] = useState<UserDataType | null>(defaultProvider.user);
+    const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
+    const [isInitialized, setIsInitialized] = useState<boolean>(
+        defaultProvider.isInitialized
+    );
 
-  // ** Hooks
-  const router = useRouter()
+    // ** Hooks
+    const router = useRouter();
 
-  useEffect(() => {
-    const initAuth = async (): Promise<void> => {
-      setIsInitialized(true)
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
-      if (storedToken) {
-        setLoading(true)
-        await axios
-          .get(authConfig.loginEndpoint, {
-            headers: {
-              Authorization: storedToken
+    useEffect(() => {
+        const initAuth = async (): Promise<void> => {
+            setIsInitialized(true);
+            const storedToken = window.localStorage.getItem(
+                authConfig.storageTokenKeyName
+            )!;
+            if (storedToken) {
+                setLoading(true);
+                await axios
+                    .get(authConfig.loginEndpoint, {
+                        headers: {
+                            Authorization: storedToken
+                        }
+                    })
+                    .then(async (response) => {
+                        setLoading(false);
+                        setUser({ ...response.data.userData });
+                    })
+                    .catch(() => {
+                        localStorage.removeItem("userData");
+                        localStorage.removeItem("refreshToken");
+                        localStorage.removeItem("accessToken");
+                        setUser(null);
+                        setLoading(false);
+                    });
+            } else {
+                setLoading(false);
             }
-          })
-          .then(async response => {
-            setLoading(false)
-            setUser({ ...response.data.userData })
-          })
-          .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-          })
-      } else {
-        setLoading(false)
-      }
-    }
-    initAuth()
-  }, [])
+        };
+        initAuth();
+    }, []);
 
-  const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.loginEndpoint, params)
-      .then(async res => {
-        window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.accessToken)
-        const returnUrl = router.query.returnUrl
-        setUser({ ...res.data.userData })
-        await window.localStorage.setItem('userData', JSON.stringify(res.data.userData))
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-        router.replace(redirectURL as string)
-      })
-      .catch(err => {
-        if (errorCallback) errorCallback(err)
-      })
-  }
+    const handleLogin = (
+        params: LoginParams,
+        errorCallback?: ErrCallbackType
+    ) => {
+        axios
+            .post(authConfig.loginEndpoint, params)
+            .then(async (res) => {
+                window.localStorage.setItem(
+                    authConfig.storageTokenKeyName,
+                    res.data.accessToken
+                );
+                const returnUrl = router.query.returnUrl;
+                setUser({ ...res.data.userData });
+                await window.localStorage.setItem(
+                    "userData",
+                    JSON.stringify(res.data.userData)
+                );
+                const redirectURL =
+                    returnUrl && returnUrl !== "/" ? returnUrl : "/";
+                router.replace(redirectURL as string);
+            })
+            .catch((err) => {
+                if (errorCallback) errorCallback(err);
+            });
+    };
 
-  const handleLogout = () => {
-    setUser(null)
-    setIsInitialized(false)
-    window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    router.push('/login')
-  }
+    const handleLogout = () => {
+        setUser(null);
+        setIsInitialized(false);
+        window.localStorage.removeItem("userData");
+        window.localStorage.removeItem(authConfig.storageTokenKeyName);
+        router.push("/login");
+    };
 
-  const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.registerEndpoint, params)
-      .then(res => {
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error)
-        } else {
-          handleLogin({ email: params.email, password: params.password })
-        }
-      })
-      .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null))
-  }
+    const handleRegister = (
+        params: RegisterParams,
+        errorCallback?: ErrCallbackType
+    ) => {
+        axios
+            .post(authConfig.registerEndpoint, params)
+            .then((res) => {
+                if (res.data.error) {
+                    if (errorCallback) errorCallback(res.data.error);
+                } else {
+                    handleLogin({
+                        email: params.email,
+                        password: params.password
+                    });
+                }
+            })
+            .catch((err: { [key: string]: string }) =>
+                errorCallback ? errorCallback(err) : null
+            );
+    };
 
-  const values = {
-    user,
-    loading,
-    setUser,
-    setLoading,
-    isInitialized,
-    setIsInitialized,
-    login: handleLogin,
-    logout: handleLogout,
-    register: handleRegister
-  }
+    const values = {
+        user,
+        loading,
+        setUser,
+        setLoading,
+        isInitialized,
+        setIsInitialized,
+        login: handleLogin,
+        logout: handleLogout,
+        register: handleRegister
+    };
 
-  return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
-}
+    return (
+        <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
+    );
+};
 
-export { AuthContext, AuthProvider }
+export { AuthContext, AuthProvider };
