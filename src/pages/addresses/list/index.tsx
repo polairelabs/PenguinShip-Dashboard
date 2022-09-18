@@ -56,7 +56,7 @@ import { PackagesType } from "src/types/apps/userTypes";
 
 // ** Custom Components Imports
 import TableHeader from "src/views/packages/list/TableHeader";
-import AddPackageDrawer from "src/views/packages/list/AddUserDrawer";
+import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
 
 interface UserRoleType {
     [key: string]: ReactElement;

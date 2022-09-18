@@ -1,35 +1,35 @@
 // ** React Imports
-import { useState } from "react";
+import {useState} from "react";
 
 // ** MUI Imports
 import Drawer from "@mui/material/Drawer";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
-import Box, { BoxProps } from "@mui/material/Box";
+import Box, {BoxProps} from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 
 // ** Third Party Imports
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm, Controller } from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {useForm, Controller} from "react-hook-form";
 
 // ** Icons Imports
 import Close from "mdi-material-ui/Close";
 
 // ** Store Imports
-import { useDispatch } from "react-redux";
+import {useDispatch} from "react-redux";
 
 // ** Actions Imports
-import { addPackages } from "src/store/apps/packages";
+import {addPackages} from "src/store/apps/packages";
 
 // ** Types Imports
-import { AppDispatch } from "src/store";
+import {AppDispatch} from "src/store";
 
 interface SidebarAddPackageType {
     open: boolean;
@@ -56,7 +56,7 @@ const showErrors = (field: string, valueLen: number, min: number) => {
     }
 };
 
-const Header = styled(Box)<BoxProps>(({ theme }) => ({
+const Header = styled(Box)<BoxProps>(({theme}) => ({
     display: "flex",
     alignItems: "center",
     padding: theme.spacing(3, 4),
@@ -78,7 +78,7 @@ const schema = yup.object().shape({
     length: yup
         .number()
         .typeError("length field is required")
-        .min(0, (obj) => showErrors("length", obj.value.width, obj.min))
+        .min(0, (obj) => showErrors("length", obj.value.length, obj.min))
         .required(),
     width: yup
         .number()
@@ -107,7 +107,7 @@ const defaultValues = {
 
 const SidebarAddPackage = (props: SidebarAddPackageType) => {
     // ** Props
-    const { open, toggle } = props;
+    const {open, toggle} = props;
 
     // ** State
     const [plan, setPlan] = useState<string>("basic");
@@ -120,7 +120,7 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
         control,
         setValue,
         handleSubmit,
-        formState: { errors }
+        formState: {errors}
     } = useForm({
         defaultValues,
         mode: "onChange",
@@ -129,7 +129,7 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
 
     const onSubmit = (data: UserData) => {
         // old: dispatch(addPackages({ ...data, role, currentPlan: plan }))
-        dispatch(addPackages({ ...data }));
+        dispatch(addPackages({...data}));
         toggle();
         reset();
     };
@@ -148,25 +148,25 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
             anchor="right"
             variant="temporary"
             onClose={handleClose}
-            ModalProps={{ keepMounted: true }}
-            sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
+            ModalProps={{keepMounted: true}}
+            sx={{"& .MuiDrawer-paper": {width: {xs: 300, sm: 400}}}}
         >
             <Header>
                 <Typography variant="h6">Add Package</Typography>
                 <Close
                     fontSize="small"
                     onClick={handleClose}
-                    sx={{ cursor: "pointer" }}
+                    sx={{cursor: "pointer"}}
                 />
             </Header>
-            <Box sx={{ p: 5 }}>
+            <Box sx={{p: 5}}>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <FormControl fullWidth sx={{ mb: 6 }}>
+                    <FormControl fullWidth sx={{mb: 6}}>
                         <Controller
                             name="name"
                             control={control}
-                            rules={{ required: true }}
-                            render={({ field: { value, onChange } }) => (
+                            rules={{required: true}}
+                            render={({field: {value, onChange}}) => (
                                 <TextField
                                     value={value}
                                     label="Name"
@@ -177,17 +177,17 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
                             )}
                         />
                         {errors.name && (
-                            <FormHelperText sx={{ color: "error.main" }}>
+                            <FormHelperText sx={{color: "error.main"}}>
                                 {errors.name.message}
                             </FormHelperText>
                         )}
                     </FormControl>
-                    <FormControl fullWidth sx={{ mb: 6 }}>
+                    <FormControl fullWidth sx={{mb: 6}}>
                         <Controller
                             name="weight"
                             control={control}
-                            rules={{ required: true }}
-                            render={({ field: { value, onChange } }) => (
+                            rules={{required: true}}
+                            render={({field: {value, onChange}}) => (
                                 <TextField
                                     type="number"
                                     value={value}
@@ -199,17 +199,17 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
                             )}
                         />
                         {errors.weight && (
-                            <FormHelperText sx={{ color: "error.main" }}>
+                            <FormHelperText sx={{color: "error.main"}}>
                                 {errors.weight.message}
                             </FormHelperText>
                         )}
                     </FormControl>
-                    <FormControl fullWidth sx={{ mb: 6 }}>
+                    <FormControl fullWidth sx={{mb: 6}}>
                         <Controller
                             name="value"
                             control={control}
-                            rules={{ required: true }}
-                            render={({ field: { value, onChange } }) => (
+                            rules={{required: true}}
+                            render={({field: {value, onChange}}) => (
                                 <TextField
                                     type="money"
                                     value={value}
@@ -221,39 +221,39 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
                             )}
                         />
                         {errors.value && (
-                            <FormHelperText sx={{ color: "error.main" }}>
+                            <FormHelperText sx={{color: "error.main"}}>
                                 {errors.value.message}
                             </FormHelperText>
                         )}
                     </FormControl>
-                    <FormControl fullWidth sx={{ mb: 6 }}>
-                        {/*<Controller
-              name='length'
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <TextField
-                    type='number'
-                  value={value}
-                  label='Length'
-                  onChange={onChange}
-                  placeholder='Length'
-                  error={Boolean(errors)}
-                />
-              )}
-            />*/}
+                    <FormControl fullWidth sx={{mb: 6}}>
+                        {<Controller
+                            name='length'
+                            control={control}
+                            rules={{required: true}}
+                            render={({field: {value, onChange}}) => (
+                                <TextField
+                                    type='number'
+                                    value={value}
+                                    label='Length'
+                                    onChange={onChange}
+                                    placeholder='Length'
+                                    error={Boolean(errors)}
+                                />
+                            )}
+                        />}
                         {errors.width && (
-                            <FormHelperText sx={{ color: "error.main" }}>
+                            <FormHelperText sx={{color: "error.main"}}>
                                 {errors.width.message}
                             </FormHelperText>
                         )}
                     </FormControl>
-                    <FormControl fullWidth sx={{ mb: 6 }}>
+                    <FormControl fullWidth sx={{mb: 6}}>
                         <Controller
                             name="width"
                             control={control}
-                            rules={{ required: true }}
-                            render={({ field: { value, onChange } }) => (
+                            rules={{required: true}}
+                            render={({field: {value, onChange}}) => (
                                 <TextField
                                     type="number"
                                     value={value}
@@ -265,17 +265,17 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
                             )}
                         />
                         {errors.width && (
-                            <FormHelperText sx={{ color: "error.main" }}>
+                            <FormHelperText sx={{color: "error.main"}}>
                                 {errors.width.message}
                             </FormHelperText>
                         )}
                     </FormControl>
-                    <FormControl fullWidth sx={{ mb: 6 }}>
+                    <FormControl fullWidth sx={{mb: 6}}>
                         <Controller
                             name="height"
                             control={control}
-                            rules={{ required: true }}
-                            render={({ field: { value, onChange } }) => (
+                            rules={{required: true}}
+                            render={({field: {value, onChange}}) => (
                                 <TextField
                                     type="number"
                                     value={value}
@@ -287,17 +287,17 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
                             )}
                         />
                         {errors.height && (
-                            <FormHelperText sx={{ color: "error.main" }}>
+                            <FormHelperText sx={{color: "error.main"}}>
                                 {errors.height.message}
                             </FormHelperText>
                         )}
                     </FormControl>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box sx={{display: "flex", alignItems: "center"}}>
                         <Button
                             size="large"
                             type="submit"
                             variant="contained"
-                            sx={{ mr: 3 }}
+                            sx={{mr: 3}}
                         >
                             Submit
                         </Button>

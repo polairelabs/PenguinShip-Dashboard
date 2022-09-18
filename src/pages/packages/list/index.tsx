@@ -56,7 +56,7 @@ import { PackagesType } from "src/types/apps/userTypes";
 
 // ** Custom Components Imports
 import TableHeader from "src/views/packages/list/TableHeader";
-import AddPackageDrawer from "src/views/packages/list/AddUserDrawer";
+import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
 
 interface UserRoleType {
     [key: string]: ReactElement;
@@ -106,31 +106,6 @@ const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
     textDecoration: "none",
     marginRight: theme.spacing(3)
 }));
-
-// ** renders client column
-const renderClient = (row: PackagesType) => {
-    if (row.name) {
-        return (
-            <AvatarWithImageLink href={`/apps/user/view/${row.id}`}>
-                <CustomAvatar
-                    src={row.name}
-                    sx={{ mr: 3, width: 30, height: 30 }}
-                />
-            </AvatarWithImageLink>
-        );
-    } else {
-        return (
-            <AvatarWithoutImageLink href={`/apps/user/view/${row.id}`}>
-                <CustomAvatar
-                    skin="light"
-                    sx={{ mr: 3, width: 30, height: 30, fontSize: ".875rem" }}
-                >
-                    {getInitials(row.name ? row.name : "John Doe")}
-                </CustomAvatar>
-            </AvatarWithoutImageLink>
-        );
-    }
-};
 
 // ** Styled component for the link inside menu
 const MenuItemLink = styled("a")(({ theme }) => ({
@@ -215,38 +190,15 @@ const columns = [
 
             return (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    {renderClient(row)}
                     <Box
+
                         sx={{
                             display: "flex",
                             alignItems: "flex-start",
                             flexDirection: "column"
                         }}
                     >
-                        <Link href={`/apps/user/view/${id}`} passHref>
-                            <Typography
-                                noWrap
-                                component="a"
-                                variant="body2"
-                                sx={{
-                                    fontWeight: 600,
-                                    color: "text.primary",
-                                    textDecoration: "none"
-                                }}
-                            >
-                                {name}
-                            </Typography>
-                        </Link>
-                        <Link href={`/apps/user/view/${id}`} passHref>
-                            <Typography
-                                noWrap
-                                component="a"
-                                variant="caption"
-                                sx={{ textDecoration: "none" }}
-                            >
-                                @{name}
-                            </Typography>
-                        </Link>
+                        <Typography>{row.name}</Typography>
                     </Box>
                 </Box>
             );
@@ -287,7 +239,7 @@ const columns = [
             );
         }
     },
-    /*{
+    {
     flex: 0.15,
     minWidth: 120,
     headerName: 'Length',
@@ -295,11 +247,11 @@ const columns = [
     renderCell: ({ row }: CellType) => {
       return (
         <Typography noWrap sx={{ textTransform: 'capitalize' }}>
-          {/!*{row.length}*!/}
+          {row.length}
         </Typography>
       )
     }
-  },*/
+  },
     {
         flex: 0.1,
         minWidth: 110,
@@ -350,18 +302,6 @@ const PackagesList = () => {
         }
         return "";
     };
-
-    const rows = [
-        { id: 1, name: "Snow", firstName: "Jon", age: 35 },
-        { id: 2, name: "Lannister", firstName: "Cersei", age: 42 },
-        { id: 3, name: "Lannister", firstName: "Jaime", age: 45 },
-        { id: 4, name: "Stark", firstName: "Arya", age: 16 },
-        { id: 5, name: "Targaryen", firstName: "Daenerys", age: null },
-        { id: 6, name: "Melisandre", firstName: null, age: 150 },
-        { id: 7, name: "Clifford", firstName: "Ferrara", age: 44 },
-        { id: 8, name: "Frances", firstName: "Rossini", age: 36 },
-        { id: 9, name: "Roxie", firstName: "Harvey", age: 65 }
-    ];
 
     return (
         // <p>{data()}</p>

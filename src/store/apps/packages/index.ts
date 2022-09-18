@@ -22,7 +22,7 @@ export const fetchData = createAsyncThunk(
     "appPackages/fetchData",
     async (p) => {
         const response = await axios.get(
-            "http://localhost:8080/apps/packages/"
+            "http://localhost:8080/apps/packages/?clientId=" + JSON.parse(window.localStorage.getItem("userData")  || '{}').id
         );
         return response.data;
     }
@@ -36,7 +36,7 @@ export const addPackages = createAsyncThunk(
         { getState, dispatch }: Redux
     ) => {
         const response = await axios.post(
-            "http://localhost:8080/apps/packages/",
+            "http://localhost:8080/apps/packages/?clientId=" + JSON.parse(window.localStorage.getItem("userData")  || '{}').id,
             data
         );
         dispatch(fetchData());
