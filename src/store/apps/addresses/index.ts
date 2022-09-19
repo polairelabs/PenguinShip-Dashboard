@@ -17,30 +17,28 @@ interface Redux {
     dispatch: Dispatch<any>;
 }
 
-// ** Fetch Packages
+// ** Fetch Addresses
 export const fetchData = createAsyncThunk(
     "appPackages/fetchData",
     async (p) => {
         const response = await axios.get(
-            "http://localhost:8080/apps/packages/"
+            "http://localhost:8080/api/v1/addresses/"
         );
 
         return response.data;
     }
 );
 
-// ** Add User
-export const addPackages = createAsyncThunk(
-    "appPackages/addPackage",
+// ** Add Address
+export const addAddress = createAsyncThunk(
+    "appAddress/addAddress",
     async (
         data: { [key: string]: number | string },
         { getState, dispatch }: Redux
     ) => {
         const response = await axios.post(
-            "http://localhost:8080/apps/packages/",
-            {
-                data
-            }
+            "http://localhost:8080/api/v1/addresses/",
+            data
         );
         dispatch(fetchData());
 

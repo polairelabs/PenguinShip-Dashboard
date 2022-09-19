@@ -28,7 +28,13 @@ const navigation = (): VerticalNavItemsType => {
         {
             title: "Addresses",
             icon: OfficeBuildingOutline,
-            path: "/second-page"
+            path: "/second-page",
+            children: [
+                {
+                    title: "Add",
+                    path: "/addresses/add"
+                }
+            ]
         },
         {
             title: "Shipments",
