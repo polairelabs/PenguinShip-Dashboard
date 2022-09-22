@@ -14,6 +14,10 @@ import { dispatch } from "react-hot-toast/dist/core/store";
 import { addAddress } from "../../../store/apps/addresses";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import FormHelperText from "@mui/material/FormHelperText";
 
 // See: https://www.uxmatters.com/mt/archives/2008/06/international-address-fields-in-web-forms.php
 
@@ -28,28 +32,37 @@ const FormLayoutsBasic = () => {
         street2: ""
     });
 
-    // const {
-    //     reset,
-    //     control,
-    //     setValue,
-    //     handleSubmit,
-    //     formState: { errors }
-    // } = useForm({
-    //     mode: "onChange",
-    //     resolver: yupResolver(schema)
-    // });
+    const schema = yup.object().shape({
+        city: yup.string().required(),
+        country: yup.string().required(),
+        region: yup.string().required(),
+        postalCode: yup.string().required(),
+        street1: yup.string().required(),
+        street2: yup.number().required()
+    });
+
+    const {
+        reset,
+        control,
+        setValue,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({
+        mode: "onChange"
+        //resolver: yupResolver(schema)
+    });
 
     const dispatch = useDispatch<AppDispatch>();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        dispatch(addAddress({ ...addressDetails }));
+    const onSubmit = (data: AddressDetails) => {
+        console.log("SENDING", data);
+        // dispatch(addAddress({ ...data, ...addressDetails }));
     };
 
     return (
         <Card>
             <CardContent>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <Grid container spacing={5}>
                         <Grid item xs={12}>
                             <PlacesAutoComplete
@@ -57,19 +70,41 @@ const FormLayoutsBasic = () => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                value={addressDetails.street2}
-                                label="Apartment, unit, suite, or floor #"
+                            <Controller
+                                name="street2"
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field: { value, onChange } }) => (
+                                    <TextField
+                                        fullWidth
+                                        value={value}
+                                        label="Apartment, unit, suite, or floor #"
+                                        onChange={onChange}
+                                        error={Boolean(errors.name)}
+                                    />
+                                )}
                             />
+                            {errors.name && (
+                                <FormHelperText sx={{ color: "error.main" }}>
+                                    {errors.name.message}
+                                </FormHelperText>
+                            )}
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                required
-                                label="City"
-                                value={addressDetails.city}
-                                InputLabelProps={{ shrink: true }}
+                            <Controller
+                                name="city"
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field: { value, onChange } }) => (
+                                    <TextField
+                                        fullWidth
+                                        required
+                                        value={value ?? addressDetails.city}
+                                        label="City"
+                                        onChange={onChange}
+                                        error={Boolean(errors.name)}
+                                    />
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
