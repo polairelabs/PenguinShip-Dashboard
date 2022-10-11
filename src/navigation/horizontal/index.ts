@@ -7,46 +7,46 @@ import ShieldOutline from "mdi-material-ui/ShieldOutline";
 import { HorizontalNavItemsType } from "src/@core/layouts/types";
 
 const navigation = (): HorizontalNavItemsType => [
-    {
-        title: "Home",
-        icon: HomeOutline,
-        action: "read",
-        path: "/home"
-    },
-    {
-        title: "Second Page",
-        icon: EmailOutline,
-        action: "read",
-        path: "/second-page"
-    },
-    {
-        title: "Access Control",
-        icon: ShieldOutline,
-        path: "/acl",
-        action: "read",
-        subject: "acl-page"
-    },
-    {
-        title: "Packages",
-        icon: ShieldOutline,
-        path: "/acl",
-        action: "read",
-        subject: "acl-page"
-    },
-    {
-        title: "Addresses",
-        icon: ShieldOutline,
-        path: "/acl",
-        action: "read",
-        subject: "acl-page"
-    },
-    {
-        title: "Shipments",
-        icon: ShieldOutline,
-        path: "/acl",
-        action: "read",
-        subject: "acl-page"
-    }
+  {
+    title: "Home",
+    icon: HomeOutline,
+    action: "read",
+    path: "/home"
+  },
+  {
+    title: "Second Page",
+    icon: EmailOutline,
+    action: "read",
+    path: "/second-page"
+  },
+  {
+    title: "Access Control",
+    icon: ShieldOutline,
+    path: "/acl",
+    action: "read",
+    subject: "acl-page"
+  },
+  {
+    title: "Packages",
+    icon: ShieldOutline,
+    path: "/acl",
+    action: "read",
+    subject: "acl-page"
+  },
+  {
+    title: "Addresses",
+    icon: ShieldOutline,
+    path: "/acl",
+    action: "read",
+    subject: "acl-page"
+  },
+  {
+    title: "Shipments",
+    icon: ShieldOutline,
+    path: "/acl",
+    action: "read",
+    subject: "acl-page"
+  }
 ];
 
 export default navigation;

@@ -36,64 +36,64 @@ import MuiToggleButton from "./toggleButton";
 import MuiDateTimePicker from "./dateTimePicker";
 
 const Overrides = (theme: Theme, settings: Settings) => {
-    const { skin } = settings;
+  const { skin } = settings;
 
-    const button = MuiButton(theme);
-    const chip = MuiChip(theme);
-    const list = MuiList(theme);
-    const tabs = MuiTabs(theme);
-    const input = MuiInput(theme);
-    const tables = MuiTable(theme);
-    const alerts = MuiAlerts(theme);
-    const rating = MuiRating(theme);
-    const avatars = MuiAvatar(theme);
-    const divider = MuiDivider(theme);
-    const menu = MuiMenu(theme, skin);
-    const tooltip = MuiTooltip(theme);
-    const cards = MuiCard(theme, skin);
-    const backdrop = MuiBackdrop(theme);
-    const dataGrid = MuiDataGrid(theme);
-    const switches = MuiSwitches(theme);
-    const timeline = MuiTimeline(theme);
-    const accordion = MuiAccordion(theme);
-    const dialog = MuiDialog(theme, skin);
-    const pagination = MuiPagination(theme);
-    const popover = MuiPopover(theme, skin);
-    const snackbar = MuiSnackbar(theme, skin);
-    const dateTimePicker = MuiDateTimePicker(theme);
-    const autocomplete = MuiAutocomplete(theme, skin);
+  const button = MuiButton(theme);
+  const chip = MuiChip(theme);
+  const list = MuiList(theme);
+  const tabs = MuiTabs(theme);
+  const input = MuiInput(theme);
+  const tables = MuiTable(theme);
+  const alerts = MuiAlerts(theme);
+  const rating = MuiRating(theme);
+  const avatars = MuiAvatar(theme);
+  const divider = MuiDivider(theme);
+  const menu = MuiMenu(theme, skin);
+  const tooltip = MuiTooltip(theme);
+  const cards = MuiCard(theme, skin);
+  const backdrop = MuiBackdrop(theme);
+  const dataGrid = MuiDataGrid(theme);
+  const switches = MuiSwitches(theme);
+  const timeline = MuiTimeline(theme);
+  const accordion = MuiAccordion(theme);
+  const dialog = MuiDialog(theme, skin);
+  const pagination = MuiPagination(theme);
+  const popover = MuiPopover(theme, skin);
+  const snackbar = MuiSnackbar(theme, skin);
+  const dateTimePicker = MuiDateTimePicker(theme);
+  const autocomplete = MuiAutocomplete(theme, skin);
 
-    return Object.assign(
-        chip,
-        list,
-        menu,
-        tabs,
-        cards,
-        input,
-        alerts,
-        button,
-        dialog,
-        rating,
-        tables,
-        avatars,
-        divider,
-        MuiLink,
-        popover,
-        tooltip,
-        backdrop,
-        dataGrid,
-        MuiPaper,
-        snackbar,
-        switches,
-        timeline,
-        accordion,
-        MuiSelect,
-        pagination,
-        autocomplete,
-        MuiTypography,
-        dateTimePicker,
-        MuiToggleButton
-    );
+  return Object.assign(
+    chip,
+    list,
+    menu,
+    tabs,
+    cards,
+    input,
+    alerts,
+    button,
+    dialog,
+    rating,
+    tables,
+    avatars,
+    divider,
+    MuiLink,
+    popover,
+    tooltip,
+    backdrop,
+    dataGrid,
+    MuiPaper,
+    snackbar,
+    switches,
+    timeline,
+    accordion,
+    MuiSelect,
+    pagination,
+    autocomplete,
+    MuiTypography,
+    dateTimePicker,
+    MuiToggleButton
+  );
 };
 
 export default Overrides;

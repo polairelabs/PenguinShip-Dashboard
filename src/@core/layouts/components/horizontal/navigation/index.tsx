@@ -15,27 +15,27 @@ import HorizontalNavItems from "./HorizontalNavItems";
 
 // ** Types
 interface Props {
-    horizontalNavItems?: HorizontalNavItemsType;
+  horizontalNavItems?: HorizontalNavItemsType;
 }
 
 const Navigation = (props: Props) => {
-    return (
-        <Box
-            className="menu-content"
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                "& > *": {
-                    "&:not(:last-child)": { mr: 2 },
-                    ...(themeConfig.menuTextTruncate && { maxWidth: 220 })
-                }
-            }}
-        >
-            <HorizontalNavItems {...props} />
-        </Box>
-    );
+  return (
+    <Box
+      className="menu-content"
+      sx={{
+        width: "100%",
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        "& > *": {
+          "&:not(:last-child)": { mr: 2 },
+          ...(themeConfig.menuTextTruncate && { maxWidth: 220 })
+        }
+      }}
+    >
+      <HorizontalNavItems {...props} />
+    </Box>
+  );
 };
 
 export default Navigation;

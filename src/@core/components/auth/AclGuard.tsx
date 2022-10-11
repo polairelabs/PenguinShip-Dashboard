@@ -21,51 +21,51 @@ import BlankLayout from "src/@core/layouts/BlankLayout";
 import { useAuth } from "src/hooks/useAuth";
 
 interface AclGuardProps {
-    children: ReactNode;
-    guestGuard: boolean;
-    aclAbilities: ACLObj;
+  children: ReactNode;
+  guestGuard: boolean;
+  aclAbilities: ACLObj;
 }
 
 const AclGuard = (props: AclGuardProps) => {
-    // ** Props
-    const { aclAbilities, children, guestGuard } = props;
+  // ** Props
+  const { aclAbilities, children, guestGuard } = props;
 
-    const [ability, setAbility] = useState<AppAbility | undefined>(undefined);
+  const [ability, setAbility] = useState<AppAbility | undefined>(undefined);
 
-    // ** Hooks
-    const auth = useAuth();
-    const router = useRouter();
+  // ** Hooks
+  const auth = useAuth();
+  const router = useRouter();
 
-    // If guestGuard is true and packages is not logged in or its an error page, render the page without checking access
-    if (
-        guestGuard ||
-        router.route === "/404" ||
-        router.route === "/500" ||
-        router.route === "/"
-    ) {
-        return <>{children}</>;
-    }
+  // If guestGuard is true and packages is not logged in or its an error page, render the page without checking access
+  if (
+    guestGuard ||
+    router.route === "/404" ||
+    router.route === "/500" ||
+    router.route === "/"
+  ) {
+    return <>{children}</>;
+  }
 
-    // User is logged in, build ability for the packages based on his role
-    if (auth.user && auth.user.role && !ability) {
-        setAbility(buildAbilityFor(auth.user.role, aclAbilities.subject));
-    }
+  // User is logged in, build ability for the packages based on his role
+  if (auth.user && auth.user.role && !ability) {
+    setAbility(buildAbilityFor(auth.user.role, aclAbilities.subject));
+  }
 
-    // Check the access of current packages and render pages
-    if (ability && ability.can(aclAbilities.action, aclAbilities.subject)) {
-        return (
-            <AbilityContext.Provider value={ability}>
-                {children}
-            </AbilityContext.Provider>
-        );
-    }
-
-    // Render Not Authorized component if the current packages has limited access
+  // Check the access of current packages and render pages
+  if (ability && ability.can(aclAbilities.action, aclAbilities.subject)) {
     return (
-        <BlankLayout>
-            <NotAuthorized />
-        </BlankLayout>
+      <AbilityContext.Provider value={ability}>
+        {children}
+      </AbilityContext.Provider>
     );
+  }
+
+  // Render Not Authorized component if the current packages has limited access
+  return (
+    <BlankLayout>
+      <NotAuthorized />
+    </BlankLayout>
+  );
 };
 
 export default AclGuard;

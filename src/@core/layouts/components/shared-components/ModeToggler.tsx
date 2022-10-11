@@ -10,35 +10,31 @@ import WeatherSunny from "mdi-material-ui/WeatherSunny";
 import { Settings } from "src/@core/context/settingsContext";
 
 interface Props {
-    settings: Settings;
-    saveSettings: (values: Settings) => void;
+  settings: Settings;
+  saveSettings: (values: Settings) => void;
 }
 
 const ModeToggler = (props: Props) => {
-    // ** Props
-    const { settings, saveSettings } = props;
+  // ** Props
+  const { settings, saveSettings } = props;
 
-    const handleModeChange = (mode: PaletteMode) => {
-        saveSettings({ ...settings, mode });
-    };
+  const handleModeChange = (mode: PaletteMode) => {
+    saveSettings({ ...settings, mode });
+  };
 
-    const handleModeToggle = () => {
-        if (settings.mode === "light") {
-            handleModeChange("dark");
-        } else {
-            handleModeChange("light");
-        }
-    };
+  const handleModeToggle = () => {
+    if (settings.mode === "light") {
+      handleModeChange("dark");
+    } else {
+      handleModeChange("light");
+    }
+  };
 
-    return (
-        <IconButton
-            color="inherit"
-            aria-haspopup="true"
-            onClick={handleModeToggle}
-        >
-            {settings.mode === "dark" ? <WeatherSunny /> : <WeatherNight />}
-        </IconButton>
-    );
+  return (
+    <IconButton color="inherit" aria-haspopup="true" onClick={handleModeToggle}>
+      {settings.mode === "dark" ? <WeatherSunny /> : <WeatherNight />}
+    </IconButton>
+  );
 };
 
 export default ModeToggler;

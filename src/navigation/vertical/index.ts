@@ -9,41 +9,41 @@ import ArchiveOutline from "mdi-material-ui/ArchiveOutline";
 import { VerticalNavItemsType } from "src/@core/layouts/types";
 
 const navigation = (): VerticalNavItemsType => {
-    return [
+  return [
+    {
+      title: "Home",
+      icon: HomeOutline,
+      path: "/home"
+    },
+    {
+      title: "Packages",
+      icon: ArchiveOutline,
+      children: [
         {
-            title: "Home",
-            icon: HomeOutline,
-            path: "/home"
-        },
-        {
-            title: "Packages",
-            icon: ArchiveOutline,
-            children: [
-                {
-                    title: "List",
-                    path: "/packages/list"
-                }
-            ]
-        },
-        {
-            title: "Addresses",
-            icon: OfficeBuildingOutline,
-            path: "/second-page",
-            children: [
-                {
-                    title: "Add",
-                    path: "/addresses/add"
-                }
-            ]
-        },
-        {
-            title: "Shipments",
-            icon: ShieldOutline,
-            path: "/acl",
-            action: "read",
-            subject: "acl-page"
+          title: "List",
+          path: "/packages/list"
         }
-    ];
+      ]
+    },
+    {
+      title: "Addresses",
+      icon: OfficeBuildingOutline,
+      path: "/second-page",
+      children: [
+        {
+          title: "Add",
+          path: "/addresses/add"
+        }
+      ]
+    },
+    {
+      title: "Shipments",
+      icon: ShieldOutline,
+      path: "/acl",
+      action: "read",
+      subject: "acl-page"
+    }
+  ];
 };
 
 export default navigation;

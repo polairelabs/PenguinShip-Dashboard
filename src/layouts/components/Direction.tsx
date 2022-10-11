@@ -12,29 +12,29 @@ import { CacheProvider } from "@emotion/react";
 import stylisRTLPlugin from "stylis-plugin-rtl";
 
 interface DirectionProps {
-    children: ReactNode;
-    direction: Direction;
+  children: ReactNode;
+  direction: Direction;
 }
 
 const styleCache = () =>
-    createCache({
-        key: "rtl",
-        prepend: true,
-        stylisPlugins: [stylisRTLPlugin]
-    });
+  createCache({
+    key: "rtl",
+    prepend: true,
+    stylisPlugins: [stylisRTLPlugin]
+  });
 
 const Direction = (props: DirectionProps) => {
-    const { children, direction } = props;
+  const { children, direction } = props;
 
-    useEffect(() => {
-        document.dir = direction;
-    }, [direction]);
+  useEffect(() => {
+    document.dir = direction;
+  }, [direction]);
 
-    if (direction === "rtl") {
-        return <CacheProvider value={styleCache()}>{children}</CacheProvider>;
-    }
+  if (direction === "rtl") {
+    return <CacheProvider value={styleCache()}>{children}</CacheProvider>;
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 };
 
 export default Direction;
