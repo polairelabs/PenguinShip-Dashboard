@@ -1,13 +1,11 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from "react";
+import { ReactNode, useState } from "react";
 
 // ** Next Imports
 import Link from "next/link";
 
 // ** MUI Components
-import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
@@ -25,16 +23,12 @@ import MuiFormControlLabel, {
 } from "@mui/material/FormControlLabel";
 
 // ** Icons Imports
-import Google from "mdi-material-ui/Google";
-import Github from "mdi-material-ui/Github";
-import Twitter from "mdi-material-ui/Twitter";
-import Facebook from "mdi-material-ui/Facebook";
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 
 // ** Third Party Imports
 import * as yup from "yup";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 // ** Hooks
@@ -105,8 +99,11 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(
 );
 
 const schema = yup.object().shape({
-  email: yup.string().email().required(),
-  password: yup.string().min(5).required()
+  email: yup
+    .string()
+    .email("Email must be in a valid format")
+    .required("Email is required"),
+  password: yup.string().required("Password is required")
 });
 
 const defaultValues = {
@@ -148,7 +145,7 @@ const LoginPage = () => {
     auth.login({ email, password }, () => {
       setError("email", {
         type: "manual",
-        message: "Email or Password is invalid"
+        message: "Invalid credentials"
       });
     });
   };
@@ -286,9 +283,6 @@ const LoginPage = () => {
               <TypographyStyled variant="h5">
                 Welcome to {themeConfig.templateName}! 👋🏻
               </TypographyStyled>
-              <Typography variant="body2">
-                Please sign-in to your account and start the adventure
-              </Typography>
             </Box>
             <form
               noValidate

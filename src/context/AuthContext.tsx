@@ -90,14 +90,14 @@ const AuthProvider = ({ children }: Props) => {
       .then(async (res) => {
         window.localStorage.setItem(
           authConfig.storageTokenKeyName,
-          res.data.accessToken
+          res.data.access_token
         );
         const returnUrl = router.query.returnUrl;
-        setUser({ ...res.data.userData });
-        await window.localStorage.setItem(
-          "userData",
-          JSON.stringify(res.data.userData)
-        );
+        setUser({ ...res.data.user });
+        // await window.localStorage.setItem(
+        //   "userData",
+        //   JSON.stringify(res.data.userData)
+        // );
         const redirectURL = returnUrl && returnUrl !== "/" ? returnUrl : "/";
         router.replace(redirectURL as string);
       })

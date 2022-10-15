@@ -18,7 +18,6 @@ export type UserDataType = {
   email: string;
   firstName: string;
   lastName: string;
-  password: string;
   locked: boolean;
   enabled: boolean;
 };
