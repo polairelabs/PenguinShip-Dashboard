@@ -4,6 +4,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // ** Axios Imports
 import axios from "axios";
+import authConfig from "../../../configs/auth";
 
 interface DataParams {
   weight: number;
@@ -31,12 +32,19 @@ export const fetchData = createAsyncThunk(
 export const addAddress = createAsyncThunk(
   "appAddress/addAddress",
   async (
+
     data: { [key: string]: number | string },
     { getState, dispatch }: Redux
   ) => {
+    const storedToken = window.localStorage.getItem(
+        authConfig.storageTokenKeyName
+    )!;
     const response = await axios.post(
       "http://localhost:8080/api/v1/addresses/",
-      data
+      data,
+        {
+          headers: {Authorization: `Bearer ${storedToken}`}
+        }
     );
     dispatch(fetchData());
 

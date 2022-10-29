@@ -32,15 +32,6 @@ const FormLayoutsBasic = () => {
     street2: ""
   });
 
-  const schema = yup.object().shape({
-    city: yup.string().required(),
-    country: yup.string().required(),
-    region: yup.string().required(),
-    postalCode: yup.string().required(),
-    street1: yup.string().required(),
-    street2: yup.number().required()
-  });
-
   const {
     reset,
     control,
@@ -48,21 +39,20 @@ const FormLayoutsBasic = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    mode: "onChange"
-    //resolver: yupResolver(schema)
   });
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const onSubmit = (data: AddressDetails) => {
+  const handleData = (data: AddressDetails) => {
+    debugger
     console.log("SENDING", data);
-    // dispatch(addAddress({ ...data, ...addressDetails }));
+    dispatch(addAddress({ ...data, ...addressDetails }));
   };
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(handleData)}>
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <PlacesAutoComplete setAddressDetails={setAddressDetails} />
@@ -71,7 +61,6 @@ const FormLayoutsBasic = () => {
               <Controller
                 name="street2"
                 control={control}
-                rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
@@ -92,7 +81,6 @@ const FormLayoutsBasic = () => {
               <Controller
                 name="city"
                 control={control}
-                rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
