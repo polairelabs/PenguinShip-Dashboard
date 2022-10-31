@@ -26,7 +26,7 @@ import Close from "mdi-material-ui/Close";
 import { useDispatch } from "react-redux";
 
 // ** Actions Imports
-import { addPackages } from "src/store/apps/packages";
+import { addPackage } from "src/store/apps/packages";
 
 // ** Types Imports
 import { AppDispatch } from "src/store";
@@ -129,7 +129,7 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
 
   const onSubmit = (data: UserData) => {
     // old: dispatch(addPackages({ ...data, role, currentPlan: plan }))
-    dispatch(addPackages({ ...data }));
+    dispatch(addPackage({ ...data }));
     toggle();
     reset();
   };

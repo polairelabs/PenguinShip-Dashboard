@@ -47,7 +47,7 @@ import CustomAvatar from "src/@core/components/mui/avatar";
 import { getInitials } from "src/@core/utils/get-initials";
 
 // ** Actions Imports
-import { fetchData, deletePackages } from "src/store/apps/packages";
+import { fetchPackages, deletePackages } from "src/store/apps/packages";
 
 // ** Types Imports
 import { RootState, AppDispatch } from "src/store";
@@ -57,6 +57,7 @@ import { PackagesType } from "src/types/apps/userTypes";
 // ** Custom Components Imports
 import TableHeader from "src/views/packages/list/TableHeader";
 import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
+import { fetchAddresses } from "../../../store/apps/addresses";
 
 interface UserRoleType {
   [key: string]: ReactElement;
@@ -278,7 +279,7 @@ const PackagesList = () => {
   const store = useSelector((state: RootState) => state.packages);
 
   useEffect(() => {
-    dispatch(fetchData());
+    // dispatch(fetchAddresses());
   }, [dispatch]);
 
   const handleWidthChange = useCallback((val: number) => {

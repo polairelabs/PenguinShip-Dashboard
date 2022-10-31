@@ -40,8 +40,12 @@ const navigation = (): VerticalNavItemsType => {
       title: "Shipments",
       icon: ShieldOutline,
       path: "/acl",
-      action: "read",
-      subject: "acl-page"
+      children: [
+        {
+          title: "Add",
+          path: "/shipments/add"
+        }
+      ]
     }
   ];
 };

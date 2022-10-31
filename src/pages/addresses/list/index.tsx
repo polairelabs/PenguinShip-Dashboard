@@ -47,7 +47,7 @@ import CustomAvatar from "src/@core/components/mui/avatar";
 import { getInitials } from "src/@core/utils/get-initials";
 
 // ** Actions Imports
-import { fetchData, deletePackages } from "src/store/apps/packages";
+import { fetchPackages, deletePackages } from "src/store/apps/packages";
 
 // ** Types Imports
 import { RootState, AppDispatch } from "src/store";
@@ -324,7 +324,7 @@ const PackagesList = () => {
   const store = useSelector((state: RootState) => state.packages);
 
   useEffect(() => {
-    dispatch(fetchData());
+    dispatch(fetchPackages());
   }, [dispatch]);
 
   const handleWidthChange = useCallback((val: number) => {
