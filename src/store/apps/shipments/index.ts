@@ -4,6 +4,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // ** Axios Imports
 import axios from "axios";
+import BaseApi from "../../../api/api";
+import { fetchAddresses } from "../addresses";
 
 interface DataParams {
   weight: number;
@@ -17,12 +19,35 @@ interface Redux {
   dispatch: Dispatch<any>;
 }
 
+export const createShipment = createAsyncThunk(
+  "createShipment",
+  async (
+    data: { [key: string]: number | string | undefined },
+    { getState, dispatch }: Redux
+  ) => {
+    console.log("Sending in", data);
+    const response = await BaseApi.post("/shipments", data);
+    return response;
+  }
+);
+
+export const setShipmentRate = createAsyncThunk(
+  "setShipmentRate",
+  async (
+    data: { [key: string]: number | string | undefined },
+    { getState, dispatch }: Redux
+  ) => {
+    console.log("Sending in", data);
+    const response = await BaseApi.post("/shipments/buy", data);
+    return response;
+  }
+);
+
 // ** Fetch Packages
 export const fetchData = createAsyncThunk(
   "appPackages/fetchData",
   async (p) => {
     const response = await axios.get("http://localhost:8080/apps/packages/");
-
     return response.data;
   }
 );
@@ -59,23 +84,28 @@ export const deletePackages = createAsyncThunk(
   }
 );
 
-export const appPackagesSlice = createSlice({
-  name: "appPackages",
+export const shipmentsSlice = createSlice({
+  name: "shipments",
   initialState: {
-    data: [],
+    data: {},
+    rates: [],
     total: 1,
     params: {},
     allData: []
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchData.fulfilled, (state, action) => {
-      state.data = action.payload.packages;
-      state.total = action.payload.total;
-      state.params = action.payload.params;
-      state.allData = action.payload.allData;
+    builder.addCase(createShipment.fulfilled, (state, action) => {
+      console.log(action);
+      console.log(action.payload);
+      console.log("Cool", action.payload.rates);
+      state.data = action.payload;
+      state.rates = action.payload.rates;
+      // state.total = action.payload.total;
+      // state.params = action.payload.params;
+      // state.allData = action.payload.allData;
     });
   }
 });
 
-export default appPackagesSlice.reducer;
+export default shipmentsSlice.reducer;

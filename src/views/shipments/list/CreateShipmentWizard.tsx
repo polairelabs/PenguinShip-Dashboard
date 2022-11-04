@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, MouseEvent, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 // ** MUI Imports
 import Box from "@mui/material/Box";
@@ -7,44 +7,45 @@ import Card from "@mui/material/Card";
 import Step from "@mui/material/Step";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import Select from "@mui/material/Select";
 import Divider from "@mui/material/Divider";
 import Stepper from "@mui/material/Stepper";
-import MenuItem from "@mui/material/MenuItem";
 import StepLabel from "@mui/material/StepLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import InputLabel from "@mui/material/InputLabel";
-import IconButton from "@mui/material/IconButton";
 import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import FormHelperText from "@mui/material/FormHelperText";
-import InputAdornment from "@mui/material/InputAdornment";
+import { DataGrid } from "@mui/x-data-grid";
 
 // ** Third Party Imports
 import * as yup from "yup";
 import toast from "react-hot-toast";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 // ** Icons Imports
-import EyeOutline from "mdi-material-ui/EyeOutline";
-import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 
 // ** Custom Components Imports
 import StepperCustomDot from "./StepperCustomDot";
 
 // ** Styled Components
 import StepperWrapper from "src/@core/styles/mui/stepper";
-
-import { dispatch } from "react-hot-toast/dist/core/store";
-import { fetchAddresses } from "../../../store/apps/addresses";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../store";
 import BaseApi from "../../../api/api";
-import { Autocomplete } from "@mui/material";
+import {
+  Autocomplete,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
+} from "@mui/material";
 import { Address } from "../../../types/apps/addressType";
+import { Package } from "../../../types/apps/packageType";
+import { createShipment, setShipmentRate } from "../../../store/apps/shipments";
 
 interface State {
   password: string;
@@ -60,7 +61,7 @@ const steps = [
   },
   {
     title: "Parcel",
-    subtitle: "Create parcel to be sent"
+    subtitle: "Set a parcel to be sent"
   },
   {
     title: "Rates",
@@ -100,17 +101,17 @@ const accountSchema = yup.object().shape({
 });
 
 const personalSchema = yup.object().shape({
-  country: yup.string().required(),
-  "last-name": yup.string().required(),
-  "first-name": yup.string().required(),
-  language: yup.array().min(1).required()
+  // country: yup.string().required(),
+  // "last-name": yup.string().required(),
+  // "first-name": yup.string().required(),
+  // language: yup.array().min(1).required()
 });
 
 const socialSchema = yup.object().shape({
-  google: yup.string().required(),
-  twitter: yup.string().required(),
-  facebook: yup.string().required(),
-  linkedIn: yup.string().required()
+  // google: yup.string().required(),
+  // twitter: yup.string().required(),
+  // facebook: yup.string().required(),
+  // linkedIn: yup.string().required()
 });
 
 const StepperLinearWithValidation = (props) => {
@@ -127,8 +128,20 @@ const StepperLinearWithValidation = (props) => {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
 
-  const [sourceAddress, setSourceAddress] = useState<Address>();
+  const [sourceAddress, setSourceAddress] = useState<Address | null>();
   const [destinationAddress, setDestinationAddress] = useState<Address>();
+
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [selectedPackage, setSelectedPackage] = useState<Package>();
+
+  // TODO add type for Rate
+  const [selectedRate, setSelectedRate] = useState({});
+
+  // @ts-ignore
+  const shipment = useSelector((state) => state.shipments.data);
+
+  // @ts-ignore
+  const rates = useSelector((state) => state.shipments.rates);
 
   useEffect(() => {
     async function fetchAddresses() {
@@ -137,10 +150,15 @@ const StepperLinearWithValidation = (props) => {
       setSelectableAddresses(response);
     }
 
+    async function fetchPackages() {
+      const response: Package[] = await BaseApi.get("/packages");
+      setPackages(response);
+    }
+
     fetchAddresses();
+    fetchPackages();
   }, []);
 
-  // ** Hooks
   const {
     reset: accountReset,
     control: accountControl,
@@ -171,7 +189,6 @@ const StepperLinearWithValidation = (props) => {
     resolver: yupResolver(socialSchema)
   });
 
-  // Handle Stepper
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -194,13 +211,44 @@ const StepperLinearWithValidation = (props) => {
   };
 
   const onSubmit = () => {
-    console.log("Values: ", defaultAccountValues);
-    console.log("Values: ", sourceAddress);
-    console.log("Values: ", destinationAddress);
+    console.log("sourceAddress: ", sourceAddress);
+    console.log("destinationAddress: ", destinationAddress);
+    console.log("selectedPackage: ", selectedPackage);
 
     setActiveStep(activeStep + 1);
+    // if (activeStep === steps.length - 1) {
+    //   toast.success("Form Submitted");
+    // }
+  };
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const onSubmitCreateShipment = async () => {
+    // TODO create interface for payload
+    const createShipmentPayload = {
+      fromAddressId: sourceAddress?.id,
+      toAddressId: destinationAddress?.id,
+      parcelId: selectedPackage?.id
+    };
+
+    await dispatch(createShipment(createShipmentPayload));
+    // TODO add loading here
+    // console.log("RATES", rates);
+
+    setActiveStep(activeStep + 1);
+  };
+
+  const onSubmitSetRate = async () => {
+    // TODO
+    console.log(`Setting rate ${selectedRate["id"]}`);
+    const setShipmentRatePayload = {
+      easypostShipmentId: shipment?.id,
+      easypostRateId: selectedRate?.id
+    };
+    await dispatch(setShipmentRate(setShipmentRatePayload));
     if (activeStep === steps.length - 1) {
-      toast.success("Form Submitted");
+      toast.success("Rate was successfully set");
+      setActiveStep(0);
     }
   };
 
@@ -209,12 +257,34 @@ const StepperLinearWithValidation = (props) => {
   };
 
   const handleSourceAddressChange = (event, newValue) => {
+    console.log("1. selectableAddresses", selectableAddresses);
+    console.log("newValue", newValue);
     if (!newValue) {
-      if (sourceAddress)
+      console.log("CLEARRRR!!");
+      // When newValue is empty/null
+      if (sourceAddress) {
+        // Put back sourceAddress in the list
         setSelectableAddresses((list) => [...list, sourceAddress]);
+        setSourceAddress(null);
+      }
       return;
+    } else if (sourceAddress && newValue.id !== sourceAddress.id) {
+      console.log("CHANGED ADDRESS");
+      console.log("From", sourceAddress.id, "to", newValue.id);
+      // Different address was selected when a different one is already selected, put back sourceAddress in the list and continue
+      const currentAddress: Address | undefined = addresses.find(
+        (address) => address.id === sourceAddress.id
+      );
+      if (currentAddress) {
+        console.log("2. PUTTING BACK!!!!", currentAddress);
+        setSelectableAddresses((list) => [...list, currentAddress]);
+      }
+      // setSelectableAddresses(
+      //   selectableAddresses.filter((address) => address.id !== newValue?.id)
+      // );
     }
     setSourceAddress(findAddress(newValue.id));
+    // filter out/remove address with newValue.id
     setSelectableAddresses(
       selectableAddresses.filter((address) => address.id !== newValue?.id)
     );
@@ -230,6 +300,10 @@ const StepperLinearWithValidation = (props) => {
     setSelectableAddresses(
       selectableAddresses.filter((address) => address.id !== newValue?.id)
     );
+  };
+
+  const handleSelectedPackageChange = (event, newValue) => {
+    setSelectedPackage(newValue);
   };
 
   const getStepContent = (step: number) => {
@@ -249,6 +323,10 @@ const StepperLinearWithValidation = (props) => {
                   {steps[0].subtitle}
                 </Typography>
               </Grid>
+
+              {/*{selectableAddresses.map((address) => (*/}
+              {/*  <Grid>{address.street1}</Grid>*/}
+              {/*))}*/}
 
               <Grid container item spacing={6}>
                 <Grid item xs={12} sm={6} direction="column">
@@ -430,7 +508,7 @@ const StepperLinearWithValidation = (props) => {
         );
       case 1:
         return (
-          <form key={1} onSubmit={handlePersonalSubmit(onSubmit)}>
+          <form key={1} onSubmit={handlePersonalSubmit(onSubmitCreateShipment)}>
             <Grid container spacing={5}>
               <Grid item xs={12}>
                 <Typography
@@ -450,13 +528,21 @@ const StepperLinearWithValidation = (props) => {
                     control={personalControl}
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label="First Name"
-                        onChange={onChange}
-                        placeholder="Leonard"
-                        error={Boolean(personalErrors["first-name"])}
-                        aria-describedby="stepper-linear-personal-first-name"
+                      <Autocomplete
+                        options={packages}
+                        id="autocomplete-default"
+                        getOptionLabel={(parcel) =>
+                          parcel.id + " : " + parcel.name
+                        }
+                        onChange={handleSelectedPackageChange}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            value={value}
+                            label="Choose parcel"
+                            variant="standard"
+                          />
+                        )}
                       />
                     )}
                   />
@@ -470,120 +556,6 @@ const StepperLinearWithValidation = (props) => {
                   )}
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="last-name"
-                    control={personalControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label="Last Name"
-                        onChange={onChange}
-                        placeholder="Carter"
-                        error={Boolean(personalErrors["last-name"])}
-                        aria-describedby="stepper-linear-personal-last-name"
-                      />
-                    )}
-                  />
-                  {personalErrors["last-name"] && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-personal-last-name"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel
-                    id="stepper-linear-personal-country"
-                    error={Boolean(personalErrors.country)}
-                    htmlFor="stepper-linear-personal-country"
-                  >
-                    Country
-                  </InputLabel>
-                  <Controller
-                    name="country"
-                    control={personalControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        value={value}
-                        label="Country"
-                        onChange={onChange}
-                        error={Boolean(personalErrors.country)}
-                        labelId="stepper-linear-personal-country"
-                        aria-describedby="stepper-linear-personal-country-helper"
-                      >
-                        <MenuItem value="UK">UK</MenuItem>
-                        <MenuItem value="USA">USA</MenuItem>
-                        <MenuItem value="Australia">Australia</MenuItem>
-                        <MenuItem value="Germany">Germany</MenuItem>
-                      </Select>
-                    )}
-                  />
-                  {personalErrors.country && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-personal-country-helper"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel
-                    error={Boolean(personalErrors.language)}
-                    htmlFor="stepper-linear-personal-language"
-                    id="stepper-linear-personal-language-label"
-                  >
-                    Language
-                  </InputLabel>
-                  <Controller
-                    name="language"
-                    control={personalControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        multiple
-                        onChange={onChange}
-                        id="stepper-linear-personal-language"
-                        value={Array.isArray(value) ? value : []}
-                        error={Boolean(personalErrors.language)}
-                        labelId="stepper-linear-personal-language-label"
-                        input={
-                          <OutlinedInput
-                            label="Language"
-                            id="stepper-linear-select-multiple-language"
-                          />
-                        }
-                      >
-                        <MenuItem value="English">English</MenuItem>
-                        <MenuItem value="French">French</MenuItem>
-                        <MenuItem value="Spanish">Spanish</MenuItem>
-                        <MenuItem value="Portuguese">Portuguese</MenuItem>
-                        <MenuItem value="Italian">Italian</MenuItem>
-                        <MenuItem value="German">German</MenuItem>
-                        <MenuItem value="Arabic">Arabic</MenuItem>
-                      </Select>
-                    )}
-                  />
-                  {personalErrors.language && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-personal-language-helper"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
               <Grid
                 item
                 xs={12}
@@ -598,7 +570,7 @@ const StepperLinearWithValidation = (props) => {
                   Back
                 </Button>
                 <Button size="large" type="submit" variant="contained">
-                  Next
+                  Create shipment
                 </Button>
               </Grid>
             </Grid>
@@ -606,7 +578,7 @@ const StepperLinearWithValidation = (props) => {
         );
       case 2:
         return (
-          <form key={2} onSubmit={handleSocialSubmit(onSubmit)}>
+          <form key={2} onSubmit={handleSocialSubmit(onSubmitSetRate)}>
             <Grid container spacing={5}>
               <Grid item xs={12}>
                 <Typography
@@ -619,113 +591,67 @@ const StepperLinearWithValidation = (props) => {
                   {steps[2].subtitle}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="twitter"
-                    control={socialControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label="Twitter"
-                        onChange={onChange}
-                        error={Boolean(socialErrors.twitter)}
-                        placeholder="https://twitter.com/carterLeonard"
-                        aria-describedby="stepper-linear-social-twitter"
-                      />
-                    )}
-                  />
-                  {socialErrors.twitter && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-social-twitter"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="facebook"
-                    control={socialControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label="Facebook"
-                        onChange={onChange}
-                        error={Boolean(socialErrors.facebook)}
-                        placeholder="https://facebook.com/carterLeonard"
-                        aria-describedby="stepper-linear-social-facebook"
-                      />
-                    )}
-                  />
-                  {socialErrors.facebook && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-social-facebook"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="google"
-                    control={socialControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label="Google+"
-                        onChange={onChange}
-                        error={Boolean(socialErrors.google)}
-                        aria-describedby="stepper-linear-social-google"
-                        placeholder="https://plus.google.com/carterLeonard"
-                      />
-                    )}
-                  />
-                  {socialErrors.google && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-social-google"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="linkedIn"
-                    control={socialControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label="LinkedIn"
-                        onChange={onChange}
-                        error={Boolean(socialErrors.linkedIn)}
-                        placeholder="https://linkedin.com/carterLeonard"
-                        aria-describedby="stepper-linear-social-linkedIn"
-                      />
-                    )}
-                  />
-                  {socialErrors.linkedIn && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-social-linkedIn"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
+              <Grid item xs={12}>
+                <Card>
+                  <TableContainer
+                    component={Paper}
+                    sx={{
+                      "& .MuiTableRow-root:hover": {
+                        backgroundColor: "rgba(58, 53, 65, 0.04)"
+                      }
+                    }}
+                  >
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center">Carrier</TableCell>
+                          <TableCell align="left">Service</TableCell>
+                          <TableCell align="right">Rate (USD)</TableCell>
+                          <TableCell align="right">Delivery days</TableCell>
+                          <TableCell align="right">
+                            Est. delivery days
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rates.map((rate) => (
+                          <TableRow
+                            onClick={() => setSelectedRate(rate)}
+                            key={rate.id}
+                            sx={{
+                              "&:last-of-type td, &:last-of-type th": {
+                                border: 0
+                              }
+                            }}
+                            selected={selectedRate?.id === rate.id}
+                          >
+                            <TableCell
+                              align="center"
+                              component="th"
+                              scope="row"
+                            >
+                              <Box
+                                component="img"
+                                alt={rate.carrier}
+                                src={`/images/carriers/${rate.carrier}.png`}
+                              />
+                            </TableCell>
+                            <TableCell align="left" sx={{ fontWeight: "bold" }}>
+                              {rate.service}
+                            </TableCell>
+                            <TableCell align="right">${rate.rate}</TableCell>
+                            <TableCell align="right">
+                              {rate.deliveryDays}
+                            </TableCell>
+                            <TableCell align="right">
+                              {rate.estDeliveryDays}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Card>
               </Grid>
               <Grid
                 item
@@ -741,7 +667,7 @@ const StepperLinearWithValidation = (props) => {
                   Back
                 </Button>
                 <Button size="large" type="submit" variant="contained">
-                  Submit
+                  Set rate
                 </Button>
               </Grid>
             </Grid>

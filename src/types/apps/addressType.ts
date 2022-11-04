@@ -1,4 +1,4 @@
-export type Address = {
+export interface Address {
   id: number;
   street1: string;
   street2: string;
@@ -11,4 +11,4 @@ export type Address = {
   company: string;
   phone: string;
   email: string;
-};
+}
