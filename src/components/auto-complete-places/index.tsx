@@ -4,12 +4,14 @@ import React from "react";
 import { TextField, Box, Autocomplete } from "@mui/material";
 import PlaceResult = google.maps.places.PlaceResult;
 import { AddressDetails } from "../../types/components/addressDetailsType";
+type Libraries = ("drawing" | "geometry" | "localContext" | "places" | "visualization")[];
+const places : Libraries = ["places"] ;
 
 export default function PlacesAutoComplete(props) {
   const { setAddressDetails } = props;
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
-    libraries: ["places"]
+    libraries: places
   });
 
   if (!isLoaded) return <div>Loading...</div>;

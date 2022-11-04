@@ -52,7 +52,7 @@ import { fetchData, deletePackages } from "src/store/apps/packages";
 // ** Types Imports
 import { RootState, AppDispatch } from "src/store";
 import { ThemeColor } from "src/@core/layouts/types";
-import { PackagesType } from "src/types/apps/userTypes";
+import {AddressesType, PackagesType} from "src/types/apps/userTypes";
 
 // ** Custom Components Imports
 import TableHeader from "src/views/packages/list/TableHeader";
@@ -72,15 +72,15 @@ const userRoleObj: UserRoleType = {
   author: <CogOutline fontSize="small" sx={{ mr: 3, color: "warning.main" }} />,
   editor: <PencilOutline fontSize="small" sx={{ mr: 3, color: "info.main" }} />,
   maintainer: (
-    <ChartDonut fontSize="small" sx={{ mr: 3, color: "success.main" }} />
+      <ChartDonut fontSize="small" sx={{ mr: 3, color: "success.main" }} />
   ),
   subscriber: (
-    <AccountOutline fontSize="small" sx={{ mr: 3, color: "primary.main" }} />
+      <AccountOutline fontSize="small" sx={{ mr: 3, color: "primary.main" }} />
   )
 };
 
 interface CellType {
-  row: PackagesType;
+  row: AddressesType;
 }
 
 const userStatusObj: UserStatusType = {
@@ -99,28 +99,6 @@ const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
   textDecoration: "none",
   marginRight: theme.spacing(3)
 }));
-
-// ** renders client column
-const renderClient = (row: PackagesType) => {
-  if (row.name) {
-    return (
-      <AvatarWithImageLink href={`/apps/user/view/${row.id}`}>
-        <CustomAvatar src={row.name} sx={{ mr: 3, width: 30, height: 30 }} />
-      </AvatarWithImageLink>
-    );
-  } else {
-    return (
-      <AvatarWithoutImageLink href={`/apps/user/view/${row.id}`}>
-        <CustomAvatar
-          skin="light"
-          sx={{ mr: 3, width: 30, height: 30, fontSize: ".875rem" }}
-        >
-          {getInitials(row.name ? row.name : "John Doe")}
-        </CustomAvatar>
-      </AvatarWithoutImageLink>
-    );
-  }
-};
 
 // ** Styled component for the link inside menu
 const MenuItemLink = styled("a")(({ theme }) => ({
@@ -154,43 +132,43 @@ const RowOptions = ({ id }: { id: number | string }) => {
   };
 
   return (
-    <>
-      <IconButton size="small" onClick={handleRowOptionsClick}>
-        <DotsVertical />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        open={rowOptionsOpen}
-        onClose={handleRowOptionsClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right"
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right"
-        }}
-        PaperProps={{ style: { minWidth: "8rem" } }}
-      >
-        <MenuItem sx={{ p: 0 }}>
-          <Link href={`/apps/user/view/${id}`} passHref>
-            <MenuItemLink>
-              <EyeOutline fontSize="small" sx={{ mr: 2 }} />
-              View
-            </MenuItemLink>
-          </Link>
-        </MenuItem>
-        <MenuItem onClick={handleRowOptionsClose}>
-          <PencilOutline fontSize="small" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <DeleteOutline fontSize="small" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
+      <>
+        <IconButton size="small" onClick={handleRowOptionsClick}>
+          <DotsVertical />
+        </IconButton>
+        <Menu
+            keepMounted
+            anchorEl={anchorEl}
+            open={rowOptionsOpen}
+            onClose={handleRowOptionsClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right"
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right"
+            }}
+            PaperProps={{ style: { minWidth: "8rem" } }}
+        >
+          <MenuItem sx={{ p: 0 }}>
+            <Link href={`/apps/user/view/${id}`} passHref>
+              <MenuItemLink>
+                <EyeOutline fontSize="small" sx={{ mr: 2 }} />
+                View
+              </MenuItemLink>
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={handleRowOptionsClose}>
+            <PencilOutline fontSize="small" sx={{ mr: 2 }} />
+            Edit
+          </MenuItem>
+          <MenuItem onClick={handleDelete}>
+            <DeleteOutline fontSize="small" sx={{ mr: 2 }} />
+            Delete
+          </MenuItem>
+        </Menu>
+      </>
   );
 };
 
@@ -201,105 +179,80 @@ const columns = [
     field: "name",
     headerName: "Name",
     renderCell: ({ row }: CellType) => {
-      const { id, name, weight } = row;
+      const { id, name, street1 } = row;
 
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {renderClient(row)}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              flexDirection: "column"
-            }}
-          >
-            <Link href={`/apps/user/view/${id}`} passHref>
-              <Typography
-                noWrap
-                component="a"
-                variant="body2"
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box
                 sx={{
-                  fontWeight: 600,
-                  color: "text.primary",
-                  textDecoration: "none"
+                  display: "flex",
+                  alignItems: "flex-start",
+                  flexDirection: "column"
                 }}
-              >
-                {name}
-              </Typography>
-            </Link>
-            <Link href={`/apps/user/view/${id}`} passHref>
-              <Typography
-                noWrap
-                component="a"
-                variant="caption"
-                sx={{ textDecoration: "none" }}
-              >
-                @{name}
-              </Typography>
-            </Link>
+            >
+              <Typography>{row.name}</Typography>
+            </Box>
           </Box>
-        </Box>
       );
     }
   },
   {
     flex: 0.2,
     minWidth: 250,
-    field: "weight",
-    headerName: "weight",
+    field: "street1",
+    headerName: "Street 1",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap variant="body2">
-          {row.weight}
-        </Typography>
+          <Typography noWrap variant="body2">
+            {row.street1}
+          </Typography>
       );
     }
   },
   {
     flex: 0.15,
-    field: "value",
+    field: "street2",
     minWidth: 150,
-    headerName: "Value",
+    headerName: "Street 2",
     renderCell: ({ row }: CellType) => {
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {userRoleObj[row.value]}
-          <Typography
-            noWrap
-            sx={{
-              color: "text.secondary",
-              textTransform: "capitalize"
-            }}
-          >
-            {row.value}
-          </Typography>
-        </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography
+                noWrap
+                sx={{
+                  color: "text.secondary",
+                  textTransform: "capitalize"
+                }}
+            >
+              {row.street2}
+            </Typography>
+          </Box>
       );
     }
   },
-  /*{
+  {
     flex: 0.15,
     minWidth: 120,
-    headerName: 'Length',
-    field: 'length',
+    headerName: "City",
+    field: "city",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: 'capitalize' }}>
-          {/!*{row.length}*!/}
-        </Typography>
-      )
+          <Typography noWrap sx={{ textTransform: "capitalize" }}>
+            {row.city}
+          </Typography>
+      );
     }
-  },*/
+  },
   {
     flex: 0.1,
     minWidth: 110,
-    field: "width",
-    headerName: "Width",
+    field: "postalCode",
+    headerName: "Zip Code",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
-          {row.width}
-        </Typography>
+          <Typography noWrap sx={{ textTransform: "capitalize" }}>
+            {row.postalCode}
+          </Typography>
       );
     }
   },
@@ -313,11 +266,8 @@ const columns = [
   }
 ];
 
-const PackagesList = () => {
+const AddressesList = () => {
   // ** State
-  const [width, setWidth] = useState<number>(0);
-  const [value, setValue] = useState<number>(10);
-  const [addPackageOpen, setAddPackageOpen] = useState<boolean>(false);
 
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>();
@@ -327,37 +277,32 @@ const PackagesList = () => {
     dispatch(fetchData());
   }, [dispatch]);
 
-  const handleWidthChange = useCallback((val: number) => {
-    setWidth(val);
-  }, []);
 
-  const toggleAddPackageDrawer = () => setAddPackageOpen(!addPackageOpen);
+  const data = () => {
+    console.log("STORE DATA", store.data);
+    if (store.data) {
+      return store.data;
+    }
+    return "";
+  };
 
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Card>
-          <TableHeader
-            value={width}
-            handleFilter={handleWidthChange}
-            toggle={toggleAddPackageDrawer}
-          />
-          <DataGrid
-            autoHeight
-            rows={store.data}
-            columns={columns}
-            checkboxSelection
-            pageSize={value}
-            disableSelectionOnClick
-            rowsPerPageOptions={[10, 25, 50]}
-            onPageSizeChange={(newPageSize: number) => setValue(newPageSize)}
-          />
-        </Card>
+      // <p>{data()}</p>
+      <Grid container spacing={6}>
+        <Grid item xs={12}>
+          <Card>
+            <DataGrid
+                autoHeight
+                rows={store.data}
+                columns={columns}
+                checkboxSelection
+                disableSelectionOnClick
+                rowsPerPageOptions={[10, 25, 50]}
+            />
+          </Card>
+        </Grid>
       </Grid>
-      S
-      <AddPackageDrawer open={addPackageOpen} toggle={toggleAddPackageDrawer} />
-    </Grid>
   );
 };
 
-export default PackagesList;
+export default AddressesList;

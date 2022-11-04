@@ -28,8 +28,11 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: "Addresses",
       icon: OfficeBuildingOutline,
-      path: "/second-page",
       children: [
+        {
+          title: "List",
+          path: "/addresses/list"
+        },
         {
           title: "Add",
           path: "/addresses/add"
@@ -39,9 +42,12 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: "Shipments",
       icon: ShieldOutline,
-      path: "/acl",
-      action: "read",
-      subject: "acl-page"
+      children: [
+        {
+          title: "Add",
+          path: "/shipments/add"
+        }
+      ]
     }
   ];
 };

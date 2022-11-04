@@ -56,7 +56,7 @@ const FormLayoutsBasic = () => {
 
   const onSubmit = (data: AddressDetails) => {
     console.log("SENDING", data);
-    // dispatch(addAddress({ ...data, ...addressDetails }));
+    dispatch(addAddress({ ...data, ...addressDetails }));
   };
 
   return (

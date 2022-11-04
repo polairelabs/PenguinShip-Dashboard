@@ -74,12 +74,12 @@ const schema = yup.object().shape({
     .number()
     .typeError("value field is required")
     .min(0, (obj) => showErrors("value", obj.value.value, obj.min))
-    .required(),
+    .required()/*,
   length: yup
     .number()
     .typeError("length field is required")
     .min(0, (obj) => showErrors("length", obj.value.length, obj.min))
-    .required(),
+    .required()*/,
   width: yup
     .number()
     .typeError("width field is required")

@@ -34,7 +34,7 @@ export const addAddress = createAsyncThunk(
     data: { [key: string]: number | string },
     { getState, dispatch }: Redux
   ) => {
-    const response = await axios.post(
+    const response = await BaseApi.post(
       "http://localhost:8080/api/v1/addresses/",
       data
     );

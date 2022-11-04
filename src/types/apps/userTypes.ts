@@ -14,3 +14,19 @@ export type PackagesType = {
   width: number;
   height: number;
 };
+
+export type AddressesType = {
+  id: number,
+  street1: string,
+  street2: string,
+  city: string,
+  region: string,
+  postalCode: string,
+  country: string,
+  residential: string,
+  name: string,
+  company: string,
+  phone: string,
+  email: string,
+  verified: boolean
+}
