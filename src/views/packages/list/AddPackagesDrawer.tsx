@@ -238,7 +238,7 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
                     value={value}
                     label="lengthObj"
                     onChange={onChange}
-                    placeholder="length"
+                    placeholder="lengthObj"
                     error={Boolean(errors)}
                   />
                 )}

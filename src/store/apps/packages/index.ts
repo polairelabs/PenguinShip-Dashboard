@@ -17,7 +17,7 @@ export const fetchData = createAsyncThunk(
     "appPackages/fetchData",
     async (p) => {
         const response = await BaseApi.get("/packages");
-        return response.data;
+        return response;
     }
 );
 
@@ -81,12 +81,13 @@ export const appPackagesSlice = createSlice({
                 state.status = "loading";
             })
             .addCase(fetchData.fulfilled, (state, action) => {
-                debugger
+
                 state.data = action.payload;
                 // state.total = action.payload.total
                 // state.params = action.payload.params
                 // state.allData = action.payload.allData
                 state.status = "idle";
+                debugger
             })
             .addCase(fetchData.rejected, (state) => {
                 state.status = "failed";

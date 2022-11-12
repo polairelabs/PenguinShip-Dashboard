@@ -13,7 +13,6 @@ export type PackagesType = {
   lengthObj: number;
   width: number;
   height: number;
-  user: Object;
 };
 
 export type AddressesType = {

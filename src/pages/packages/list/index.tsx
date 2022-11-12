@@ -62,25 +62,6 @@ interface CellType {
     row: PackagesType;
 }
 
-// ** Styled component for the link for the avatar without image
-const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
-    textDecoration: "none",
-    marginRight: theme.spacing(3)
-}));
-
-// ** renders client column
-const renderClient = (row: PackagesType) => {
-        return (
-            <AvatarWithoutImageLink href=''>
-                <CustomAvatar
-                    skin="light"
-                    sx={{ mr: 3, width: 30, height: 30, fontSize: ".875rem" }}
-                >
-                    {getInitials(row.name ? row.name : "John Doe")}
-                </CustomAvatar>
-            </AvatarWithoutImageLink>
-        );
-};
 
 // ** Styled component for the link inside menu
 const MenuItemLink = styled("a")(({ theme }) => ({
@@ -165,7 +146,6 @@ const columns = [
 
             return (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    {renderClient(row)}
                     <Box
                         sx={{
                             display: "flex",
@@ -173,30 +153,7 @@ const columns = [
                             flexDirection: "column"
                         }}
                     >
-                        <Link href={`/apps/user/view/${id}`} passHref>
-                            <Typography
-                                noWrap
-                                component="a"
-                                variant="body2"
-                                sx={{
-                                    fontWeight: 600,
-                                    color: "text.primary",
-                                    textDecoration: "none"
-                                }}
-                            >
-                                {name}
-                            </Typography>
-                        </Link>
-                        <Link href={`/apps/user/view/${id}`} passHref>
-                            <Typography
-                                noWrap
-                                component="a"
-                                variant="caption"
-                                sx={{ textDecoration: "none" }}
-                            >
-                                @{name}
-                            </Typography>
-                        </Link>
+                        <Typography>{row.name}</Typography>
                     </Box>
                 </Box>
             );
@@ -280,6 +237,7 @@ const PackagesList = () => {
     const toggleAddPackageDrawer = () => setAddPackageOpen(!addPackageOpen);
 
     const data = () => {
+        debugger
         console.log("STORE DATA", store.data);
         if (store.data) {
             return store.data;
