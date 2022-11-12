@@ -7,13 +7,6 @@ import axios, {AxiosRequestConfig} from "axios";
 import authConfig from 'src/configs/auth'
 import BaseApi from "../../../api/api";
 
-interface DataParams {
-    weight: number;
-    length: number;
-    width: number;
-    height: number;
-}
-
 interface Redux {
     getState: any;
     dispatch: Dispatch<any>;
@@ -88,6 +81,7 @@ export const appPackagesSlice = createSlice({
                 state.status = "loading";
             })
             .addCase(fetchData.fulfilled, (state, action) => {
+                debugger
                 state.data = action.payload;
                 // state.total = action.payload.total
                 // state.params = action.payload.params

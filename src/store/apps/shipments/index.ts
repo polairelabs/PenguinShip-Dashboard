@@ -7,7 +7,7 @@ import axios from "axios";
 
 interface DataParams {
   weight: number;
-  length: number;
+  lengthObj: number;
   width: number;
   height: number;
 }

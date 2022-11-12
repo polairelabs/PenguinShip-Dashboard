@@ -58,48 +58,9 @@ import { PackagesType } from "src/types/apps/userTypes";
 import TableHeader from "src/views/packages/list/TableHeader";
 import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
 
-interface UserRoleType {
-    [key: string]: ReactElement;
-}
-
-interface UserStatusType {
-    [key: string]: ThemeColor;
-}
-
-// ** Vars
-const userRoleObj: UserRoleType = {
-    admin: <Laptop fontSize="small" sx={{ mr: 3, color: "error.main" }} />,
-    author: (
-        <CogOutline fontSize="small" sx={{ mr: 3, color: "warning.main" }} />
-    ),
-    editor: (
-        <PencilOutline fontSize="small" sx={{ mr: 3, color: "info.main" }} />
-    ),
-    maintainer: (
-        <ChartDonut fontSize="small" sx={{ mr: 3, color: "success.main" }} />
-    ),
-    subscriber: (
-        <AccountOutline
-            fontSize="small"
-            sx={{ mr: 3, color: "primary.main" }}
-        />
-    )
-};
-
 interface CellType {
     row: PackagesType;
 }
-
-const userStatusObj: UserStatusType = {
-    active: "success",
-    pending: "warning",
-    inactive: "secondary"
-};
-
-// ** Styled component for the link for the avatar with image
-const AvatarWithImageLink = styled(Link)(({ theme }) => ({
-    marginRight: theme.spacing(3)
-}));
 
 // ** Styled component for the link for the avatar without image
 const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
@@ -109,18 +70,8 @@ const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
 
 // ** renders client column
 const renderClient = (row: PackagesType) => {
-    if (row.name) {
         return (
-            <AvatarWithImageLink href={`/apps/user/view/${row.id}`}>
-                <CustomAvatar
-                    src={row.name}
-                    sx={{ mr: 3, width: 30, height: 30 }}
-                />
-            </AvatarWithImageLink>
-        );
-    } else {
-        return (
-            <AvatarWithoutImageLink href={`/apps/user/view/${row.id}`}>
+            <AvatarWithoutImageLink href=''>
                 <CustomAvatar
                     skin="light"
                     sx={{ mr: 3, width: 30, height: 30, fontSize: ".875rem" }}
@@ -129,7 +80,6 @@ const renderClient = (row: PackagesType) => {
                 </CustomAvatar>
             </AvatarWithoutImageLink>
         );
-    }
 };
 
 // ** Styled component for the link inside menu
@@ -273,7 +223,6 @@ const columns = [
         renderCell: ({ row }: CellType) => {
             return (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    {userRoleObj[row.value]}
                     <Typography
                         noWrap
                         sx={{
@@ -287,19 +236,6 @@ const columns = [
             );
         }
     },
-    /*{
-    flex: 0.15,
-    minWidth: 120,
-    headerName: 'Length',
-    field: 'length',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap sx={{ textTransform: 'capitalize' }}>
-          {/!*{row.length}*!/}
-        </Typography>
-      )
-    }
-  },*/
     {
         flex: 0.1,
         minWidth: 110,
@@ -351,20 +287,7 @@ const PackagesList = () => {
         return "";
     };
 
-    const rows = [
-        { id: 1, name: "Snow", firstName: "Jon", age: 35 },
-        { id: 2, name: "Lannister", firstName: "Cersei", age: 42 },
-        { id: 3, name: "Lannister", firstName: "Jaime", age: 45 },
-        { id: 4, name: "Stark", firstName: "Arya", age: 16 },
-        { id: 5, name: "Targaryen", firstName: "Daenerys", age: null },
-        { id: 6, name: "Melisandre", firstName: null, age: 150 },
-        { id: 7, name: "Clifford", firstName: "Ferrara", age: 44 },
-        { id: 8, name: "Frances", firstName: "Rossini", age: 36 },
-        { id: 9, name: "Roxie", firstName: "Harvey", age: 65 }
-    ];
-
     return (
-        // <p>{data()}</p>
         <Grid container spacing={6}>
             <Grid item xs={12}>
                 <Card>

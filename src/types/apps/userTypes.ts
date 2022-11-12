@@ -10,9 +10,10 @@ export type PackagesType = {
   name: string;
   weight: number;
   value: number;
-  length: number;
+  lengthObj: number;
   width: number;
   height: number;
+  user: Object;
 };
 
 export type AddressesType = {
