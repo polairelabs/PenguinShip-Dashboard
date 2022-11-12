@@ -236,10 +236,10 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
                   <TextField
                     type="number"
                     value={value}
-                    label="lengthObj"
+                    label="length"
                     onChange={onChange}
-                    placeholder="lengthObj"
-                    error={Boolean(errors)}
+                    placeholder="length"
+                    error={Boolean(errors.lengthObj)}
                   />
                 )}
               />

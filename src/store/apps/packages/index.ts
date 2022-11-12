@@ -28,20 +28,9 @@ export const addPackages = createAsyncThunk(
         data: { [key: string]: number | string },
         {getState, dispatch}: Redux
     ) => {
-        const storedToken = window.localStorage.getItem(
-            authConfig.storageTokenKeyName
-        )!;
-        const response = await axios.post(
-            "http://localhost:8080/apps/packages/?clientId=" +
-            JSON.parse(window.localStorage.getItem("userData") || "{}").id,
-            data,
-            {
-                headers: {Authorization: `Bearer ${storedToken}`}
-            }
-        );
+        const response = await BaseApi.post("/packages", data);
         dispatch(fetchData());
-
-        return response.data;
+        return response;
     }
 );
 
