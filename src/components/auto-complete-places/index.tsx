@@ -51,8 +51,8 @@ const PlacesAutoCompleteComboBox = (props) => {
       const addressDetails: AddressDetails = {
         city: addressDetailsObj.locality,
         country: addressDetailsObj.country,
-        postalCode: addressDetailsObj.postal_code,
-        region: addressDetailsObj.administrative_area_level_1,
+        zip: addressDetailsObj.postal_code,
+        state: addressDetailsObj.administrative_area_level_1,
         street1: option.description
       };
 

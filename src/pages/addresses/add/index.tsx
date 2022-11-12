@@ -26,8 +26,8 @@ const FormLayoutsBasic = () => {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>({
     city: "",
     country: "",
-    postalCode: "",
-    region: "", // state/province/region
+    zip: "",
+    state: "", // state/province/region
     street1: "",
     street2: ""
   });
@@ -44,7 +44,6 @@ const FormLayoutsBasic = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleData = (data: AddressDetails) => {
-    debugger
     console.log("SENDING", data);
     dispatch(addAddress({ ...data, ...addressDetails }));
   };
@@ -98,7 +97,7 @@ const FormLayoutsBasic = () => {
                 fullWidth
                 required
                 label="State/Province/Region"
-                value={addressDetails.region}
+                value={addressDetails.state}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -116,7 +115,7 @@ const FormLayoutsBasic = () => {
                 fullWidth
                 required
                 label="ZIP/Postal Code"
-                value={addressDetails.postalCode}
+                value={addressDetails.zip}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
