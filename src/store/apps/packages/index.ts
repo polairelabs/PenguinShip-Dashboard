@@ -76,7 +76,6 @@ export const appPackagesSlice = createSlice({
                 // state.params = action.payload.params
                 // state.allData = action.payload.allData
                 state.status = "idle";
-                debugger
             })
             .addCase(fetchData.rejected, (state) => {
                 state.status = "failed";

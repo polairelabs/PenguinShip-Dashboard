@@ -39,15 +39,8 @@ import AccountOutline from "mdi-material-ui/AccountOutline";
 // ** Store Imports
 import { useDispatch, useSelector } from "react-redux";
 
-// ** Custom Components Imports
-import CustomChip from "src/@core/components/mui/chip";
-import CustomAvatar from "src/@core/components/mui/avatar";
-
-// ** Utils Import
-import { getInitials } from "src/@core/utils/get-initials";
-
 // ** Actions Imports
-import { fetchData, deletePackages } from "src/store/apps/packages";
+import { fetchAddresses } from "src/store/apps/addresses";
 
 // ** Types Imports
 import { RootState, AppDispatch } from "src/store";
@@ -62,43 +55,9 @@ interface UserRoleType {
   [key: string]: ReactElement;
 }
 
-interface UserStatusType {
-  [key: string]: ThemeColor;
-}
-
-// ** Vars
-const userRoleObj: UserRoleType = {
-  admin: <Laptop fontSize="small" sx={{ mr: 3, color: "error.main" }} />,
-  author: <CogOutline fontSize="small" sx={{ mr: 3, color: "warning.main" }} />,
-  editor: <PencilOutline fontSize="small" sx={{ mr: 3, color: "info.main" }} />,
-  maintainer: (
-      <ChartDonut fontSize="small" sx={{ mr: 3, color: "success.main" }} />
-  ),
-  subscriber: (
-      <AccountOutline fontSize="small" sx={{ mr: 3, color: "primary.main" }} />
-  )
-};
-
 interface CellType {
   row: AddressesType;
 }
-
-const userStatusObj: UserStatusType = {
-  active: "success",
-  pending: "warning",
-  inactive: "secondary"
-};
-
-// ** Styled component for the link for the avatar with image
-const AvatarWithImageLink = styled(Link)(({ theme }) => ({
-  marginRight: theme.spacing(3)
-}));
-
-// ** Styled component for the link for the avatar without image
-const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
-  textDecoration: "none",
-  marginRight: theme.spacing(3)
-}));
 
 // ** Styled component for the link inside menu
 const MenuItemLink = styled("a")(({ theme }) => ({
@@ -127,7 +86,7 @@ const RowOptions = ({ id }: { id: number | string }) => {
   };
 
   const handleDelete = () => {
-    dispatch(deletePackages(id));
+    //dispatch(deletePackages(id));
     handleRowOptionsClose();
   };
 
@@ -151,14 +110,6 @@ const RowOptions = ({ id }: { id: number | string }) => {
             }}
             PaperProps={{ style: { minWidth: "8rem" } }}
         >
-          <MenuItem sx={{ p: 0 }}>
-            <Link href={`/apps/user/view/${id}`} passHref>
-              <MenuItemLink>
-                <EyeOutline fontSize="small" sx={{ mr: 2 }} />
-                View
-              </MenuItemLink>
-            </Link>
-          </MenuItem>
           <MenuItem onClick={handleRowOptionsClose}>
             <PencilOutline fontSize="small" sx={{ mr: 2 }} />
             Edit
@@ -251,7 +202,7 @@ const columns = [
     renderCell: ({ row }: CellType) => {
       return (
           <Typography noWrap sx={{ textTransform: "capitalize" }}>
-            {row.postalCode}
+            {row.zip}
           </Typography>
       );
     }
@@ -271,10 +222,10 @@ const AddressesList = () => {
 
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>();
-  const store = useSelector((state: RootState) => state.packages);
+  const store = useSelector((state: RootState) => state.addresses);
 
   useEffect(() => {
-    dispatch(fetchData());
+    dispatch(fetchAddresses());
   }, [dispatch]);
 
 
