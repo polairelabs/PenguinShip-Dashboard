@@ -48,8 +48,7 @@ import { ThemeColor } from "src/@core/layouts/types";
 import {AddressesType, PackagesType} from "src/types/apps/userTypes";
 
 // ** Custom Components Imports
-import TableHeader from "src/views/packages/list/TableHeader";
-import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
+import TableHeader from "src/views/addresses/list/TableHeader";
 
 interface UserRoleType {
   [key: string]: ReactElement;
@@ -242,6 +241,8 @@ const AddressesList = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
+              <TableHeader
+              />
             <DataGrid
                 autoHeight
                 rows={store.data}
