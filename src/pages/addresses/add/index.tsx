@@ -1,16 +1,11 @@
-// ** React Imports
-import { useState } from "react";
-
-// ** MUI Imports
+import { useState, ChangeEvent } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CardContent from "@mui/material/CardContent";
-import PlacesAutoComplete from "../../../components/auto-complete-places";
-import { AddressDetails } from "../../../types/components/addressDetailsType";
-import { dispatch } from "react-hot-toast/dist/core/store";
+import AddressAutoCompleteField from "../../../components/auto-complete-places";
 import { addAddress } from "../../../store/apps/addresses";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store";
@@ -21,15 +16,37 @@ import FormHelperText from "@mui/material/FormHelperText";
 
 // See: https://www.uxmatters.com/mt/archives/2008/06/international-address-fields-in-web-forms.php
 
-const FormLayoutsBasic = () => {
-  // ** States
+type AddressDetails = {
+  street1: string;
+  street2?: string;
+  city: string;
+  zip: string;
+  state: string;
+  country: string;
+};
+
+const AddressForm = () => {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>({
-    city: "",
-    country: "",
-    zip: "",
-    state: "", // state/province/region
     street1: "",
-    street2: ""
+    street2: "",
+    city: "",
+    zip: "",
+    state: "",
+    country: ""
+  });
+
+  yup.setLocale({
+    mixed: {
+      required: "Required Field"
+    }
+  });
+
+  const schema = yup.object().shape({
+    street1: yup.string().required(),
+    city: yup.string().required(),
+    country: yup.string().required(),
+    region: yup.string().required(),
+    postalCode: yup.string().required()
   });
 
   const {
@@ -39,13 +56,28 @@ const FormLayoutsBasic = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schema)
   });
 
   const dispatch = useDispatch<AppDispatch>();
 
   const handleData = (data: AddressDetails) => {
-    console.log("SENDING", data);
+    // console.log("SENDING", data);
     dispatch(addAddress({ ...data, ...addressDetails }));
+  };
+
+  const handleAddressValueChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const addressDetailName = event.target.name;
+    const addressDetailValue = event.target.value;
+
+    const newAddressDetailValue = {};
+    newAddressDetailValue[addressDetailName] = addressDetailValue;
+
+    const newAddressDetails = { ...addressDetails, ...newAddressDetailValue };
+    setAddressDetails(newAddressDetails);
+
+    console.log(newAddressDetails);
   };
 
   return (
@@ -54,7 +86,23 @@ const FormLayoutsBasic = () => {
         <form onSubmit={handleSubmit(handleData)}>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <PlacesAutoComplete setAddressDetails={setAddressDetails} />
+              <Controller
+                name="street1"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <AddressAutoCompleteField
+                    setAddressDetails={setAddressDetails}
+                    handleAddressValueChange={handleAddressValueChange}
+                    error={Boolean(errors.street1)}
+                  />
+                )}
+              />
+              {errors.street1 && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.street1.message}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12}>
               <Controller
@@ -63,16 +111,17 @@ const FormLayoutsBasic = () => {
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
-                    value={value}
+                    name="street2"
+                    value={addressDetails.street2}
+                    onChange={handleAddressValueChange}
                     label="Apartment, unit, suite, or floor #"
-                    onChange={onChange}
-                    error={Boolean(errors.name)}
+                    error={Boolean(errors.street2)}
                   />
                 )}
               />
-              {errors.name && (
+              {errors.street2 && (
                 <FormHelperText sx={{ color: "error.main" }}>
-                  {errors.name.message}
+                  {errors.street2.message}
                 </FormHelperText>
               )}
             </Grid>
@@ -80,44 +129,105 @@ const FormLayoutsBasic = () => {
               <Controller
                 name="city"
                 control={control}
+                rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
-                    required
-                    value={value ?? addressDetails.city}
+                    name="city"
                     label="City"
-                    onChange={onChange}
-                    error={Boolean(errors.name)}
+                    onChange={handleAddressValueChange}
+                    value={addressDetails.city}
+                    error={Boolean(errors.city)}
+                    InputLabelProps={{ shrink: true }}
                   />
                 )}
               />
+              {errors.city && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.city.message}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                required
-                label="State/Province/Region"
-                value={addressDetails.state}
-                InputLabelProps={{ shrink: true }}
+              <Controller
+                name="state"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    name="state"
+                    label="State/Province/Region"
+                    onChange={handleAddressValueChange}
+                    value={addressDetails.state}
+                    InputLabelProps={{ shrink: true }}
+                    error={Boolean(errors.region)}
+                  />
+                )}
               />
+              {errors.region && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.region.message}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                required
-                label="Country"
-                value={addressDetails.country}
-                InputLabelProps={{ shrink: true }}
+              <Controller
+                name="country"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    name="country"
+                    label="Country"
+                    onChange={handleAddressValueChange}
+                    value={addressDetails.country}
+                    InputLabelProps={{ shrink: true }}
+                    error={Boolean(errors.country)}
+                  />
+                )}
               />
+              {errors.country && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.country.message}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                fullWidth
-                required
-                label="ZIP/Postal Code"
-                value={addressDetails.zip}
-                InputLabelProps={{ shrink: true }}
+              <Controller
+                name="postalCode"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    label="ZIP/Postal Code"
+                    name="zip"
+                    InputLabelProps={{ shrink: true }}
+                    onChange={handleAddressValueChange}
+                    value={addressDetails.zip}
+                    error={Boolean(errors.postalCode)}
+                  />
+                )}
               />
+              {errors.postalCode && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.postalCode.message}
+                </FormHelperText>
+              )}
             </Grid>
             <Grid item xs={12}>
               <Box
@@ -141,4 +251,4 @@ const FormLayoutsBasic = () => {
   );
 };
 
-export default FormLayoutsBasic;
+export default AddressForm;

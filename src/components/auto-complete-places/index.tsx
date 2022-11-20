@@ -1,25 +1,43 @@
 import { useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { TextField, Box, Autocomplete } from "@mui/material";
 import PlaceResult = google.maps.places.PlaceResult;
 import { AddressDetails } from "../../types/components/addressDetailsType";
-type Libraries = ("drawing" | "geometry" | "localContext" | "places" | "visualization")[];
-const places : Libraries = ["places"] ;
+type Libraries = (
+  | "drawing"
+  | "geometry"
+  | "localContext"
+  | "places"
+  | "visualization"
+)[];
+const places: Libraries = ["places"];
 
-export default function PlacesAutoComplete(props) {
-  const { setAddressDetails } = props;
+export default function AddressAutoCompleteField({
+  setAddressDetails,
+  handleAddressValueChange,
+  error
+}) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
     libraries: places
   });
 
   if (!isLoaded) return <div>Loading...</div>;
-  return <PlacesAutoCompleteComboBox setAddressDetails={setAddressDetails} />;
+  return (
+    <PlacesAutoCompleteComboBox
+      setAddressDetails={setAddressDetails}
+      handleAddressValueChange={handleAddressValueChange}
+      error={error}
+    />
+  );
 }
 
-const PlacesAutoCompleteComboBox = (props) => {
-  const { setAddressDetails } = props;
+const PlacesAutoCompleteComboBox = ({
+  setAddressDetails,
+  handleAddressValueChange,
+  error
+}) => {
   const {
     ready,
     value,
@@ -28,8 +46,9 @@ const PlacesAutoCompleteComboBox = (props) => {
     clearSuggestions
   } = usePlacesAutocomplete();
 
-  const handleOnChange = (e) => {
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+    handleAddressValueChange(e);
   };
 
   const handleSelect = async (option) => {
@@ -74,10 +93,11 @@ const PlacesAutoCompleteComboBox = (props) => {
         <TextField
           {...params}
           fullWidth
-          required
+          name="street1"
           label="Enter an address"
           variant="outlined"
           onChange={handleOnChange}
+          error={error}
         />
       )}
       renderOption={(props, option) => (

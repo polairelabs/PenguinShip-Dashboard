@@ -45,10 +45,10 @@ import { fetchAddresses } from "src/store/apps/addresses";
 // ** Types Imports
 import { RootState, AppDispatch } from "src/store";
 import { ThemeColor } from "src/@core/layouts/types";
-import {AddressesType, PackagesType} from "src/types/apps/userTypes";
+import { AddressesType, PackagesType } from "src/types/apps/userTypes";
 
 // ** Custom Components Imports
-import TableHeader from "src/views/addresses/list/TableHeader";
+import AddressModal from "src/views/addresses/list/AddressModal";
 
 interface UserRoleType {
   [key: string]: ReactElement;
@@ -90,35 +90,35 @@ const RowOptions = ({ id }: { id: number | string }) => {
   };
 
   return (
-      <>
-        <IconButton size="small" onClick={handleRowOptionsClick}>
-          <DotsVertical />
-        </IconButton>
-        <Menu
-            keepMounted
-            anchorEl={anchorEl}
-            open={rowOptionsOpen}
-            onClose={handleRowOptionsClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right"
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right"
-            }}
-            PaperProps={{ style: { minWidth: "8rem" } }}
-        >
-          <MenuItem onClick={handleRowOptionsClose}>
-            <PencilOutline fontSize="small" sx={{ mr: 2 }} />
-            Edit
-          </MenuItem>
-          <MenuItem onClick={handleDelete}>
-            <DeleteOutline fontSize="small" sx={{ mr: 2 }} />
-            Delete
-          </MenuItem>
-        </Menu>
-      </>
+    <>
+      <IconButton size="small" onClick={handleRowOptionsClick}>
+        <DotsVertical />
+      </IconButton>
+      <Menu
+        keepMounted
+        anchorEl={anchorEl}
+        open={rowOptionsOpen}
+        onClose={handleRowOptionsClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right"
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right"
+        }}
+        PaperProps={{ style: { minWidth: "8rem" } }}
+      >
+        <MenuItem onClick={handleRowOptionsClose}>
+          <PencilOutline fontSize="small" sx={{ mr: 2 }} />
+          Edit
+        </MenuItem>
+        <MenuItem onClick={handleDelete}>
+          <DeleteOutline fontSize="small" sx={{ mr: 2 }} />
+          Delete
+        </MenuItem>
+      </Menu>
+    </>
   );
 };
 
@@ -132,17 +132,17 @@ const columns = [
       const { id, name, street1 } = row;
 
       return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  flexDirection: "column"
-                }}
-            >
-              <Typography>{row.name}</Typography>
-            </Box>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              flexDirection: "column"
+            }}
+          >
+            <Typography>{row.name}</Typography>
           </Box>
+        </Box>
       );
     }
   },
@@ -153,9 +153,9 @@ const columns = [
     headerName: "Street 1",
     renderCell: ({ row }: CellType) => {
       return (
-          <Typography noWrap variant="body2">
-            {row.street1}
-          </Typography>
+        <Typography noWrap variant="body2">
+          {row.street1}
+        </Typography>
       );
     }
   },
@@ -166,17 +166,17 @@ const columns = [
     headerName: "Street 2",
     renderCell: ({ row }: CellType) => {
       return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography
-                noWrap
-                sx={{
-                  color: "text.secondary",
-                  textTransform: "capitalize"
-                }}
-            >
-              {row.street2}
-            </Typography>
-          </Box>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Typography
+            noWrap
+            sx={{
+              color: "text.secondary",
+              textTransform: "capitalize"
+            }}
+          >
+            {row.street2}
+          </Typography>
+        </Box>
       );
     }
   },
@@ -187,9 +187,9 @@ const columns = [
     field: "city",
     renderCell: ({ row }: CellType) => {
       return (
-          <Typography noWrap sx={{ textTransform: "capitalize" }}>
-            {row.city}
-          </Typography>
+        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+          {row.city}
+        </Typography>
       );
     }
   },
@@ -200,9 +200,9 @@ const columns = [
     headerName: "Zip Code",
     renderCell: ({ row }: CellType) => {
       return (
-          <Typography noWrap sx={{ textTransform: "capitalize" }}>
-            {row.zip}
-          </Typography>
+        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+          {row.zip}
+        </Typography>
       );
     }
   },
@@ -227,7 +227,6 @@ const AddressesList = () => {
     dispatch(fetchAddresses());
   }, [dispatch]);
 
-
   const data = () => {
     console.log("STORE DATA", store.data);
     if (store.data) {
@@ -237,23 +236,22 @@ const AddressesList = () => {
   };
 
   return (
-      // <p>{data()}</p>
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <Card>
-              <TableHeader
-              />
-            <DataGrid
-                autoHeight
-                rows={store.data}
-                columns={columns}
-                checkboxSelection
-                disableSelectionOnClick
-                rowsPerPageOptions={[10, 25, 50]}
-            />
-          </Card>
-        </Grid>
+    // <p>{data()}</p>
+    <Grid container spacing={6}>
+      <Grid item xs={12}>
+        <Card>
+          <AddressModal />
+          <DataGrid
+            autoHeight
+            rows={store.data}
+            columns={columns}
+            checkboxSelection
+            disableSelectionOnClick
+            rowsPerPageOptions={[10, 25, 50]}
+          />
+        </Card>
       </Grid>
+    </Grid>
   );
 };
 
