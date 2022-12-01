@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -11,21 +9,9 @@ import {
   Typography
 } from "@mui/material";
 import { Close } from "mdi-material-ui";
-import AddressForm from "../../../pages/addresses/add";
+import AddressForm from "./addressForm";
 
-const AddressModal = () => {
-  const [open, setOpen] = useState<boolean>(false);
-
-  const {
-    setValue,
-    formState: { errors }
-  } = useForm({ defaultValues: { name: "" } });
-
-  const handleDialogToggle = () => {
-    setOpen(!open);
-    setValue("name", "");
-  };
-
+const AddressModal = ({ open, handleDialogToggle }) => {
   return (
     <Box
       sx={{
@@ -37,11 +23,6 @@ const AddressModal = () => {
         justifyContent: "space-between"
       }}
     >
-      <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
-        <Button sx={{ mb: 2 }} onClick={handleDialogToggle} variant="contained">
-          Add Address
-        </Button>
-      </Box>
       <Dialog
         fullWidth
         open={open}
@@ -50,7 +31,7 @@ const AddressModal = () => {
         onClose={handleDialogToggle}
         onBackdropClick={handleDialogToggle}
       >
-        <DialogTitle sx={{ pt: 12, mx: "auto", textAlign: "center" }}>
+        <DialogTitle sx={{ pt: 12, ml: { xs: "1rem", sm: "2.2rem" } }}>
           <Typography variant="h4" component="span" sx={{ mb: 2 }}>
             ADD NEW ADDRESS
           </Typography>
@@ -67,14 +48,14 @@ const AddressModal = () => {
         </DialogTitle>
         <DialogContent
           sx={{
-            pt: { xs: 8, sm: 12.5 },
-            pr: { xs: 5, sm: 12 },
-            pb: { xs: 5, sm: 9.5 },
-            pl: { xs: 4, sm: 11 },
+            pt: { xs: 4, sm: 8 },
+            pr: { xs: 4, sm: 8 },
+            pb: { xs: 4, sm: 8 },
+            pl: { xs: 4, sm: 8 },
             position: "relative"
           }}
         >
-          <AddressForm></AddressForm>
+          <AddressForm handleDialogToggle={handleDialogToggle} />
         </DialogContent>
       </Dialog>
     </Box>

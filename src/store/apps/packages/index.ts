@@ -1,86 +1,67 @@
-// ** Redux Imports
-import {Dispatch} from "redux";
-import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+import { Dispatch } from "redux";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// ** Axios Imports
-import axios, {AxiosRequestConfig} from "axios";
-import authConfig from 'src/configs/auth'
 import BaseApi from "../../../api/api";
 
 interface Redux {
-    getState: any;
-    dispatch: Dispatch<any>;
+  getState: any;
+  dispatch: Dispatch<any>;
 }
 
-// ** Fetch Packages
-export const fetchData = createAsyncThunk(
-    "appPackages/fetchData",
-    async (p) => {
-        const response = await BaseApi.get("/packages");
-        return response;
-    }
+export const fetchPackages = createAsyncThunk(
+  "appPackages/fetchData",
+  async (p) => {
+    return await BaseApi.get("/packages");
+  }
 );
 
-// ** Add Packages
-export const addPackages = createAsyncThunk(
-    "appPackages/addPackage",
-    async (
-        data: { [key: string]: number | string },
-        {getState, dispatch}: Redux
-    ) => {
-        const response = await BaseApi.post("/packages", data);
-        dispatch(fetchData());
-        return response;
-    }
+export const addPackage = createAsyncThunk(
+  "appPackages/addPackage",
+  async (
+    data: { [key: string]: number | string },
+    { getState, dispatch }: Redux
+  ) => {
+    const response = await BaseApi.post("/packages", data);
+    dispatch(fetchPackages());
+    return response;
+  }
 );
 
-// ** Delete Packages
-export const deletePackages = createAsyncThunk(
-    "appPackages/deletePackage",
-    async (id: number | string, {getState, dispatch}: Redux) => {
-        const storedToken = window.localStorage.getItem(
-            authConfig.storageTokenKeyName
-        )!;
-        const response = await axios.delete(
-            "http://localhost:8080/apps/packages/",
-            {
-                headers: {Authorization: storedToken},
-                data: id
-            }
-        );
-        dispatch(fetchData());
-
-        return response.data;
-    }
+export const deletePackage = createAsyncThunk(
+  "appPackages/deletePackage",
+  async (id: number | string, { getState, dispatch }: Redux) => {
+    const response = await BaseApi.delete(`/packages/${id}`);
+    dispatch(fetchPackages());
+    return response;
+  }
 );
 
 export const appPackagesSlice = createSlice({
-    name: "appPackages",
-    initialState: {
-        data: [],
-        total: 1,
-        params: {},
-        allData: [],
-        status: "idle"
-    },
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchData.pending, (state) => {
-                state.status = "loading";
-            })
-            .addCase(fetchData.fulfilled, (state, action) => {
-
-                state.data = action.payload;
-                // state.total = action.payload.total
-                // state.params = action.payload.params
-                // state.allData = action.payload.allData
-                state.status = "idle";
-            })
-            .addCase(fetchData.rejected, (state) => {
-                state.status = "failed";
-            });
-    }
+  name: "appPackages",
+  initialState: {
+    data: [],
+    total: 1,
+    params: {},
+    allData: [],
+    status: "idle"
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPackages.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchPackages.fulfilled, (state, action) => {
+        state.data = action.payload;
+        // state.total = action.payload.total
+        // state.params = action.payload.params
+        // state.allData = action.payload.allData
+        state.status = "success";
+      })
+      .addCase(fetchPackages.rejected, (state) => {
+        state.status = "failed";
+      });
+  }
 });
 
 export default appPackagesSlice.reducer;

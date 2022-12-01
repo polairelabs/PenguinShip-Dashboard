@@ -1,16 +1,5 @@
-// ** React Imports
-import {
-  useState,
-  useEffect,
-  MouseEvent,
-  useCallback,
-  ReactElement
-} from "react";
+import { useState, useEffect, MouseEvent, ReactElement } from "react";
 
-// ** Next Import
-import Link from "next/link";
-
-// ** MUI Imports
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Menu from "@mui/material/Menu";
@@ -20,45 +9,26 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import CardHeader from "@mui/material/CardHeader";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import CardContent from "@mui/material/CardContent";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-// ** Icons Imports
-import Laptop from "mdi-material-ui/Laptop";
-import ChartDonut from "mdi-material-ui/ChartDonut";
-import CogOutline from "mdi-material-ui/CogOutline";
-import EyeOutline from "mdi-material-ui/EyeOutline";
 import DotsVertical from "mdi-material-ui/DotsVertical";
 import PencilOutline from "mdi-material-ui/PencilOutline";
 import DeleteOutline from "mdi-material-ui/DeleteOutline";
-import AccountOutline from "mdi-material-ui/AccountOutline";
 
-// ** Store Imports
 import { useDispatch, useSelector } from "react-redux";
 
-// ** Actions Imports
 import { fetchAddresses } from "src/store/apps/addresses";
 
-// ** Types Imports
 import { RootState, AppDispatch } from "src/store";
-import { ThemeColor } from "src/@core/layouts/types";
-import { AddressesType, PackagesType } from "src/types/apps/userTypes";
+import { AddressesType } from "src/types/apps/userTypes";
 
-// ** Custom Components Imports
-import AddressModal from "src/views/addresses/list/AddressModal";
-
-interface UserRoleType {
-  [key: string]: ReactElement;
-}
+import AddressModal from "src/components/addresses/addressModal";
+import Button from "@mui/material/Button";
+import TableHeader from "../../../views/packages/list/TableHeader";
 
 interface CellType {
   row: AddressesType;
 }
 
-// ** Styled component for the link inside menu
 const MenuItemLink = styled("a")(({ theme }) => ({
   width: "100%",
   display: "flex",
@@ -69,10 +39,8 @@ const MenuItemLink = styled("a")(({ theme }) => ({
 }));
 
 const RowOptions = ({ id }: { id: number | string }) => {
-  // ** Hooks
   const dispatch = useDispatch<AppDispatch>();
 
-  // ** State
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const rowOptionsOpen = Boolean(anchorEl);
@@ -85,7 +53,7 @@ const RowOptions = ({ id }: { id: number | string }) => {
   };
 
   const handleDelete = () => {
-    //dispatch(deletePackages(id));
+    // dispatch(deletePackages(id));
     handleRowOptionsClose();
   };
 
@@ -123,29 +91,6 @@ const RowOptions = ({ id }: { id: number | string }) => {
 };
 
 const columns = [
-  {
-    flex: 0.2,
-    minWidth: 230,
-    field: "name",
-    headerName: "Name",
-    renderCell: ({ row }: CellType) => {
-      const { id, name, street1 } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              flexDirection: "column"
-            }}
-          >
-            <Typography>{row.name}</Typography>
-          </Box>
-        </Box>
-      );
-    }
-  },
   {
     flex: 0.2,
     minWidth: 250,
@@ -196,12 +141,38 @@ const columns = [
   {
     flex: 0.1,
     minWidth: 110,
-    field: "postalCode",
+    field: "zip",
     headerName: "Zip Code",
     renderCell: ({ row }: CellType) => {
       return (
         <Typography noWrap sx={{ textTransform: "capitalize" }}>
           {row.zip}
+        </Typography>
+      );
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
+    field: "state",
+    headerName: "State",
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+          {row.state}
+        </Typography>
+      );
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
+    field: "country",
+    headerName: "Country",
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+          {row.country}
         </Typography>
       );
     }
@@ -217,30 +188,25 @@ const columns = [
 ];
 
 const AddressesList = () => {
-  // ** State
-
-  // ** Hooks
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.addresses);
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(fetchAddresses());
   }, [dispatch]);
 
-  const data = () => {
-    console.log("STORE DATA", store.data);
-    if (store.data) {
-      return store.data;
-    }
-    return "";
+  const handleDialogToggle = () => {
+    setOpen(!open);
   };
 
   return (
-    // <p>{data()}</p>
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <AddressModal />
+          <TableHeader toggle={handleDialogToggle} toggleLabel="Add address" />
+          <AddressModal open={open} handleDialogToggle={handleDialogToggle} />
+
           <DataGrid
             autoHeight
             rows={store.data}
