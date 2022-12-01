@@ -10,7 +10,23 @@ export type PackagesType = {
   name: string;
   weight: number;
   value: number;
-  length: number;
+  lengthObj: number;
   width: number;
   height: number;
 };
+
+export type AddressesType = {
+  id: number,
+  street1: string,
+  street2: string,
+  city: string,
+  state: string,
+  zip: string,
+  country: string,
+  residential: string,
+  name: string,
+  company: string,
+  phone: string,
+  email: string,
+  verified: boolean
+}

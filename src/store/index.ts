@@ -3,10 +3,11 @@ import { configureStore } from "@reduxjs/toolkit";
 
 // ** Reducers
 import packages from "src/store/apps/packages";
-
+import addresses from "src/store/apps/addresses";
 export const store = configureStore({
   reducer: {
-    packages
+    packages,
+    addresses
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

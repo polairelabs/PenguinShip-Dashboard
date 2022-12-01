@@ -1,65 +1,38 @@
-// ** Redux Imports
 import { Dispatch } from "redux";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// ** Axios Imports
-import axios from "axios";
-
-interface DataParams {
-  weight: number;
-  length: number;
-  width: number;
-  height: number;
-}
+import BaseApi from "../../../api/api";
 
 interface Redux {
   getState: any;
   dispatch: Dispatch<any>;
 }
 
-// ** Fetch Packages
-export const fetchData = createAsyncThunk(
+export const fetchPackages = createAsyncThunk(
   "appPackages/fetchData",
   async (p) => {
-    const response = await axios.get(
-      "http://localhost:8080/apps/packages/?clientId=" +
-        JSON.parse(window.localStorage.getItem("userData") || "{}").id
-    );
-    return response.data;
+    return await BaseApi.get("/packages");
   }
 );
 
-// ** Add Packages
-export const addPackages = createAsyncThunk(
+export const addPackage = createAsyncThunk(
   "appPackages/addPackage",
   async (
     data: { [key: string]: number | string },
     { getState, dispatch }: Redux
   ) => {
-    const response = await axios.post(
-      "http://localhost:8080/apps/packages/?clientId=" +
-        JSON.parse(window.localStorage.getItem("userData") || "{}").id,
-      data
-    );
-    dispatch(fetchData());
-
-    return response.data;
+    const response = await BaseApi.post("/packages", data);
+    dispatch(fetchPackages());
+    return response;
   }
 );
 
-// ** Delete Packages
-export const deletePackages = createAsyncThunk(
+export const deletePackage = createAsyncThunk(
   "appPackages/deletePackage",
   async (id: number | string, { getState, dispatch }: Redux) => {
-    const response = await axios.delete(
-      "http://localhost:8080/apps/packages/",
-      {
-        data: id
-      }
-    );
-    dispatch(fetchData());
-
-    return response.data;
+    const response = await BaseApi.delete(`/packages/${id}`);
+    dispatch(fetchPackages());
+    return response;
   }
 );
 
@@ -75,17 +48,17 @@ export const appPackagesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchData.pending, (state) => {
+      .addCase(fetchPackages.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchData.fulfilled, (state, action) => {
+      .addCase(fetchPackages.fulfilled, (state, action) => {
         state.data = action.payload;
         // state.total = action.payload.total
         // state.params = action.payload.params
         // state.allData = action.payload.allData
-        state.status = "idle";
+        state.status = "success";
       })
-      .addCase(fetchData.rejected, (state) => {
+      .addCase(fetchPackages.rejected, (state) => {
         state.status = "failed";
       });
   }

@@ -4,10 +4,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // ** Axios Imports
 import axios from "axios";
+import BaseApi from "../../../api/api";
 
 interface DataParams {
   weight: number;
-  length: number;
+  lengthObj: number;
   width: number;
   height: number;
 }
@@ -34,12 +35,10 @@ export const addPackages = createAsyncThunk(
     data: { [key: string]: number | string },
     { getState, dispatch }: Redux
   ) => {
-    const response = await axios.post("http://localhost:8080/apps/packages/", {
-      data
-    });
+    const response = await BaseApi.post("/shipments", data);
     dispatch(fetchData());
 
-    return response.data;
+    return response;
   }
 );
 
