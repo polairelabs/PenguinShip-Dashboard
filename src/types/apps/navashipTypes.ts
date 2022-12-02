@@ -5,17 +5,17 @@ export type UserLayoutType = {
   id: string | undefined;
 };
 
-export type PackagesType = {
+export type Package = {
   id: number;
   name: string;
   weight: number;
   value: number;
-  lengthObj: number;
+  length: number;
   width: number;
   height: number;
 };
 
-export type AddressesType = {
+export type Address = {
   id: number,
   street1: string,
   street2: string,
@@ -23,7 +23,8 @@ export type AddressesType = {
   state: string,
   zip: string,
   country: string,
-  residential: string,
+  residential: boolean,
+  // Person address info
   name: string,
   company: string,
   phone: string,
