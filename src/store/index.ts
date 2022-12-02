@@ -1,7 +1,5 @@
-// ** Toolkit imports
 import { configureStore } from "@reduxjs/toolkit";
 
-// ** Reducers
 import packages from "src/store/apps/packages";
 import addresses from "src/store/apps/addresses";
 import shipments from "src/store/apps/shipments";

@@ -1,16 +1,7 @@
-// ** React Imports
-import {
-  useState,
-  useEffect,
-  MouseEvent,
-  useCallback,
-  ReactElement
-} from "react";
+import { useState, useEffect, MouseEvent, useCallback } from "react";
 
-// ** Next Import
 import Link from "next/link";
 
-// ** MUI Imports
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Menu from "@mui/material/Menu";
@@ -20,88 +11,27 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import CardHeader from "@mui/material/CardHeader";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import CardContent from "@mui/material/CardContent";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-// ** Icons Imports
-import Laptop from "mdi-material-ui/Laptop";
-import ChartDonut from "mdi-material-ui/ChartDonut";
-import CogOutline from "mdi-material-ui/CogOutline";
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import DotsVertical from "mdi-material-ui/DotsVertical";
 import PencilOutline from "mdi-material-ui/PencilOutline";
 import DeleteOutline from "mdi-material-ui/DeleteOutline";
-import AccountOutline from "mdi-material-ui/AccountOutline";
 
-// ** Store Imports
 import { useDispatch, useSelector } from "react-redux";
 
-// ** Custom Components Imports
-import CustomChip from "src/@core/components/mui/chip";
-import CustomAvatar from "src/@core/components/mui/avatar";
+import { fetchPackages, deletePackage } from "src/store/apps/packages";
 
-// ** Utils Import
-import { getInitials } from "src/@core/utils/get-initials";
-
-// ** Actions Imports
-import { fetchPackages, deletePackages } from "src/store/apps/packages";
-
-// ** Types Imports
 import { RootState, AppDispatch } from "src/store";
-import { ThemeColor } from "src/@core/layouts/types";
-import { PackagesType } from "src/types/apps/userTypes";
+import { Package } from "src/types/apps/navashipTypes";
 
-// ** Custom Components Imports
 import TableHeader from "src/views/packages/list/TableHeader";
 import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
-import { fetchAddresses } from "../../../store/apps/addresses";
-
-interface UserRoleType {
-  [key: string]: ReactElement;
-}
-
-interface UserStatusType {
-  [key: string]: ThemeColor;
-}
-
-// ** Vars
-const userRoleObj: UserRoleType = {
-  admin: <Laptop fontSize="small" sx={{ mr: 3, color: "error.main" }} />,
-  author: <CogOutline fontSize="small" sx={{ mr: 3, color: "warning.main" }} />,
-  editor: <PencilOutline fontSize="small" sx={{ mr: 3, color: "info.main" }} />,
-  maintainer: (
-    <ChartDonut fontSize="small" sx={{ mr: 3, color: "success.main" }} />
-  ),
-  subscriber: (
-    <AccountOutline fontSize="small" sx={{ mr: 3, color: "primary.main" }} />
-  )
-};
+import PackageModal from "../../../components/packages/packagesModal";
 
 interface CellType {
-  row: PackagesType;
+  row: Package;
 }
 
-const userStatusObj: UserStatusType = {
-  active: "success",
-  pending: "warning",
-  inactive: "secondary"
-};
-
-// ** Styled component for the link for the avatar with image
-const AvatarWithImageLink = styled(Link)(({ theme }) => ({
-  marginRight: theme.spacing(3)
-}));
-
-// ** Styled component for the link for the avatar without image
-const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
-  textDecoration: "none",
-  marginRight: theme.spacing(3)
-}));
-
-// ** Styled component for the link inside menu
 const MenuItemLink = styled("a")(({ theme }) => ({
   width: "100%",
   display: "flex",
@@ -112,10 +42,8 @@ const MenuItemLink = styled("a")(({ theme }) => ({
 }));
 
 const RowOptions = ({ id }: { id: number | string }) => {
-  // ** Hooks
   const dispatch = useDispatch<AppDispatch>();
 
-  // ** State
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const rowOptionsOpen = Boolean(anchorEl);
@@ -128,7 +56,7 @@ const RowOptions = ({ id }: { id: number | string }) => {
   };
 
   const handleDelete = () => {
-    dispatch(deletePackages(id));
+    dispatch(deletePackage(id));
     handleRowOptionsClose();
   };
 
@@ -176,70 +104,53 @@ const RowOptions = ({ id }: { id: number | string }) => {
 const columns = [
   {
     flex: 0.2,
-    minWidth: 230,
+    minWidth: 250,
     field: "name",
     headerName: "Name",
     renderCell: ({ row }: CellType) => {
-      const { id, name, weight } = row;
-
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              flexDirection: "column"
-            }}
-          >
-            <Typography>{row.name}</Typography>
-          </Box>
-        </Box>
-      );
-    }
-  },
-  {
-    flex: 0.2,
-    minWidth: 250,
-    field: "weight",
-    headerName: "weight",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap variant="body2">
-          {row.weight}
+        <Typography noWrap>
+          {row.name}
         </Typography>
       );
     }
   },
   {
     flex: 0.15,
-    field: "value",
     minWidth: 150,
-    headerName: "Value",
+    field: "value",
+    headerName: "Value ($)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {userRoleObj[row.value]}
-          <Typography
-            noWrap
-            sx={{
-              color: "text.secondary",
-              textTransform: "capitalize"
-            }}
-          >
-            {row.value}
-          </Typography>
-        </Box>
+        <Typography noWrap>
+          {row.value}
+        </Typography>
       );
     }
   },
   {
     flex: 0.15,
     minWidth: 120,
-    headerName: "Length",
-    field: "length",
+    field: "weight",
+    headerName: "Weight (oz)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+        <Typography noWrap>
+          {row.weight}
+        </Typography>
+      );
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
+    field: "length",
+    headerName: "Length (in)",
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap sx={{
+          color: "text.secondary",
+        }}>
           {row.length}
         </Typography>
       );
@@ -249,11 +160,28 @@ const columns = [
     flex: 0.1,
     minWidth: 110,
     field: "width",
-    headerName: "Width",
+    headerName: "Width (in)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+        <Typography noWrap sx={{
+          color: "text.secondary",
+        }}>
           {row.width}
+        </Typography>
+      );
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
+    field: "height",
+    headerName: "Height (in)",
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap sx={{
+          color: "text.secondary",
+        }}>
+          {row.height}
         </Typography>
       );
     }
@@ -269,26 +197,25 @@ const columns = [
 ];
 
 const PackagesList = () => {
-  // ** State
-  const [width, setWidth] = useState<number>(0);
   const [value, setValue] = useState<number>(10);
   const [addPackageOpen, setAddPackageOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
-  // ** Hooks
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.packages);
 
   useEffect(() => {
-    // dispatch(fetchAddresses());
+    dispatch(fetchPackages());
   }, [dispatch]);
 
-  const handleWidthChange = useCallback((val: number) => {
-    setWidth(val);
-  }, []);
+  const handleDialogToggle = () => {
+    setOpen(!open);
+  };
 
   const toggleAddPackageDrawer = () => setAddPackageOpen(!addPackageOpen);
 
   const data = () => {
+    debugger;
     console.log("STORE DATA", store.data);
     if (store.data) {
       return store.data;
@@ -297,15 +224,12 @@ const PackagesList = () => {
   };
 
   return (
-    // <p>{data()}</p>
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader
-            value={width}
-            handleFilter={handleWidthChange}
-            toggle={toggleAddPackageDrawer}
-          />
+          <TableHeader toggle={handleDialogToggle} toggleLabel="Add package" />
+          <PackageModal open={open} handleDialogToggle={handleDialogToggle} />
+
           <DataGrid
             autoHeight
             rows={store.data}

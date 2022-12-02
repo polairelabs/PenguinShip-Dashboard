@@ -1,20 +1,15 @@
-// ** MUI Imports
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-
-// ** Icons Imports
-import ExportVariant from "mdi-material-ui/ExportVariant";
 
 interface TableHeaderProps {
-  value: number;
+  // value: number;
   toggle: () => void;
-  handleFilter: (val: number) => void;
+  toggleLabel: string;
+  // handleFilter: (val: number) => void;
 }
 
 const TableHeader = (props: TableHeaderProps) => {
-  // ** Props
-  const { handleFilter, toggle, value } = props;
+  const { toggle, toggleLabel } = props;
 
   return (
     <Box
@@ -27,17 +22,17 @@ const TableHeader = (props: TableHeaderProps) => {
         justifyContent: "space-between"
       }}
     >
-      <Button
-        sx={{ mr: 4, mb: 2 }}
-        color="secondary"
-        variant="outlined"
-        startIcon={<ExportVariant fontSize="small" />}
-      >
-        Export
-      </Button>
+      {/*<Button*/}
+      {/*  sx={{ mr: 4, mb: 2 }}*/}
+      {/*  color="secondary"*/}
+      {/*  variant="outlined"*/}
+      {/*  startIcon={<ExportVariant fontSize="small" />}*/}
+      {/*>*/}
+      {/*  Export*/}
+      {/*</Button>*/}
       <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
         <Button sx={{ mb: 2 }} onClick={toggle} variant="contained">
-          Add Package
+          {toggleLabel}
         </Button>
       </Box>
     </Box>

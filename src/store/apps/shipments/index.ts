@@ -1,11 +1,7 @@
-// ** Redux Imports
 import { Dispatch } from "redux";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// ** Axios Imports
-import axios from "axios";
 import BaseApi from "../../../api/api";
-import { fetchAddresses } from "../addresses";
 
 interface DataParams {
   weight: number;
@@ -26,8 +22,7 @@ export const createShipment = createAsyncThunk(
     { getState, dispatch }: Redux
   ) => {
     console.log("Sending in", data);
-    const response = await BaseApi.post("/shipments", data);
-    return response;
+    return await BaseApi.post("/shipments", data);
   }
 );
 
@@ -38,49 +33,7 @@ export const setShipmentRate = createAsyncThunk(
     { getState, dispatch }: Redux
   ) => {
     console.log("Sending in", data);
-    const response = await BaseApi.post("/shipments/buy", data);
-    return response;
-  }
-);
-
-// ** Fetch Packages
-export const fetchData = createAsyncThunk(
-  "appPackages/fetchData",
-  async (p) => {
-    const response = await axios.get("http://localhost:8080/apps/packages/");
-    return response.data;
-  }
-);
-
-// ** Add User
-export const addPackages = createAsyncThunk(
-  "appPackages/addPackage",
-  async (
-    data: { [key: string]: number | string },
-    { getState, dispatch }: Redux
-  ) => {
-    const response = await axios.post("http://localhost:8080/apps/packages/", {
-      data
-    });
-    dispatch(fetchData());
-
-    return response.data;
-  }
-);
-
-// ** Delete Packages
-export const deletePackages = createAsyncThunk(
-  "appPackages/deletePackage",
-  async (id: number | string, { getState, dispatch }: Redux) => {
-    const response = await axios.delete(
-      "http://localhost:8080/apps/packages/",
-      {
-        data: id
-      }
-    );
-    dispatch(fetchData());
-
-    return response.data;
+    return await BaseApi.post("/shipments/buy", data);
   }
 );
 
@@ -96,9 +49,9 @@ export const shipmentsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(createShipment.fulfilled, (state, action) => {
-      console.log(action);
-      console.log(action.payload);
-      console.log("Cool", action.payload.rates);
+      // console.log(action);
+      // console.log(action.payload);
+      // console.log("Cool", action.payload.rates);
       state.data = action.payload;
       state.rates = action.payload.rates;
       // state.total = action.payload.total;

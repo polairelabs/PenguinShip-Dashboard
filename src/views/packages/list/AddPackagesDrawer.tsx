@@ -40,7 +40,7 @@ interface UserData {
   id: number;
   weight: number;
   value: number;
-  length: number;
+  lengthObj: number;
   width: number;
   name: string;
   height: number;
@@ -75,10 +75,10 @@ const schema = yup.object().shape({
     .typeError("value field is required")
     .min(0, (obj) => showErrors("value", obj.value.value, obj.min))
     .required(),
-  length: yup
+  lengthObj: yup
     .number()
     .typeError("length field is required")
-    .min(0, (obj) => showErrors("length", obj.value.length, obj.min))
+    .min(0, (obj) => showErrors("lengthObj", obj.value.lengthObj, obj.min))
     .required(),
   width: yup
     .number()
@@ -99,7 +99,7 @@ const schema = yup.object().shape({
 const defaultValues = {
   weight: 0,
   value: 0,
-  length: 0,
+  lengthObj: 0,
   width: 0,
   height: 0,
   name: ""
@@ -229,17 +229,17 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
           <FormControl fullWidth sx={{ mb: 6 }}>
             {
               <Controller
-                name="length"
+                name="lengthObj"
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     type="number"
                     value={value}
-                    label="Length"
+                    label="length"
                     onChange={onChange}
-                    placeholder="Length"
-                    error={Boolean(errors)}
+                    placeholder="length"
+                    error={Boolean(errors.lengthObj)}
                   />
                 )}
               />

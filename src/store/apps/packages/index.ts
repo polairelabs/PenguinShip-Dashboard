@@ -1,34 +1,20 @@
-// ** Redux Imports
 import { Dispatch } from "redux";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// ** Axios Imports
-import axios from "axios";
-
 import BaseApi from "../../../api/api";
-
-interface DataParams {
-  weight: number;
-  length: number;
-  width: number;
-  height: number;
-}
 
 interface Redux {
   getState: any;
   dispatch: Dispatch<any>;
 }
 
-// ** Fetch Packages
 export const fetchPackages = createAsyncThunk(
   "appPackages/fetchData",
   async (p) => {
-    const response = await BaseApi.get("/packages");
-    return response.data;
+    return await BaseApi.get("/packages");
   }
 );
 
-// ** Add Packages
 export const addPackage = createAsyncThunk(
   "appPackages/addPackage",
   async (
@@ -37,23 +23,16 @@ export const addPackage = createAsyncThunk(
   ) => {
     const response = await BaseApi.post("/packages", data);
     dispatch(fetchPackages());
-    return response.data;
+    return response;
   }
 );
 
-// ** Delete Packages
-export const deletePackages = createAsyncThunk(
+export const deletePackage = createAsyncThunk(
   "appPackages/deletePackage",
   async (id: number | string, { getState, dispatch }: Redux) => {
-    const response = await axios.delete(
-      "http://localhost:8080/apps/packages/",
-      {
-        data: id
-      }
-    );
+    const response = await BaseApi.delete(`/packages/${id}`);
     dispatch(fetchPackages());
-
-    return response.data;
+    return response;
   }
 );
 
@@ -77,7 +56,7 @@ export const appPackagesSlice = createSlice({
         // state.total = action.payload.total
         // state.params = action.payload.params
         // state.allData = action.payload.allData
-        state.status = "idle";
+        state.status = "success";
       })
       .addCase(fetchPackages.rejected, (state) => {
         state.status = "failed";

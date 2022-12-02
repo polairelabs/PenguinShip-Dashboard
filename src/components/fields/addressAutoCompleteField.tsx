@@ -1,23 +1,58 @@
 import { useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { TextField, Box, Autocomplete } from "@mui/material";
 import PlaceResult = google.maps.places.PlaceResult;
-import { AddressDetails } from "../../types/components/addressDetailsType";
+import { AddressDetails } from "../addresses/addressForm"; // TODO move this elsewhere
+type Libraries = (
+  | "drawing"
+  | "geometry"
+  | "localContext"
+  | "places"
+  | "visualization"
+)[];
+const places: Libraries = ["places"];
 
-export default function PlacesAutoComplete(props) {
-  const { setAddressDetails } = props;
-  const { isLoaded } = useLoadScript({
+export default function AddressAutoCompleteField({
+  setAddressDetails,
+  handleAddressValueChange,
+  error
+}) {
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
-    libraries: ["places"]
+    libraries: places
   });
 
   if (!isLoaded) return <div>Loading...</div>;
-  return <PlacesAutoCompleteComboBox setAddressDetails={setAddressDetails} />;
+  /*
+  if (loadError) {
+    // If the google api won't work for some reason, load the field without any auto complete feature
+    console.log("Error!!!!!!");
+    return (
+      <TextField
+        fullWidth
+        name="street1"
+        label="Enter an addresses"
+        onChange={handleAddressValueChange}
+        error={error}
+      />
+    );
+  }
+  */
+  return (
+    <PlacesAutoCompleteComboBox
+      setAddressDetails={setAddressDetails}
+      handleAddressValueChange={handleAddressValueChange}
+      error={error}
+    />
+  );
 }
 
-const PlacesAutoCompleteComboBox = (props) => {
-  const { setAddressDetails } = props;
+const PlacesAutoCompleteComboBox = ({
+  setAddressDetails,
+  handleAddressValueChange,
+  error
+}) => {
   const {
     ready,
     value,
@@ -26,12 +61,13 @@ const PlacesAutoCompleteComboBox = (props) => {
     clearSuggestions
   } = usePlacesAutocomplete();
 
-  const handleOnChange = (e) => {
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+    handleAddressValueChange(e);
   };
 
   const handleSelect = async (option) => {
-    setValue(option.description, false);
+    setValue(option.structured_formatting.main_text, false);
     clearSuggestions();
 
     const details = (await getDetails({
@@ -47,11 +83,12 @@ const PlacesAutoCompleteComboBox = (props) => {
       );
 
       const addressDetails: AddressDetails = {
+        street1:
+          addressDetailsObj.street_number + " " + addressDetailsObj.route,
         city: addressDetailsObj.locality,
         country: addressDetailsObj.country,
-        postalCode: addressDetailsObj.postal_code,
-        region: addressDetailsObj.administrative_area_level_1,
-        street1: option.description
+        zip: addressDetailsObj.postal_code,
+        state: addressDetailsObj.administrative_area_level_1
       };
 
       setAddressDetails(addressDetails);
@@ -72,10 +109,11 @@ const PlacesAutoCompleteComboBox = (props) => {
         <TextField
           {...params}
           fullWidth
-          required
+          name="street1"
           label="Enter an address"
           variant="outlined"
           onChange={handleOnChange}
+          error={error}
         />
       )}
       renderOption={(props, option) => (

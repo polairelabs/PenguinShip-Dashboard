@@ -18,35 +18,27 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: "Packages",
       icon: ArchiveOutline,
-      children: [
-        {
-          title: "List",
-          path: "/packages/list"
-        }
-      ]
+      path: "/packages/list"
     },
     {
       title: "Addresses",
       icon: OfficeBuildingOutline,
-      path: "/second-page",
-      children: [
-        {
-          title: "Add",
-          path: "/addresses/add"
-        }
-      ]
+      path: "/addresses/list"
     },
     {
       title: "Shipments",
       icon: ShieldOutline,
-      path: "/acl",
       children: [
         {
           title: "Add",
           path: "/shipments/add"
+        },
+        {
+          title: "List",
+          path: "/shipments/list"
         }
       ]
-    }
+    },
   ];
 };
 
