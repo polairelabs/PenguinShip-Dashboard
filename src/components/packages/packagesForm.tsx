@@ -232,7 +232,7 @@ const PackageForm = ({ handleDialogToggle }) => {
                     2. Package Dimensions
                   </Typography>
                 </Grid>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={4}>
                   <Controller
                     name="length"
                     control={control}
@@ -261,7 +261,7 @@ const PackageForm = ({ handleDialogToggle }) => {
                     </FormHelperText>
                   )}
                 </Grid>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={4}>
                   <Controller
                     name="width"
                     control={control}
@@ -290,7 +290,7 @@ const PackageForm = ({ handleDialogToggle }) => {
                     </FormHelperText>
                   )}
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                   <Controller
                     name="height"
                     control={control}
