@@ -32,9 +32,13 @@ const navigation = (): VerticalNavItemsType => {
         {
           title: "Add",
           path: "/shipments/add"
+        },
+        {
+          title: "List",
+          path: "/shipments/list"
         }
       ]
-    }
+    },
   ];
 };
 
