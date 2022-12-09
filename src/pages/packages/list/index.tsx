@@ -2,7 +2,6 @@ import { useState, useEffect, MouseEvent, useCallback } from "react";
 
 import Link from "next/link";
 
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
@@ -22,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPackages, deletePackage } from "src/store/apps/packages";
 
 import { RootState, AppDispatch } from "src/store";
-import { Package } from "src/types/apps/navashipTypes";
+import { Package } from "src/types/apps/navashipInterfaces";
 
 import TableHeader from "src/views/packages/list/TableHeader";
 import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
@@ -213,15 +212,6 @@ const PackagesList = () => {
   };
 
   const toggleAddPackageDrawer = () => setAddPackageOpen(!addPackageOpen);
-
-  const data = () => {
-    debugger;
-    console.log("STORE DATA", store.data);
-    if (store.data) {
-      return store.data;
-    }
-    return "";
-  };
 
   return (
     <Grid container spacing={6}>

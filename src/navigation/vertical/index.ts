@@ -1,11 +1,8 @@
-// ** Icon imports
 import HomeOutline from "mdi-material-ui/HomeOutline";
-import EmailOutline from "mdi-material-ui/EmailOutline";
 import ShieldOutline from "mdi-material-ui/ShieldOutline";
 import OfficeBuildingOutline from "mdi-material-ui/OfficeBuildingOutline";
 import ArchiveOutline from "mdi-material-ui/ArchiveOutline";
 
-// ** Type import
 import { VerticalNavItemsType } from "src/@core/layouts/types";
 
 const navigation = (): VerticalNavItemsType => {
@@ -16,7 +13,7 @@ const navigation = (): VerticalNavItemsType => {
       path: "/home"
     },
     {
-      title: "Packages",
+      title: "Parcels",
       icon: ArchiveOutline,
       path: "/packages/list"
     },
@@ -30,11 +27,11 @@ const navigation = (): VerticalNavItemsType => {
       icon: ShieldOutline,
       children: [
         {
-          title: "Add",
+          title: "Create Label",
           path: "/shipments/add"
         },
         {
-          title: "List",
+          title: "My Labels",
           path: "/shipments/list"
         }
       ]

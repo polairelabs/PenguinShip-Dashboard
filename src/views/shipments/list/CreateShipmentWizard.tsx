@@ -1,7 +1,5 @@
-// ** React Imports
-import { Fragment, useEffect, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useState } from "react";
 
-// ** MUI Imports
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Step from "@mui/material/Step";
@@ -10,31 +8,21 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Stepper from "@mui/material/Stepper";
 import StepLabel from "@mui/material/StepLabel";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
-import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
-import { DataGrid } from "@mui/x-data-grid";
 
-// ** Third Party Imports
 import * as yup from "yup";
 import toast from "react-hot-toast";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
-// ** Icons Imports
-
-// ** Custom Components Imports
 import StepperCustomDot from "./StepperCustomDot";
 
-// ** Styled Components
 import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "../../../store";
+import { AppDispatch, RootState } from "../../../store";
 import BaseApi from "../../../api/api";
 import {
-  Autocomplete,
   Paper,
   Table,
   TableBody,
@@ -43,37 +31,48 @@ import {
   TableHead,
   TableRow
 } from "@mui/material";
-import { Address } from "../../../types/apps/addressType";
-import { Package } from "../../../types/apps/packageType";
 import { createShipment, setShipmentRate } from "../../../store/apps/shipments";
-
-interface State {
-  password: string;
-  password2: string;
-  showPassword: boolean;
-  showPassword2: boolean;
-}
+import AddressFormSelect, { AddressType } from "../../../components/addresses/addressFormSelect";
+import { Address, Package } from "../../../types/apps/navashipInterfaces";
+import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
+import PackageFormSelect from "../../../components/packages/packageFormSelect";
 
 const steps = [
   {
-    title: "Addresses",
-    subtitle: "Set source and destination address"
+    title: "Source address",
+    subtitle: "Set source address"
+  },
+  {
+    title: "Delivery address",
+    subtitle: "Set delivery address"
   },
   {
     title: "Parcel",
-    subtitle: "Set a parcel to be sent"
+    subtitle: "Set the parcel to be sent"
   },
   {
     title: "Rates",
-    subtitle: "Choose shipping rate"
+    subtitle: "Choose a shipping rate"
   }
 ];
 
-const defaultAccountValues = {
+const defaultSourceAddressValues = {
+  source: ""
+};
+
+const defaultDeliveryAddressValues = {
+  delivery: ""
+};
+
+const defaultAdditionalInfoValues = {
+  name: "",
+  company: "",
+  phone: "",
   email: "",
-  username: "popo",
-  password: "",
-  "confirm-password": ""
+}
+
+const defaultPackageValues = {
+  parcel: ""
 };
 
 const defaultPersonalValues = {
@@ -90,49 +89,39 @@ const defaultSocialValues = {
   linkedIn: ""
 };
 
-const accountSchema = yup.object().shape({
-  username: yup.string().required()
-  // email: yup.string().email().required(),
-  // password: yup.string().min(6).required(),
-  // "confirm-password": yup
-  //   .string()
-  //   .required()
-  //   .oneOf([yup.ref("password"), null], "Passwords must match")
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+const additionalInfoSchema = yup.object().shape({
+  name: yup.string().optional().max(30, "Name must be at most 30 characters").nullable(true),
+  company: yup.string().optional().max(30,"Company must be at most 30 characters").nullable(true),
+  email: yup.string().email("Email is not valid").optional().nullable(true),
+  phone: yup.string().matches(phoneRegExp, "Phone number is not valid").optional().nullable(true),
 });
 
-const personalSchema = yup.object().shape({
-  // country: yup.string().required(),
-  // "last-name": yup.string().required(),
-  // "first-name": yup.string().required(),
-  // language: yup.array().min(1).required()
+const fromAddressSchema = additionalInfoSchema.shape({
+  source: yup.string().required("Source address is required"),
 });
 
-const socialSchema = yup.object().shape({
-  // google: yup.string().required(),
-  // twitter: yup.string().required(),
-  // facebook: yup.string().required(),
-  // linkedIn: yup.string().required()
+const deliveryAddressSchema = additionalInfoSchema.shape({
+  delivery: yup.string().required("Delivery address is required"),
+});
+
+const packageSchema = additionalInfoSchema.shape({
+  parcel: yup.string().required("Parcel is required"),
 });
 
 const StepperLinearWithValidation = (props) => {
-  const { setAddressDetails } = props;
-
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [state, setState] = useState<State>({
-    password: "",
-    password2: "",
-    showPassword: false,
-    showPassword2: false
-  });
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  // const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
 
   const [sourceAddress, setSourceAddress] = useState<Address | null>();
-  const [destinationAddress, setDestinationAddress] = useState<Address>();
+  const [deliveryAddress, setDeliveryAddress] = useState<Address | null>();
 
-  const [packages, setPackages] = useState<Package[]>([]);
-  const [selectedPackage, setSelectedPackage] = useState<Package>();
+  const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>();
 
   // TODO add type for Rate
   const [selectedRate, setSelectedRate] = useState({});
@@ -146,27 +135,93 @@ const StepperLinearWithValidation = (props) => {
   useEffect(() => {
     async function fetchAddresses() {
       const response: Address[] = await BaseApi.get("/addresses");
-      setAddresses(response);
       setSelectableAddresses(response);
     }
 
     async function fetchPackages() {
       const response: Package[] = await BaseApi.get("/packages");
-      setPackages(response);
+      setSelectablePackages(response);
     }
 
     fetchAddresses();
     fetchPackages();
   }, []);
 
+  const handleSourceAddressChange = (newSourceAddress: Address | null) => {
+    if (newSourceAddress) {
+      setSourceAddress(newSourceAddress);
+      setSelectableAddresses(
+        selectableAddresses.filter((address) => address.id !== newSourceAddress?.id)
+      );
+    } else {
+      if (sourceAddress)
+        setSelectableAddresses((list: (Address)[]) => [...list, sourceAddress]);
+      setSourceAddress(null);
+    }
+  }
+
+  const handleDestinationAddressChange = (deliveryAddress: Address | null) => {
+    setDeliveryAddress(deliveryAddress);
+  };
+
+  const handleSelectedPackageChange = (parcel: Package | null) => {
+    setSelectedPackage(parcel);
+  };
+
+  const handleAdditionalInfoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const additionalInfoDetailName = event.target.name;
+    const additionalInfoDetailValue = event.target.value;
+
+    const newAddressAdditionalInfoValue = {};
+    newAddressAdditionalInfoValue[additionalInfoDetailName] = additionalInfoDetailValue;
+    return newAddressAdditionalInfoValue;
+  };
+
+  const handleSourceAdditionalInfoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSourceAddress({ ...sourceAddress, ...handleAdditionalInfoChange(event) } as Address);
+  }
+
+  const handleDeliveryAdditionalInfoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setDeliveryAddress({ ...deliveryAddress, ...handleAdditionalInfoChange(event) } as Address);
+  }
+
   const {
-    reset: accountReset,
-    control: accountControl,
-    handleSubmit: handleAccountSubmit,
-    formState: { errors: accountErrors }
+    control: sourceAddressControl,
+    handleSubmit: handleSourceAddressSubmit,
+    formState: { errors: sourceAddressErrors }
   } = useForm({
-    defaultValues: defaultAccountValues,
-    resolver: yupResolver(accountSchema)
+    defaultValues: {...defaultSourceAddressValues, ...defaultAdditionalInfoValues},
+    resolver: async (data, context, options) => {
+      const schemaValues = { "source": sourceAddress?.street1, ...sourceAddress };
+      // @ts-ignore
+      return yupResolver(fromAddressSchema)(schemaValues, context, options);
+    }
+  });
+
+  const {
+    control: deliveryAddressControl,
+    handleSubmit: handleDeliveryAddressSubmit,
+    formState: { errors: deliveryAddressErrors }
+  } = useForm({
+    defaultValues: {...defaultDeliveryAddressValues, ...defaultAdditionalInfoValues},
+    resolver: async (data, context, options) => {
+      const schemaValues = { "delivery": deliveryAddress?.street1, ...deliveryAddress };
+      // @ts-ignore
+      return yupResolver(deliveryAddressSchema)(schemaValues, context, options);
+    }
+  });
+
+  const {
+    control: packageControl,
+    handleSubmit: handlePackageSubmit,
+    formState: { errors: packageErrors }
+  } = useForm({
+    defaultValues: defaultPackageValues,
+    resolver: async (data, context, options) => {
+      const schemaValues = { "parcel": selectedPackage?.name };
+      // @ts-ignore
+      return yupResolver(packageSchema)(schemaValues, context, options);
+    }
   });
 
   const {
@@ -176,7 +231,7 @@ const StepperLinearWithValidation = (props) => {
     formState: { errors: personalErrors }
   } = useForm({
     defaultValues: defaultPersonalValues,
-    resolver: yupResolver(personalSchema)
+    // resolver: yupResolver(personalSchema)
   });
 
   const {
@@ -186,7 +241,7 @@ const StepperLinearWithValidation = (props) => {
     formState: { errors: socialErrors }
   } = useForm({
     defaultValues: defaultSocialValues,
-    resolver: yupResolver(socialSchema)
+    // resolver: yupResolver(socialSchema)
   });
 
   const handleBack = () => {
@@ -195,39 +250,17 @@ const StepperLinearWithValidation = (props) => {
 
   const handleReset = () => {
     setActiveStep(0);
-    socialReset({ google: "", twitter: "", facebook: "", linkedIn: "" });
-    accountReset({
-      email: "",
-      username: "",
-      password: "",
-      "confirm-password": ""
-    });
-    personalReset({
-      country: "",
-      language: [],
-      "last-name": "",
-      "first-name": ""
-    });
   };
 
-  const onSubmit = () => {
-    console.log("sourceAddress: ", sourceAddress);
-    console.log("destinationAddress: ", destinationAddress);
-    console.log("selectedPackage: ", selectedPackage);
-
+  const onSubmitAddress = () => {
     setActiveStep(activeStep + 1);
-    // if (activeStep === steps.length - 1) {
-    //   toast.success("Form Submitted");
-    // }
   };
-
-  const dispatch = useDispatch<AppDispatch>();
 
   const onSubmitCreateShipment = async () => {
     // TODO create interface for payload
     const createShipmentPayload = {
       fromAddressId: sourceAddress?.id,
-      toAddressId: destinationAddress?.id,
+      toAddressId: deliveryAddress?.id,
       parcelId: selectedPackage?.id
     };
 
@@ -252,251 +285,37 @@ const StepperLinearWithValidation = (props) => {
     }
   };
 
-  const findAddress = (addressId: number) => {
-    return addresses.find((address) => address.id == addressId);
-  };
-
-  const handleSourceAddressChange = (event, newValue) => {
-    console.log("1. selectableAddresses", selectableAddresses);
-    console.log("newValue", newValue);
-    if (!newValue) {
-      console.log("CLEARRRR!!");
-      // When newValue is empty/null
-      if (sourceAddress) {
-        // Put back sourceAddress in the list
-        setSelectableAddresses((list) => [...list, sourceAddress]);
-        setSourceAddress(null);
-      }
-      return;
-    } else if (sourceAddress && newValue.id !== sourceAddress.id) {
-      console.log("CHANGED ADDRESS");
-      console.log("From", sourceAddress.id, "to", newValue.id);
-      // Different address was selected when a different one is already selected, put back sourceAddress in the list and continue
-      const currentAddress: Address | undefined = addresses.find(
-        (address) => address.id === sourceAddress.id
-      );
-      if (currentAddress) {
-        console.log("2. PUTTING BACK!!!!", currentAddress);
-        setSelectableAddresses((list) => [...list, currentAddress]);
-      }
-      // setSelectableAddresses(
-      //   selectableAddresses.filter((address) => address.id !== newValue?.id)
-      // );
-    }
-    setSourceAddress(findAddress(newValue.id));
-    // filter out/remove address with newValue.id
-    setSelectableAddresses(
-      selectableAddresses.filter((address) => address.id !== newValue?.id)
-    );
-  };
-
-  const handleDestinationAddressChange = (event, newValue) => {
-    if (!newValue) {
-      if (destinationAddress)
-        setSelectableAddresses((list) => [...list, destinationAddress]);
-      return;
-    }
-    setDestinationAddress(findAddress(newValue.id));
-    setSelectableAddresses(
-      selectableAddresses.filter((address) => address.id !== newValue?.id)
-    );
-  };
-
-  const handleSelectedPackageChange = (event, newValue) => {
-    setSelectedPackage(newValue);
-  };
-
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
         return (
-          <form key={0} onSubmit={handleAccountSubmit(onSubmit)}>
-            <Grid container>
-              <Grid item xs={12}>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 600, color: "text.primary" }}
-                >
-                  {steps[0].title}
-                </Typography>
-                <Typography variant="caption" component="p">
-                  {steps[0].subtitle}
-                </Typography>
-              </Grid>
+          <form key={0} onSubmit={handleSourceAddressSubmit(onSubmitAddress)}>
+            <Grid container item spacing={12}>
+              <AddressFormSelect
+                addressType={AddressType.SOURCE}
+                currentAddress={sourceAddress}
+                selectableAddresses={selectableAddresses}
+                handleAddressChange={handleSourceAddressChange}
+                handleAddressAdditionalInformationChange={handleSourceAdditionalInfoChange}
+                control={sourceAddressControl}
+                errors={sourceAddressErrors}
+               />
 
-              {/*{selectableAddresses.map((address) => (*/}
-              {/*  <Grid>{address.street1}</Grid>*/}
-              {/*))}*/}
+              <ShippingLabel
+                sourceAddress={sourceAddress}
+                deliveryAddress={deliveryAddress}
+                parcel={selectedPackage}
+              />
 
-              <Grid container item spacing={6}>
-                <Grid item xs={12} sm={6} direction="column">
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                      <Controller
-                        name="username"
-                        control={accountControl}
-                        rules={{ required: true }}
-                        render={({ field: { value, onChange } }) => (
-                          // <TextField
-                          //   value={value}
-                          //   label="Username"
-                          //   onChange={onChange}
-                          //   placeholder="carterLeonard"
-                          //   error={Boolean(accountErrors.username)}
-                          //   aria-describedby="stepper-linear-account-username"
-                          // />
-                          <Autocomplete
-                            options={selectableAddresses}
-                            id="autocomplete-default"
-                            getOptionLabel={(address) => address.street1}
-                            onChange={handleSourceAddressChange}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                value={value}
-                                label="Source address"
-                                variant="standard"
-                              />
-                            )}
-                          />
-                        )}
-                      />
-                      {accountErrors.username && (
-                        <FormHelperText
-                          sx={{ color: "error.main" }}
-                          id="stepper-linear-account-username"
-                        >
-                          This field is required
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} sm={6} my={6}>
-                    <Grid container item direction="row" spacing={2}>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          disabled
-                          value={sourceAddress?.zip}
-                          label="Zip/Postal Code"
-                          id="form-props-disabled"
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          disabled
-                          value={sourceAddress?.city}
-                          label="City"
-                          id="form-props-disabled"
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          disabled
-                          value={sourceAddress?.country}
-                          label="Country"
-                          id="form-props-disabled"
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-
-                <Grid item xs={12} sm={6} direction="column">
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                      <Controller
-                        name="email"
-                        control={accountControl}
-                        rules={{ required: true }}
-                        render={({ field: { value, onChange } }) => (
-                          // <TextField
-                          //   type="email"
-                          //   value={value}
-                          //   label="Email"
-                          //   onChange={onChange}
-                          //   error={Boolean(accountErrors.email)}
-                          //   placeholder="carterleonard@gmail.com"
-                          //   aria-describedby="stepper-linear-account-email"
-                          // />
-                          <Autocomplete
-                            options={selectableAddresses}
-                            id="autocomplete-default"
-                            getOptionLabel={(address) => address.street1}
-                            onChange={handleDestinationAddressChange}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                value={value}
-                                label="Destination address"
-                                variant="standard"
-                              />
-                            )}
-                          />
-                        )}
-                      />
-                      {accountErrors.email && (
-                        <FormHelperText
-                          sx={{ color: "error.main" }}
-                          id="stepper-linear-account-email"
-                        >
-                          {accountErrors.email.message}
-                        </FormHelperText>
-                      )}
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} sm={6} my={6}>
-                    <Grid container item direction="row" spacing={2}>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          disabled
-                          value={destinationAddress?.zip}
-                          label="Zip/Postal Code"
-                          id="form-props-disabled"
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          disabled
-                          value={destinationAddress?.city}
-                          label="City"
-                          id="form-props-disabled"
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <TextField
-                          disabled
-                          value={destinationAddress?.country}
-                          label="Country"
-                          id="form-props-disabled"
-                          variant="standard"
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
-              >
+                sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Button
                   size="large"
                   variant="outlined"
                   color="secondary"
-                  disabled
-                >
+                  disabled>
                   Back
                 </Button>
                 <Button size="large" type="submit" variant="contained">
@@ -508,65 +327,69 @@ const StepperLinearWithValidation = (props) => {
         );
       case 1:
         return (
-          <form key={1} onSubmit={handlePersonalSubmit(onSubmitCreateShipment)}>
-            <Grid container spacing={5}>
-              <Grid item xs={12}>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 600, color: "text.primary" }}
-                >
-                  {steps[1].title}
-                </Typography>
-                <Typography variant="caption" component="p">
-                  {steps[1].subtitle}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <Controller
-                    name="first-name"
-                    control={personalControl}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <Autocomplete
-                        options={packages}
-                        id="autocomplete-default"
-                        getOptionLabel={(parcel) =>
-                          parcel.id + " : " + parcel.name
-                        }
-                        onChange={handleSelectedPackageChange}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            value={value}
-                            label="Choose parcel"
-                            variant="standard"
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                  {personalErrors["first-name"] && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="stepper-linear-personal-first-name"
-                    >
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
+          <form key={0} onSubmit={handleDeliveryAddressSubmit(onSubmitAddress)}>
+            <Grid container item spacing={12}>
+              <AddressFormSelect
+                addressType={AddressType.DELIVERY}
+                currentAddress={deliveryAddress}
+                selectableAddresses={selectableAddresses}
+                handleAddressChange={handleDestinationAddressChange}
+                handleAddressAdditionalInformationChange={handleDeliveryAdditionalInfoChange}
+                control={deliveryAddressControl}
+                errors={deliveryAddressErrors}
+              />
+
+              <ShippingLabel
+                sourceAddress={sourceAddress}
+                deliveryAddress={deliveryAddress}
+                parcel={selectedPackage}
+              />
+
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
-              >
+                sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Button
                   size="large"
                   variant="outlined"
                   color="secondary"
-                  onClick={handleBack}
-                >
+                  onClick={handleBack}>
+                  Back
+                </Button>
+                <Button size="large" type="submit" variant="contained">
+                  Next
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        );
+      case 2:
+        return (
+          <form key={1} onSubmit={handlePackageSubmit(onSubmitCreateShipment)}>
+            <Grid container spacing={12}>
+              <PackageFormSelect
+                currentParcel={selectedPackage}
+                selectablePackages={selectablePackages}
+                handleSelectedPackageChange={handleSelectedPackageChange}
+                control={packageControl}
+                errors={packageErrors}
+              />
+
+              <ShippingLabel
+                sourceAddress={sourceAddress}
+                deliveryAddress={deliveryAddress}
+                parcel={selectedPackage}
+              />
+
+              <Grid
+                item
+                xs={12}
+                sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Button
+                  size="large"
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleBack}>
                   Back
                 </Button>
                 <Button size="large" type="submit" variant="contained">
@@ -576,7 +399,7 @@ const StepperLinearWithValidation = (props) => {
             </Grid>
           </form>
         );
-      case 2:
+      case 3:
         return (
           <form key={2} onSubmit={handleSocialSubmit(onSubmitSetRate)}>
             <Grid container spacing={5}>
@@ -707,10 +530,10 @@ const StepperLinearWithValidation = (props) => {
               if (index === activeStep) {
                 labelProps.error = false;
                 if (
-                  (accountErrors.email ||
-                    accountErrors.username ||
-                    accountErrors.password ||
-                    accountErrors["confirm-password"]) &&
+                  (sourceAddressErrors.email ||
+                    sourceAddressErrors.username ||
+                    sourceAddressErrors.password ||
+                    sourceAddressErrors["confirm-password"]) &&
                   activeStep === 0
                 ) {
                   labelProps.error = true;
