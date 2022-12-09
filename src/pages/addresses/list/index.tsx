@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAddresses } from "src/store/apps/addresses";
 
 import { RootState, AppDispatch } from "src/store";
-import { Address } from "src/types/apps/navashipTypes";
+import { Address } from "src/types/apps/navashipInterfaces";
 
 import AddressModal from "src/components/addresses/addressModal";
 import TableHeader from "../../../views/packages/list/TableHeader";

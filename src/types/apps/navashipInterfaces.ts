@@ -1,11 +1,4 @@
-// ** Types
-import { ThemeColor } from "src/@core/layouts/types";
-
-export type UserLayoutType = {
-  id: string | undefined;
-};
-
-export type Package = {
+export interface Package {
   id: number;
   name: string;
   weight: number;
@@ -15,7 +8,7 @@ export type Package = {
   height: number;
 };
 
-export type Address = {
+export interface Address {
   id: number,
   street1: string,
   street2: string,

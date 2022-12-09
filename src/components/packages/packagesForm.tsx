@@ -5,8 +5,6 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CardContent from "@mui/material/CardContent";
-import AddressAutoCompleteField from "../fields/addressAutoCompleteField";
-import { addAddress } from "../../store/apps/addresses";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { useForm, Controller } from "react-hook-form";

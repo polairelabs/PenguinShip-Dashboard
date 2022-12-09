@@ -2,6 +2,7 @@ import { Dispatch } from "redux";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import BaseApi from "../../../api/api";
+import { Package } from "../../../types/apps/navashipInterfaces";
 
 interface Redux {
   getState: any;
@@ -39,7 +40,7 @@ export const deletePackage = createAsyncThunk(
 export const appPackagesSlice = createSlice({
   name: "appPackages",
   initialState: {
-    data: [],
+    data: [] as Package[],
     total: 1,
     params: {},
     allData: [],
