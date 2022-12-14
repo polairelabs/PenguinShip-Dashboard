@@ -1,8 +1,7 @@
 import { Dispatch } from "redux";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import BaseApi from "../../../api/api";
-import { Package } from "../../../types/apps/navashipInterfaces";
 
 interface Redux {
   getState: any;
@@ -10,14 +9,14 @@ interface Redux {
 }
 
 export const fetchPackages = createAsyncThunk(
-  "appPackages/fetchData",
+  "packages/fetchPackages",
   async (p) => {
     return await BaseApi.get("/packages");
   }
 );
 
 export const addPackage = createAsyncThunk(
-  "appPackages/addPackage",
+  "packages/addPackage",
   async (
     data: { [key: string]: number | string },
     { getState, dispatch }: Redux
@@ -29,7 +28,7 @@ export const addPackage = createAsyncThunk(
 );
 
 export const deletePackage = createAsyncThunk(
-  "appPackages/deletePackage",
+  "packages/deletePackage",
   async (id: number | string, { getState, dispatch }: Redux) => {
     const response = await BaseApi.delete(`/packages/${id}`);
     dispatch(fetchPackages());
@@ -37,32 +36,33 @@ export const deletePackage = createAsyncThunk(
   }
 );
 
-export const appPackagesSlice = createSlice({
-  name: "appPackages",
+export const packagesSlice = createSlice({
+  name: "packages",
   initialState: {
-    data: [] as Package[],
+    data: [],
     total: 1,
     params: {},
     allData: [],
-    status: "idle"
+    status: "IDLE",
+    lastInsertedPackage: {}
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchPackages.pending, (state) => {
-        state.status = "loading";
+        state.status = "LOADING";
       })
       .addCase(fetchPackages.fulfilled, (state, action) => {
         state.data = action.payload;
-        // state.total = action.payload.total
-        // state.params = action.payload.params
-        // state.allData = action.payload.allData
-        state.status = "success";
+        state.status = "SUCCESS";
       })
       .addCase(fetchPackages.rejected, (state) => {
-        state.status = "failed";
+        state.status = "FAILED";
+      })
+      .addCase(addPackage.fulfilled, (state, action) => {
+        state.lastInsertedPackage = action.payload;
       });
   }
 });
 
-export default appPackagesSlice.reducer;
+export default packagesSlice.reducer;

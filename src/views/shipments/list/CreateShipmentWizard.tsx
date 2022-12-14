@@ -22,20 +22,17 @@ import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import BaseApi from "../../../api/api";
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from "@mui/material";
-import { createShipment, setShipmentRate } from "../../../store/apps/shipments";
-import AddressFormSelect, { AddressType } from "../../../components/addresses/addressFormSelect";
-import { Address, Package } from "../../../types/apps/navashipInterfaces";
+import { createShipment, buyShipmentRate } from "../../../store/apps/shipments";
+import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
+import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
-import PackageFormSelect from "../../../components/packages/packageFormSelect";
+import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
+import { fetchAddresses } from "../../../store/apps/addresses";
+import RateSelect from "../../../components/rates/rateSelect";
+import { LoadingButton } from "@mui/lab";
+import AddressModal from "../../../components/addresses/addressModal";
+import PackageModal from "../../../components/packages/packagesModal";
+import { fetchPackages } from "../../../store/apps/packages";
 
 const steps = [
   {
@@ -75,27 +72,14 @@ const defaultPackageValues = {
   parcel: ""
 };
 
-const defaultPersonalValues = {
-  country: "",
-  language: [],
-  "last-name": "",
-  "first-name": ""
-};
-
-const defaultSocialValues = {
-  google: "",
-  twitter: "",
-  facebook: "",
-  linkedIn: ""
-};
-
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 const additionalInfoSchema = yup.object().shape({
   name: yup.string().optional().max(30, "Name must be at most 30 characters").nullable(true),
   company: yup.string().optional().max(30,"Company must be at most 30 characters").nullable(true),
   email: yup.string().email("Email is not valid").optional().nullable(true),
-  phone: yup.string().matches(phoneRegExp, "Phone number is not valid").optional().nullable(true),
+  // transform() empty string into a null
+  phone: yup.string().nullable().transform((v, o) => (o === '' ? null : v)).matches(phoneRegExp, "Phone number is not valid").optional().nullable(true),
 });
 
 const fromAddressSchema = additionalInfoSchema.shape({
@@ -114,54 +98,140 @@ const StepperLinearWithValidation = (props) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const dispatch = useDispatch<AppDispatch>();
 
-  // const [addresses, setAddresses] = useState<Address[]>([]);
-  const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
+  const shipmentStore = useSelector((state: RootState) => state.shipments);
 
+  // Lists from the store
+  const addresses = useSelector((state: RootState) => state.addresses.data) as Address[];
+  const packages = useSelector((state: RootState) => state.packages.data) as Package[];
+  const rates = useSelector((state: RootState) => state.shipments.rates) as Rate[];
+
+  // Selectable lists as to not change the store when we filter on them
+  const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
+  const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
+
+  const lastInsertedAddress = useSelector((state: RootState) => state.addresses.lastInsertedAddress) as Address;
+  const lastInsertedPackage = useSelector((state: RootState) => state.packages.lastInsertedPackage) as Package;
+
+  // Selected entities
   const [sourceAddress, setSourceAddress] = useState<Address | null>();
   const [deliveryAddress, setDeliveryAddress] = useState<Address | null>();
-
-  const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>();
+  const [selectedRate, setSelectedRate] = useState<Rate | null>();
 
-  // TODO add type for Rate
-  const [selectedRate, setSelectedRate] = useState({});
+  // To show/hide "Rate is required error"
+  const [showRateError, setShowRateError] = useState<boolean>(false);
 
-  // @ts-ignore
-  const shipment = useSelector((state) => state.shipments.data);
+  // To create a shipment or keep old one
+  const [createNewShipment, setCreateNewShipment] = useState<boolean>(true);
+  // Create shipment loading
+  const [createShipmentLoading, setCreateShipmentLoading] = useState<boolean>(false);
 
-  // @ts-ignore
-  const rates = useSelector((state) => state.shipments.rates);
+  // Modals
+  const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
+  const [openPackageModal, setOpenPackageModal] = useState<boolean>(false);
+
+  // Used in modals to select last created entry once a new entry is created
+  const [createdAddress, setCreatedAddress] = useState<boolean>(false);
+  const [createdPackage, setCreatedPackage] = useState<boolean>(false);
+
+  const handleAddressModalToggle = () => {
+    setOpenAddressModal(!openAddressModal);
+  };
+
+  const handlePackageModalToggle = () => {
+    setOpenPackageModal(!openPackageModal);
+  };
+
+  const SOURCE_ADDRESS_SELECT_INDEX = 0;
+  const DELIVERY_ADDRESS_SELECT_INDEX = 1;
+  const PARCEL_SELECT_INDEX = 2;
 
   useEffect(() => {
-    async function fetchAddresses() {
-      const response: Address[] = await BaseApi.get("/addresses");
-      setSelectableAddresses(response);
-    }
+    dispatch(fetchAddresses());
+    dispatch(fetchPackages());
+  }, [dispatch]);
 
-    async function fetchPackages() {
-      const response: Package[] = await BaseApi.get("/packages");
-      setSelectablePackages(response);
-    }
+  // Once addresses in store change
+  useEffect(() => {
+    setSelectableAddresses(addresses);
+  }, [addresses]);
 
-    fetchAddresses();
-    fetchPackages();
-  }, []);
+  // Once packages in store change
+  useEffect(() => {
+    setSelectablePackages(packages);
+  }, [packages]);
+
+  // Invalidate user selected rate when addresses or parcel change, in this case a new shipment will always be created
+  useEffect(() => {
+    setSelectedRate(null);
+    setCreateNewShipment(true);
+  }, [sourceAddress, deliveryAddress, selectedPackage]);
+
+  // Hide "Rate required" error accordingly
+  useEffect(() => {
+    setShowRateError(false);
+  }, [selectedRate]);
+
+  // If new address was created in Address Modal
+  useEffect(() => {
+    // Populate address with the last inserted
+    if (createdAddress) {
+      if (activeStep === SOURCE_ADDRESS_SELECT_INDEX) {
+        setSourceAddress(lastInsertedAddress);
+      } else if (activeStep === DELIVERY_ADDRESS_SELECT_INDEX) {
+        setDeliveryAddress(lastInsertedAddress);
+      }
+      setCreatedAddress(false);
+    }
+  }, [lastInsertedAddress]);
+
+  // If new package was created in Package Modal
+  useEffect(() => {
+    // Populate address with the last inserted
+    if (createdPackage) {
+      setSelectedPackage(lastInsertedPackage);
+      setCreatedPackage(false);
+    }
+  }, [lastInsertedPackage]);
+
+  const asAddressValues = (address: Address | null) => {
+    return {
+      id: address?.id ,
+      street1: address?.street1,
+      street2: address?.street2,
+      city: address?.city,
+      state: address?.state,
+      zip: address?.zip,
+      country: address?.country,
+    } as Address;
+  }
 
   const handleSourceAddressChange = (newSourceAddress: Address | null) => {
     if (newSourceAddress) {
-      setSourceAddress(newSourceAddress);
-      setSelectableAddresses(
-        selectableAddresses.filter((address) => address.id !== newSourceAddress?.id)
-      );
+      setSourceAddress({...sourceAddress, ...asAddressValues(newSourceAddress)});
+      // setSelectableAddresses(
+      //   selectableAddresses.filter((address) => address.id !== newSourceAddress?.id)
+      // );
     } else {
-      if (sourceAddress)
-        setSelectableAddresses((list: (Address)[]) => [...list, sourceAddress]);
-      setSourceAddress(null);
+      // if (sourceAddress) {
+      //   setSelectableAddresses((list: (Address)[]) => [...list, sourceAddress]);
+      // }
+      setSourceAddress({...sourceAddress, ...asAddressValues(null)})
     }
   }
 
-  const handleDestinationAddressChange = (deliveryAddress: Address | null) => {
-    setDeliveryAddress(deliveryAddress);
+  const handleDestinationAddressChange = (newDeliveryAddress: Address | null) => {
+    if (newDeliveryAddress) {
+      setDeliveryAddress({...deliveryAddress, ...asAddressValues(newDeliveryAddress)});
+      // setSelectableAddresses(
+      //   selectableAddresses.filter((address) => address.id !== deliveryAddress?.id)
+      // );
+    } else {
+      // if (deliveryAddress) {
+      //   setSelectableAddresses((list: (Address)[]) => [...list, deliveryAddress]);
+      // }
+      setDeliveryAddress({...asAddressValues(null)});
+    }
   };
 
   const handleSelectedPackageChange = (parcel: Package | null) => {
@@ -178,18 +248,20 @@ const StepperLinearWithValidation = (props) => {
   };
 
   const handleSourceAdditionalInfoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSourceAddress({ ...sourceAddress, ...handleAdditionalInfoChange(event) } as Address);
+    setSourceAddress({ ...sourceAddress, ...handleAdditionalInfoChange(event)} as Address);
   }
 
   const handleDeliveryAdditionalInfoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setDeliveryAddress({ ...deliveryAddress, ...handleAdditionalInfoChange(event) } as Address);
+    setDeliveryAddress({ ...deliveryAddress, ...handleAdditionalInfoChange(event)} as Address);
   }
 
   const {
+    reset: sourceAddressReset,
     control: sourceAddressControl,
     handleSubmit: handleSourceAddressSubmit,
-    formState: { errors: sourceAddressErrors }
+    formState: { errors: sourceAddressErrors },
   } = useForm({
+    mode: "onBlur",
     defaultValues: {...defaultSourceAddressValues, ...defaultAdditionalInfoValues},
     resolver: async (data, context, options) => {
       const schemaValues = { "source": sourceAddress?.street1, ...sourceAddress };
@@ -225,31 +297,17 @@ const StepperLinearWithValidation = (props) => {
   });
 
   const {
-    reset: personalReset,
-    control: personalControl,
-    handleSubmit: handlePersonalSubmit,
-    formState: { errors: personalErrors }
-  } = useForm({
-    defaultValues: defaultPersonalValues,
-    // resolver: yupResolver(personalSchema)
-  });
-
-  const {
-    reset: socialReset,
-    control: socialControl,
-    handleSubmit: handleSocialSubmit,
-    formState: { errors: socialErrors }
-  } = useForm({
-    defaultValues: defaultSocialValues,
-    // resolver: yupResolver(socialSchema)
-  });
+    handleSubmit: handleRateSubmit,
+  } = useForm();
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
+    const prevActiveStep = activeStep - 1;
+    setActiveStep(prevActiveStep);
+    if (prevActiveStep === PARCEL_SELECT_INDEX) {
+      // Back from "RATE" STEP
+      setShowRateError(false);
+      setCreateNewShipment(false);
+    }
   };
 
   const onSubmitAddress = () => {
@@ -257,30 +315,54 @@ const StepperLinearWithValidation = (props) => {
   };
 
   const onSubmitCreateShipment = async () => {
-    // TODO create interface for payload
-    const createShipmentPayload = {
-      fromAddressId: sourceAddress?.id,
-      toAddressId: deliveryAddress?.id,
-      parcelId: selectedPackage?.id
-    };
+    if (createNewShipment) {
+      const createShipmentPayload = {
+        fromAddressId: sourceAddress?.id,
+        toAddressId: deliveryAddress?.id,
+        parcelId: selectedPackage?.id
+      };
 
-    await dispatch(createShipment(createShipmentPayload));
-    // TODO add loading here
-    // console.log("RATES", rates);
+      console.log("SHIPMENT CREATED, STORE HAS CHANGED", createShipmentPayload);
+      setCreateShipmentLoading(true);
+      await dispatch(createShipment(createShipmentPayload));
+      setCreateShipmentLoading(false);
+      console.log("A.A", shipmentStore.createShipmentStatus);
+      if (shipmentStore.createShipmentStatus === "CREATED") {
+        toast.success("Shipment successfully created", {
+          position: "top-center"
+        });
+      } else if (shipmentStore.createShipmentStatus === "FAILED") {
+        toast.error("An error has occurred while creating the shipment", {
+          position: "top-center"
+        });
+        return;
+      }
+    }
 
     setActiveStep(activeStep + 1);
   };
 
-  const onSubmitSetRate = async () => {
-    // TODO
-    console.log(`Setting rate ${selectedRate["id"]}`);
+  const onSubmitSelectRate = async () => {
     const setShipmentRatePayload = {
-      easypostShipmentId: shipment?.id,
+      easypostShipmentId: shipmentStore.data?.id,
       easypostRateId: selectedRate?.id
     };
-    await dispatch(setShipmentRate(setShipmentRatePayload));
+
+    // If no rate selected, return and don't submit the form yet
+    if (!selectedRate) {
+      setShowRateError(true);
+      return;
+    }
+
+    await dispatch(buyShipmentRate(setShipmentRatePayload));
     if (activeStep === steps.length - 1) {
-      toast.success("Rate was successfully set");
+      toast.success("Label was successfully created", {
+        position: "top-center"
+      });
+      setSourceAddress(null);
+      setDeliveryAddress(null);
+      setSelectedPackage(null);
+      setSelectedRate(null);
       setActiveStep(0);
     }
   };
@@ -291,7 +373,7 @@ const StepperLinearWithValidation = (props) => {
         return (
           <form key={0} onSubmit={handleSourceAddressSubmit(onSubmitAddress)}>
             <Grid container item spacing={12}>
-              <AddressFormSelect
+              <SelectAddressFormController
                 addressType={AddressType.SOURCE}
                 currentAddress={sourceAddress}
                 selectableAddresses={selectableAddresses}
@@ -299,14 +381,14 @@ const StepperLinearWithValidation = (props) => {
                 handleAddressAdditionalInformationChange={handleSourceAdditionalInfoChange}
                 control={sourceAddressControl}
                 errors={sourceAddressErrors}
+                handleAddressModalToggle={handleAddressModalToggle}
                />
-
               <ShippingLabel
                 sourceAddress={sourceAddress}
                 deliveryAddress={deliveryAddress}
                 parcel={selectedPackage}
+                rate={selectedRate}
               />
-
               <Grid
                 item
                 xs={12}
@@ -329,7 +411,7 @@ const StepperLinearWithValidation = (props) => {
         return (
           <form key={0} onSubmit={handleDeliveryAddressSubmit(onSubmitAddress)}>
             <Grid container item spacing={12}>
-              <AddressFormSelect
+              <SelectAddressFormController
                 addressType={AddressType.DELIVERY}
                 currentAddress={deliveryAddress}
                 selectableAddresses={selectableAddresses}
@@ -337,14 +419,14 @@ const StepperLinearWithValidation = (props) => {
                 handleAddressAdditionalInformationChange={handleDeliveryAdditionalInfoChange}
                 control={deliveryAddressControl}
                 errors={deliveryAddressErrors}
+                handleAddressModalToggle={handleAddressModalToggle}
               />
-
               <ShippingLabel
                 sourceAddress={sourceAddress}
                 deliveryAddress={deliveryAddress}
                 parcel={selectedPackage}
+                rate={selectedRate}
               />
-
               <Grid
                 item
                 xs={12}
@@ -367,20 +449,20 @@ const StepperLinearWithValidation = (props) => {
         return (
           <form key={1} onSubmit={handlePackageSubmit(onSubmitCreateShipment)}>
             <Grid container spacing={12}>
-              <PackageFormSelect
+              <SelectPackageFormController
                 currentParcel={selectedPackage}
                 selectablePackages={selectablePackages}
                 handleSelectedPackageChange={handleSelectedPackageChange}
                 control={packageControl}
                 errors={packageErrors}
+                handlePackageModalToggle={handlePackageModalToggle}
               />
-
               <ShippingLabel
                 sourceAddress={sourceAddress}
                 deliveryAddress={deliveryAddress}
                 parcel={selectedPackage}
+                rate={selectedRate}
               />
-
               <Grid
                 item
                 xs={12}
@@ -392,105 +474,49 @@ const StepperLinearWithValidation = (props) => {
                   onClick={handleBack}>
                   Back
                 </Button>
-                <Button size="large" type="submit" variant="contained">
-                  Create shipment
-                </Button>
+                <LoadingButton
+                  size="large"
+                  type="submit"
+                  loading={createShipmentLoading}
+                  loadingIndicator="Loading..."
+                  variant="contained">
+                  {createNewShipment ? "Create shipment" : "Next"}
+                </LoadingButton>
               </Grid>
             </Grid>
           </form>
         );
       case 3:
         return (
-          <form key={2} onSubmit={handleSocialSubmit(onSubmitSetRate)}>
-            <Grid container spacing={5}>
-              <Grid item xs={12}>
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 600, color: "text.primary" }}
-                >
-                  {steps[2].title}
-                </Typography>
-                <Typography variant="caption" component="p">
-                  {steps[2].subtitle}
-                </Typography>
+          <form key={2} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
+            <Grid container item spacing={12}>
+              <Grid item xs={12} sm={6} direction="column">
+                <RateSelect
+                  rates={rates}
+                  selectedRate={selectedRate}
+                  setSelectedRate={setSelectedRate}
+                  showRateError={showRateError}
+                />
               </Grid>
-              <Grid item xs={12}>
-                <Card>
-                  <TableContainer
-                    component={Paper}
-                    sx={{
-                      "& .MuiTableRow-root:hover": {
-                        backgroundColor: "rgba(58, 53, 65, 0.04)"
-                      }
-                    }}
-                  >
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell align="center">Carrier</TableCell>
-                          <TableCell align="left">Service</TableCell>
-                          <TableCell align="right">Rate (USD)</TableCell>
-                          <TableCell align="right">Delivery days</TableCell>
-                          <TableCell align="right">
-                            Est. delivery days
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {rates.map((rate) => (
-                          <TableRow
-                            onClick={() => setSelectedRate(rate)}
-                            key={rate.id}
-                            sx={{
-                              "&:last-of-type td, &:last-of-type th": {
-                                border: 0
-                              }
-                            }}
-                            selected={selectedRate?.id === rate.id}
-                          >
-                            <TableCell
-                              align="center"
-                              component="th"
-                              scope="row"
-                            >
-                              <Box
-                                component="img"
-                                alt={rate.carrier}
-                                src={`/images/carriers/${rate.carrier}.png`}
-                              />
-                            </TableCell>
-                            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-                              {rate.service}
-                            </TableCell>
-                            <TableCell align="right">${rate.rate}</TableCell>
-                            <TableCell align="right">
-                              {rate.deliveryDays}
-                            </TableCell>
-                            <TableCell align="right">
-                              {rate.estDeliveryDays}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Card>
-              </Grid>
+              <ShippingLabel
+                sourceAddress={sourceAddress}
+                deliveryAddress={deliveryAddress}
+                parcel={selectedPackage}
+                rate={selectedRate}
+              />
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
-              >
+                sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Button
                   size="large"
                   variant="outlined"
                   color="secondary"
-                  onClick={handleBack}
-                >
+                  onClick={handleBack}>
                   Back
                 </Button>
-                <Button size="large" type="submit" variant="contained">
-                  Set rate
+                <Button size="large" type="submit" variant="contained" disabled={rates.length == 0}>
+                  Buy label
                 </Button>
               </Grid>
             </Grid>
@@ -502,20 +528,19 @@ const StepperLinearWithValidation = (props) => {
   };
 
   const renderContent = () => {
-    if (activeStep === steps.length) {
-      return (
-        <Fragment>
-          <Typography>All steps are completed!</Typography>
-          <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-            <Button size="large" variant="contained" onClick={handleReset}>
-              Reset
-            </Button>
-          </Box>
-        </Fragment>
-      );
-    } else {
-      return getStepContent(activeStep);
-    }
+    // if (activeStep === steps.length) {
+    //   return (
+    //     <Fragment>
+    //       <Typography>All steps are completed!</Typography>
+    //       <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
+    //         <Button size="large" variant="contained" onClick={handleReset}>
+    //           Reset
+    //         </Button>
+    //       </Box>
+    //     </Fragment>
+    //   );
+    // } else {}
+    return getStepContent(activeStep);
   };
 
   return (
@@ -527,36 +552,36 @@ const StepperLinearWithValidation = (props) => {
               const labelProps: {
                 error?: boolean;
               } = {};
-              if (index === activeStep) {
-                labelProps.error = false;
-                if (
-                  (sourceAddressErrors.email ||
-                    sourceAddressErrors.username ||
-                    sourceAddressErrors.password ||
-                    sourceAddressErrors["confirm-password"]) &&
-                  activeStep === 0
-                ) {
-                  labelProps.error = true;
-                } else if (
-                  (personalErrors.country ||
-                    personalErrors.language ||
-                    personalErrors["last-name"] ||
-                    personalErrors["first-name"]) &&
-                  activeStep === 1
-                ) {
-                  labelProps.error = true;
-                } else if (
-                  (socialErrors.google ||
-                    socialErrors.twitter ||
-                    socialErrors.facebook ||
-                    socialErrors.linkedIn) &&
-                  activeStep === 2
-                ) {
-                  labelProps.error = true;
-                } else {
-                  labelProps.error = false;
-                }
-              }
+              // if (index === activeStep) {
+              //   labelProps.error = false;
+              //   if (
+              //     (sourceAddressErrors.email ||
+              //       sourceAddressErrors.username ||
+              //       sourceAddressErrors.password ||
+              //       sourceAddressErrors["confirm-password"]) &&
+              //     activeStep === 0
+              //   ) {
+              //     labelProps.error = true;
+              //   } else if (
+              //     (personalErrors.country ||
+              //       personalErrors.language ||
+              //       personalErrors["last-name"] ||
+              //       personalErrors["first-name"]) &&
+              //     activeStep === 1
+              //   ) {
+              //     labelProps.error = true;
+              //   } else if (
+              //     (socialErrors.google ||
+              //       socialErrors.twitter ||
+              //       socialErrors.facebook ||
+              //       socialErrors.linkedIn) &&
+              //     activeStep === 2
+              //   ) {
+              //     labelProps.error = true;
+              //   } else {
+              //     labelProps.error = false;
+              //   }
+              // }
 
               return (
                 <Step key={index}>
@@ -587,7 +612,13 @@ const StepperLinearWithValidation = (props) => {
 
       <Divider sx={{ m: 0 }} />
 
-      <CardContent>{renderContent()}</CardContent>
+      <CardContent>
+        {renderContent()}
+      </CardContent>
+
+      {/* Modals */}
+      <AddressModal open={openAddressModal} handleDialogToggle={handleAddressModalToggle} setCreatedAddress={setCreatedAddress} />
+      <PackageModal open={openPackageModal} handleDialogToggle={handlePackageModalToggle} setCreatedPackage={setCreatedPackage} />
     </Card>
   );
 };

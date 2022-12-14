@@ -1,8 +1,6 @@
 import { Dispatch } from "redux";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import BaseApi from "../../../api/api";
-import { fetchPackages } from "../packages";
 
 interface Redux {
   getState: any;
@@ -10,14 +8,14 @@ interface Redux {
 }
 
 export const fetchAddresses = createAsyncThunk(
-  "appAddresses/fetchData",
+  "addresses/fetchData",
   async (p) => {
     return await BaseApi.get("/addresses");
   }
 );
 
 export const addAddress = createAsyncThunk(
-  "appAddresses/addAddress",
+  "addresses/addAddress",
   async (
     data: { [key: string]: number | string },
     { getState, dispatch }: Redux
@@ -29,38 +27,40 @@ export const addAddress = createAsyncThunk(
 );
 
 export const deleteAddress = createAsyncThunk(
-  "appAddresses/deleteAddress",
+  "addresses/deleteAddress",
   async (id: number | string, { getState, dispatch }: Redux) => {
     // Todo implement
   }
 );
 
-export const addressSlice = createSlice({
-  name: "appAddresses",
+export const addressesSlice = createSlice({
+  name: "addresses",
   initialState: {
     data: [],
     total: 1,
     params: {},
     allData: [],
-    status: "idle"
+    status: "IDLE",
+    lastInsertedAddress: {},
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchAddresses.pending, (state) => {
-        state.status = "loading";
+        state.status = "LOADING";
       })
       .addCase(fetchAddresses.fulfilled, (state, action) => {
         state.data = action.payload;
-        // state.total = action.payload.total;
-        // state.params = action.payload.params;
-        // state.allData = action.payload.allData;
-        state.status = "success";
+        state.status = "SUCCESS";
       })
       .addCase(fetchAddresses.rejected, (state) => {
-        state.status = "failed";
+        state.status = "FAILED";
+      })
+      .addCase(addAddress.fulfilled, (state, action) => {
+        state.lastInsertedAddress = action.payload;
+        console.log("Added address!!");
       });
   }
 });
 
-export default addressSlice.reducer;
+export default addressesSlice.reducer;

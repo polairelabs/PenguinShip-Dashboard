@@ -196,7 +196,7 @@ const AddressesList = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader toggle={handleDialogToggle} toggleLabel="Add address" />
-          <AddressModal open={open} handleDialogToggle={handleDialogToggle} />
+          <AddressModal open={open} handleDialogToggle={handleDialogToggle} setCreatedAddress={undefined} />
 
           <DataGrid
             autoHeight

@@ -24,7 +24,6 @@ import { RootState, AppDispatch } from "src/store";
 import { Package } from "src/types/apps/navashipInterfaces";
 
 import TableHeader from "src/views/packages/list/TableHeader";
-import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
 import PackageModal from "../../../components/packages/packagesModal";
 
 interface CellType {
@@ -197,7 +196,6 @@ const columns = [
 
 const PackagesList = () => {
   const [value, setValue] = useState<number>(10);
-  const [addPackageOpen, setAddPackageOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -211,14 +209,12 @@ const PackagesList = () => {
     setOpen(!open);
   };
 
-  const toggleAddPackageDrawer = () => setAddPackageOpen(!addPackageOpen);
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={handleDialogToggle} toggleLabel="Add package" />
-          <PackageModal open={open} handleDialogToggle={handleDialogToggle} />
+          <TableHeader toggle={handleDialogToggle} toggleLabel="Add parcel" />
+          <PackageModal open={open} handleDialogToggle={handleDialogToggle} setCreatedPackage={undefined} />
 
           <DataGrid
             autoHeight
@@ -232,7 +228,6 @@ const PackagesList = () => {
           />
         </Card>
       </Grid>
-      <AddPackageDrawer open={addPackageOpen} toggle={toggleAddPackageDrawer} />
     </Grid>
   );
 };

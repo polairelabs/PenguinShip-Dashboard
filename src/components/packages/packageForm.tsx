@@ -24,7 +24,7 @@ export type PackageDetails = {
   monetaryValue: string;
 };
 
-const PackageForm = ({ handleDialogToggle }) => {
+const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
   const [packageDetails, setPackageDetails] = useState<PackageDetails>({
     name: "",
     weight: "",
@@ -116,6 +116,11 @@ const PackageForm = ({ handleDialogToggle }) => {
     toast.success("Package was successfully added", {
       position: "top-center"
     });
+
+    if (setCreatedPackage) {
+      setCreatedPackage(true);
+    }
+
     handleDialogToggle();
   };
 
@@ -326,11 +331,11 @@ const PackageForm = ({ handleDialogToggle }) => {
                   display: "flex",
                   flexWrap: "wrap",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "flex-end",
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  Add package
+                  Create Parcel
                 </Button>
               </Box>
             </Grid>

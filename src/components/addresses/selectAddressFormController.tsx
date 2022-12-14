@@ -5,9 +5,8 @@ import { Autocomplete, Box, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Address } from "../../types/apps/navashipInterfaces";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent } from "react";
 import Button from "@mui/material/Button";
-import AddressModal from "./addressModal";
 
 export enum AddressType {
   SOURCE = "source",
@@ -22,9 +21,10 @@ interface AddressSelectProps {
   handleAddressAdditionalInformationChange: (event: ChangeEvent<HTMLInputElement>) => void,
   control: any;
   errors: any;
+  handleAddressModalToggle: () => void;
 }
 
-const AddressFormSelect = (
+const SelectAddressFormController = (
   {
    addressType,
    currentAddress,
@@ -32,16 +32,11 @@ const AddressFormSelect = (
    handleAddressChange,
    handleAddressAdditionalInformationChange,
    control,
-   errors
+   errors,
+   handleAddressModalToggle,
   }: AddressSelectProps) => {
-  const [open, setOpen] = useState<boolean>(false);
-
   const fieldName = addressType.toString();
   const labelName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
-
-  const handleDialogToggle = () => {
-    setOpen(!open);
-  };
 
   const handleAddressValueChange = (event, newValue) => {
     let selectedAddress: Address | null = null;
@@ -64,42 +59,41 @@ const AddressFormSelect = (
 
   return (
       <Grid item xs={12} sm={6} direction="column">
-        <Grid container direction="row" spacing={1}>
-          <Grid item xs={12} sm={12} >
-            <FormControl fullWidth>
-              <Controller
-                name={fieldName}
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange } }) => (
-                  <Autocomplete
-                    options={selectableAddresses}
-                    value={currentAddress ? currentAddress : null}
-                    getOptionLabel={(address) => addressOptionLabel(address)}
-                    onChange={handleAddressValueChange}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        value={value}
-                        label={labelName}
-                        variant="standard"
-                      />
-                    )}
-                  />
-                )}
-              />
-            </FormControl>
-            {errors[fieldName] && (
-              <FormHelperText sx={{ color: "error.main", position: "absolute" }}>
-                {errors[fieldName].message}
-              </FormHelperText>
-            )}
-          </Grid>
+        <Grid item xs={12} sm={12} >
+          <FormControl fullWidth>
+            <Controller
+              name={fieldName}
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <Autocomplete
+                  options={selectableAddresses}
+                  value={currentAddress?.street1 ? currentAddress : null}
+                  getOptionLabel={(address) => addressOptionLabel(address)}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  onChange={handleAddressValueChange}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      value={value}
+                      label={labelName}
+                      variant="standard"
+                    />
+                  )}
+                />
+              )}
+            />
+          </FormControl>
+          {errors[fieldName] && (
+            <FormHelperText sx={{ color: "error.main", position: "absolute" }}>
+              {errors[fieldName].message}
+            </FormHelperText>
+          )}
         </Grid>
         <Grid item sx={{"mt": 4}} xs={12} sm={12}>
           <Box display="flex" justifyContent="flex-end">
-            <Button sx={{ padding: 2}} onClick={handleDialogToggle} variant="contained">
-              Create Address
+            <Button sx={{ padding: 2}} onClick={handleAddressModalToggle} variant="contained">
+              Add Address
             </Button>
           </Box>
           <Box display="flex" justifyContent="flex-end">
@@ -127,7 +121,7 @@ const AddressFormSelect = (
                 <TextField
                   fullWidth
                   name="name"
-                  value={currentAddress?.name}
+                  value={currentAddress?.name ? currentAddress.name : ""}
                   onChange={handleAddressAdditionalInformationChange}
                   label="Name"
                   error={Boolean(errors.name)}
@@ -148,7 +142,7 @@ const AddressFormSelect = (
                 <TextField
                   fullWidth
                   name="company"
-                  value={currentAddress?.company}
+                  value={currentAddress?.company ? currentAddress.company : ""}
                   onChange={handleAddressAdditionalInformationChange}
                   label="Company"
                   error={Boolean(errors.company)}
@@ -169,7 +163,7 @@ const AddressFormSelect = (
                 <TextField
                   fullWidth
                   name="phone"
-                  value={currentAddress?.phone}
+                  value={currentAddress?.phone ? currentAddress.phone : ""}
                   onChange={handleAddressAdditionalInformationChange}
                   label="Phone"
                   error={Boolean(errors.phone)}
@@ -190,7 +184,7 @@ const AddressFormSelect = (
                 <TextField
                   fullWidth
                   name="email"
-                  value={currentAddress?.email}
+                  value={currentAddress?.email ? currentAddress.email : ""}
                   onChange={handleAddressAdditionalInformationChange}
                   label="Email"
                   error={Boolean(errors.email)}
@@ -204,10 +198,8 @@ const AddressFormSelect = (
             )}
           </Grid>
         </Grid>
-
-        <AddressModal open={open} handleDialogToggle={handleDialogToggle} />
     </Grid>
   )
 };
 
-export default AddressFormSelect;
+export default SelectAddressFormController;
