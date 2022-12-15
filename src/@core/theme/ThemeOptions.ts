@@ -18,7 +18,7 @@ const themeOptions = (settings: Settings): ThemeOptions => {
   // ** Vars
   const { skin, mode, direction, themeColor } = settings;
 
-  // ** Create New object before removing packages component overrides and typography objects from userThemeOptions
+  // ** Create New object before removing user component overrides and typography objects from userThemeOptions
   const userThemeConfig: any = Object.assign({}, UserThemeOptions());
 
   const userFontFamily = userThemeConfig.typography?.fontFamily;
@@ -30,7 +30,7 @@ const themeOptions = (settings: Settings): ThemeOptions => {
   const mergedThemeConfig = deepmerge(
     {
       direction,
-      palette: palette(mode, skin, themeColor),
+      palette: palette(mode === "semi-dark" ? "light" : mode, skin, themeColor),
       typography: {
         fontFamily:
           userFontFamily ||

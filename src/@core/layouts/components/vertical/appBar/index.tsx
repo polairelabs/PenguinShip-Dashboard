@@ -1,24 +1,26 @@
-// ** React Imports
-import { ReactNode } from "react";
-
 // ** MUI Imports
 import { styled, useTheme } from "@mui/material/styles";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import MuiAppBar, { AppBarProps } from "@mui/material/AppBar";
 import MuiToolbar, { ToolbarProps } from "@mui/material/Toolbar";
 
-// ** Type Import
-import { Settings } from "src/@core/context/settingsContext";
+// ** Type Imports
+import { LayoutProps } from "src/@core/layouts/types";
 
 // ** Util Import
 import { hexToRGBA } from "src/@core/utils/hex-to-rgba";
 
 interface Props {
-  hidden: boolean;
-  settings: Settings;
+  hidden: LayoutProps["hidden"];
   toggleNavVisibility: () => void;
-  saveSettings: (values: Settings) => void;
-  verticalAppBarContent?: (props?: any) => ReactNode;
+  settings: LayoutProps["settings"];
+  saveSettings: LayoutProps["saveSettings"];
+  appBarContent: NonNullable<
+    LayoutProps["verticalLayoutProps"]["appBar"]
+  >["content"];
+  appBarProps: NonNullable<
+    LayoutProps["verticalLayoutProps"]["appBar"]
+  >["componentProps"];
 }
 
 const AppBar = styled(MuiAppBar)<AppBarProps>(({ theme }) => ({
@@ -47,7 +49,7 @@ const Toolbar = styled(MuiToolbar)<ToolbarProps>(({ theme }) => ({
 
 const LayoutAppBar = (props: Props) => {
   // ** Props
-  const { settings, verticalAppBarContent: userVerticalAppBarContent } = props;
+  const { settings, appBarProps, appBarContent: userAppBarContent } = props;
 
   // ** Hooks
   const theme = useTheme();
@@ -62,8 +64,8 @@ const LayoutAppBar = (props: Props) => {
   const appBarFixedStyles = () => {
     return {
       px: `${theme.spacing(5)} !important`,
+      boxShadow: skin === "bordered" ? 0 : 3,
       ...(appBarBlur && { backdropFilter: "blur(8px)" }),
-      boxShadow: theme.shadows[skin === "bordered" ? 0 : 3],
       backgroundColor: hexToRGBA(
         theme.palette.background.paper,
         appBarBlur ? 0.85 : 1
@@ -79,12 +81,21 @@ const LayoutAppBar = (props: Props) => {
     return null;
   }
 
+  let userAppBarStyle = {};
+  if (appBarProps && appBarProps.sx) {
+    userAppBarStyle = appBarProps.sx;
+  }
+  const userAppBarProps = Object.assign({}, appBarProps);
+  delete userAppBarProps.sx;
+
   return (
     <AppBar
       elevation={0}
       color="default"
       className="layout-navbar"
+      sx={{ ...userAppBarStyle }}
       position={appBar === "fixed" ? "sticky" : "static"}
+      {...userAppBarProps}
     >
       <Toolbar
         className="navbar-content-container"
@@ -98,8 +109,7 @@ const LayoutAppBar = (props: Props) => {
           })
         }}
       >
-        {(userVerticalAppBarContent && userVerticalAppBarContent(props)) ||
-          null}
+        {(userAppBarContent && userAppBarContent(props)) || null}
       </Toolbar>
     </AppBar>
   );

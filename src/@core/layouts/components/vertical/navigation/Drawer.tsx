@@ -1,6 +1,3 @@
-// ** React Imports
-import { ReactNode } from "react";
-
 // ** MUI Imports
 import { styled, useTheme } from "@mui/material/styles";
 import MuiSwipeableDrawer, {
@@ -8,19 +5,20 @@ import MuiSwipeableDrawer, {
 } from "@mui/material/SwipeableDrawer";
 
 // ** Type Import
-import { Settings } from "src/@core/context/settingsContext";
+import { LayoutProps } from "src/@core/layouts/types";
 
 interface Props {
-  hidden: boolean;
   navWidth: number;
   navHover: boolean;
-  settings: Settings;
   navVisible: boolean;
-  children: ReactNode;
   collapsedNavWidth: number;
   navigationBorderWidth: number;
+  hidden: LayoutProps["hidden"];
+  settings: LayoutProps["settings"];
+  children: LayoutProps["children"];
   setNavHover: (values: boolean) => void;
   setNavVisible: (value: boolean) => void;
+  navMenuProps: LayoutProps["verticalLayoutProps"]["navMenu"]["componentProps"];
 }
 
 const SwipeableDrawer = styled(MuiSwipeableDrawer)<SwipeableDrawerProps>({
@@ -51,6 +49,7 @@ const Drawer = (props: Props) => {
     settings,
     navVisible,
     setNavHover,
+    navMenuProps,
     setNavVisible,
     collapsedNavWidth,
     navigationBorderWidth
@@ -60,38 +59,20 @@ const Drawer = (props: Props) => {
   const theme = useTheme();
 
   // ** Vars
-  const { skin, navCollapsed } = settings;
+  const { mode, navCollapsed } = settings;
 
-  const drawerColor = () => {
-    if (skin === "semi-dark" && theme.palette.mode === "light") {
+  const drawerColors = () => {
+    if (mode === "semi-dark") {
       return {
-        "& .MuiTypography-root, & .MuiSvgIcon-root": {
+        backgroundColor: "customColors.darkBg",
+        "& .MuiTypography-root, & svg": {
           color: `rgba(${theme.palette.customColors.dark}, 0.87)`
         }
       };
-    } else if (skin === "semi-dark" && theme.palette.mode === "dark") {
+    } else
       return {
-        "& .MuiTypography-root, & .MuiSvgIcon-root": {
-          color: `rgba(${theme.palette.customColors.light}, 0.87)`
-        }
+        backgroundColor: "background.default"
       };
-    } else return {};
-  };
-
-  const drawerBgColor = () => {
-    if (skin === "semi-dark" && theme.palette.mode === "light") {
-      return {
-        backgroundColor: theme.palette.customColors.darkBg
-      };
-    } else if (skin === "semi-dark" && theme.palette.mode === "dark") {
-      return {
-        backgroundColor: theme.palette.customColors.lightBg
-      };
-    } else {
-      return {
-        backgroundColor: theme.palette.background.default
-      };
-    }
   };
 
   // Drawer Props for Mobile & Tablet screens
@@ -104,7 +85,7 @@ const Drawer = (props: Props) => {
     }
   };
 
-  // Drawer Props for Desktop screens
+  // Drawer Props for Laptop & Desktop screens
   const DesktopDrawerProps = {
     open: true,
     onOpen: () => null,
@@ -117,6 +98,18 @@ const Drawer = (props: Props) => {
     }
   };
 
+  let userNavMenuStyle = {};
+  let userNavMenuPaperStyle = {};
+  if (navMenuProps && navMenuProps.sx) {
+    userNavMenuStyle = navMenuProps.sx;
+  }
+  if (navMenuProps && navMenuProps.PaperProps && navMenuProps.PaperProps.sx) {
+    userNavMenuPaperStyle = navMenuProps.PaperProps.sx;
+  }
+  const userNavMenuProps = Object.assign({}, navMenuProps);
+  delete userNavMenuProps.sx;
+  delete userNavMenuProps.PaperProps;
+
   return (
     <SwipeableDrawer
       className="layout-vertical-nav"
@@ -124,21 +117,22 @@ const Drawer = (props: Props) => {
       {...(hidden ? { ...MobileDrawerProps } : { ...DesktopDrawerProps })}
       PaperProps={{
         sx: {
-          width: navCollapsed && !navHover ? collapsedNavWidth : navWidth
-        }
-      }}
-      sx={{
-        width: navCollapsed ? collapsedNavWidth : navWidth,
-        "& .MuiDrawer-paper": {
-          ...drawerColor(),
-          ...drawerBgColor(),
+          ...drawerColors(),
+          width: navCollapsed && !navHover ? collapsedNavWidth : navWidth,
           ...(!hidden && navCollapsed && navHover ? { boxShadow: 9 } : {}),
           borderRight:
             navigationBorderWidth === 0
               ? 0
-              : `${navigationBorderWidth}px solid ${theme.palette.divider}`
-        }
+              : `${navigationBorderWidth}px solid ${theme.palette.divider}`,
+          ...userNavMenuPaperStyle
+        },
+        ...navMenuProps?.PaperProps
       }}
+      sx={{
+        width: navCollapsed ? collapsedNavWidth : navWidth,
+        ...userNavMenuStyle
+      }}
+      {...userNavMenuProps}
     >
       {children}
     </SwipeableDrawer>

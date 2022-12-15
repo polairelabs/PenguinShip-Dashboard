@@ -6,6 +6,8 @@ const headers = {
   "Content-type": "application/json"
 };
 
+console.log("baseUrl", baseUrl);
+
 const http = axios.create({
   baseURL: baseUrl,
   headers

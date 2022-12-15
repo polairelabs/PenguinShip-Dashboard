@@ -17,9 +17,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 // ** Third Party Imports
 import clsx from "clsx";
 
-// ** Icons Imports
-import ChevronLeft from "mdi-material-ui/ChevronLeft";
-import ChevronRight from "mdi-material-ui/ChevronRight";
+// ** Icon Imports
+import Icon from "src/@core/components/icon";
 
 // ** Configs Import
 import themeConfig from "src/configs/themeConfig";
@@ -27,9 +26,8 @@ import themeConfig from "src/configs/themeConfig";
 // ** Utils
 import { hasActiveChild, removeChildren } from "src/@core/layouts/utils";
 
-// ** Types
-import { NavGroup } from "src/@core/layouts/types";
-import { Settings } from "src/@core/context/settingsContext";
+// ** Type Import
+import { NavGroup, LayoutProps } from "src/@core/layouts/types";
 
 // ** Custom Components Imports
 import VerticalNavItems from "./VerticalNavItems";
@@ -41,14 +39,14 @@ interface Props {
   item: NavGroup;
   navHover: boolean;
   parent?: NavGroup;
-  settings: Settings;
   navVisible?: boolean;
   groupActive: string[];
   collapsedNavWidth: number;
   currentActiveGroup: string[];
   navigationBorderWidth: number;
+  settings: LayoutProps["settings"];
   isSubToSub?: NavGroup | undefined;
-  saveSettings: (values: Settings) => void;
+  saveSettings: LayoutProps["saveSettings"];
   setGroupActive: (values: string[]) => void;
   setCurrentActiveGroup: (items: string[]) => void;
 }
@@ -59,16 +57,6 @@ const MenuItemTextWrapper = styled(Box)<BoxProps>(() => ({
   justifyContent: "space-between",
   transition: "opacity .25s ease-in-out",
   ...(themeConfig.menuTextTruncate && { overflow: "hidden" })
-}));
-
-const MenuGroupToggleRightIcon = styled(ChevronRight)(({ theme }) => ({
-  color: theme.palette.text.primary,
-  transition: "transform .25s ease-in-out"
-}));
-
-const MenuGroupToggleLeftIcon = styled(ChevronLeft)(({ theme }) => ({
-  color: theme.palette.text.primary,
-  transition: "transform .25s ease-in-out"
 }));
 
 const VerticalNavGroup = (props: Props) => {
@@ -91,8 +79,8 @@ const VerticalNavGroup = (props: Props) => {
   // ** Hooks & Vars
   const theme = useTheme();
   const router = useRouter();
-  const currentURL = router.pathname;
-  const { skin, direction, navCollapsed, verticalNavToggleType } = settings;
+  const currentURL = router.asPath;
+  const { direction, mode, navCollapsed, verticalNavToggleType } = settings;
 
   // ** Accordion menu group open toggle
   const toggleActiveGroup = (item: NavGroup, parent: NavGroup | undefined) => {
@@ -189,29 +177,13 @@ const VerticalNavGroup = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navHover]);
 
-  const IconTag = parent && !item.icon ? themeConfig.navSubItemIcon : item.icon;
+  const icon = parent && !item.icon ? themeConfig.navSubItemIcon : item.icon;
 
   const menuGroupCollapsedStyles =
     navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 };
 
-  const conditionalColor = () => {
-    if (skin === "semi-dark" && theme.palette.mode === "light") {
-      return {
-        color: `rgba(${theme.palette.customColors.dark}, 0.68) !important`
-      };
-    } else if (skin === "semi-dark" && theme.palette.mode === "dark") {
-      return {
-        color: `rgba(${theme.palette.customColors.light}, 0.68) !important`
-      };
-    } else {
-      return {
-        color: `${theme.palette.text.secondary} !important`
-      };
-    }
-  };
-
-  const conditionalBgColor = () => {
-    if (skin === "semi-dark" && theme.palette.mode === "light") {
+  const conditionalColors = () => {
+    if (mode === "semi-dark") {
       return {
         color: `rgba(${theme.palette.customColors.dark}, 0.87)`,
         "&:hover": {
@@ -224,25 +196,12 @@ const VerticalNavGroup = (props: Props) => {
           }
         }
       };
-    } else if (skin === "semi-dark" && theme.palette.mode === "dark") {
-      return {
-        color: `rgba(${theme.palette.customColors.light}, 0.87)`,
-        "&:hover": {
-          backgroundColor: `rgba(${theme.palette.customColors.light}, 0.04)`
-        },
-        "&.Mui-selected": {
-          backgroundColor: `rgba(${theme.palette.customColors.light}, 0.08)`,
-          "&:hover": {
-            backgroundColor: `rgba(${theme.palette.customColors.light}, 0.12)`
-          }
-        }
-      };
     } else {
       return {
         "&.Mui-selected": {
-          backgroundColor: theme.palette.action.hover,
+          backgroundColor: "action.hover",
           "&:hover": {
-            backgroundColor: theme.palette.action.hover
+            backgroundColor: "action.hover"
           }
         }
       };
@@ -256,11 +215,7 @@ const VerticalNavGroup = (props: Props) => {
           disablePadding
           className="nav-group"
           onClick={handleGroupClick}
-          sx={{
-            mt: 1.5,
-            px: "0 !important",
-            flexDirection: "column"
-          }}
+          sx={{ mt: 1.5, px: "0 !important", flexDirection: "column" }}
         >
           <ListItemButton
             className={clsx({
@@ -271,7 +226,7 @@ const VerticalNavGroup = (props: Props) => {
             sx={{
               py: 2.25,
               width: "100%",
-              ...conditionalBgColor(),
+              ...conditionalColors(),
               borderTopRightRadius: 100,
               borderBottomRightRadius: 100,
               transition: "padding-left .25s ease-in-out",
@@ -283,7 +238,13 @@ const VerticalNavGroup = (props: Props) => {
                 navCollapsed && !navHover
                   ? ((collapsedNavWidth - navigationBorderWidth - 24) / 2 - 5) /
                     4
-                  : 3.5
+                  : 3.5,
+              "&.Mui-selected.Mui-focusVisible": {
+                backgroundColor: "action.focus",
+                "&:hover": {
+                  backgroundColor: "action.focus"
+                }
+              }
             }}
           >
             {isSubToSub ? null : (
@@ -297,13 +258,8 @@ const VerticalNavGroup = (props: Props) => {
                 }}
               >
                 <UserIcon
-                  icon={IconTag}
-                  componentType="vertical-menu"
-                  iconProps={{
-                    sx: {
-                      ...(parent ? { fontSize: "0.875rem" } : {})
-                    }
-                  }}
+                  icon={icon as string}
+                  {...(parent && { fontSize: "0.875rem" })}
                 />
               </ListItemIcon>
             )}
@@ -328,7 +284,18 @@ const VerticalNavGroup = (props: Props) => {
                 sx={{
                   ml: 0.8,
                   display: "flex",
-                  alignItems: "center"
+                  alignItems: "center",
+                  "& svg": {
+                    transition: "transform .25s ease-in-out",
+                    color:
+                      mode === "semi-dark"
+                        ? `rgba(${theme.palette.customColors.dark}, 0.87)`
+                        : "text.primary",
+                    ...(groupActive.includes(item.title) && {
+                      transform:
+                        direction === "ltr" ? "rotate(90deg)" : "rotate(-90deg)"
+                    })
+                  }
                 }}
               >
                 {item.badgeContent ? (
@@ -346,27 +313,13 @@ const VerticalNavGroup = (props: Props) => {
                     }}
                   />
                 ) : null}
-                {direction === "ltr" ? (
-                  <MenuGroupToggleRightIcon
-                    sx={{
-                      ...conditionalColor(),
-                      ...(groupActive.includes(item.title)
-                        ? { transform: "rotate(90deg)" }
-                        : {})
-                    }}
-                  />
-                ) : (
-                  <MenuGroupToggleLeftIcon
-                    sx={{
-                      ...conditionalColor(),
-                      ...(groupActive.includes(item.title)
-                        ? {
-                            transform: "rotate(-90deg)"
-                          }
-                        : {})
-                    }}
-                  />
-                )}
+                <Icon
+                  icon={
+                    direction === "ltr"
+                      ? "mdi:chevron-right"
+                      : "mdi:chevron-left"
+                  }
+                />
               </Box>
             </MenuItemTextWrapper>
           </ListItemButton>
@@ -378,7 +331,7 @@ const VerticalNavGroup = (props: Props) => {
               pl: 0,
               width: "100%",
               ...menuGroupCollapsedStyles,
-              transition: "all .25s ease-in-out"
+              transition: "all 0.25s ease-in-out"
             }}
           >
             <VerticalNavItems

@@ -47,14 +47,14 @@ const ThemeComponent = (props: Props) => {
   // ** Pass ThemeOptions to CreateTheme Function to create partial theme without component overrides
   let theme = createTheme(coreThemeConfig);
 
-  // ** Deep Merge Component overrides of core and packages
+  // ** Deep Merge Component overrides of core and user
   const mergeComponentOverrides = (theme: Theme, settings: Settings) =>
     deepmerge(
       { ...overrides(theme, settings) },
       UserThemeOptions()?.components
     );
 
-  // ** Deep Merge Typography of core and packages
+  // ** Deep Merge Typography of core and user
   const mergeTypography = (theme: Theme) =>
     deepmerge(typography(theme), UserThemeOptions()?.typography);
 
@@ -73,7 +73,7 @@ const ThemeComponent = (props: Props) => {
     <ThemeProvider theme={theme}>
       <Direction direction={settings.direction}>
         <CssBaseline />
-        <GlobalStyles styles={() => GlobalStyling(theme, settings) as any} />
+        <GlobalStyles styles={() => GlobalStyling(theme) as any} />
         {children}
       </Direction>
     </ThemeProvider>

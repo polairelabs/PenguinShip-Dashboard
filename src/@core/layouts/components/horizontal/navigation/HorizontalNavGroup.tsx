@@ -20,10 +20,8 @@ import MuiListItem, { ListItemProps } from "@mui/material/ListItem";
 import clsx from "clsx";
 import { usePopper } from "react-popper";
 
-// ** Icons Imports
-import ChevronDown from "mdi-material-ui/ChevronDown";
-import ChevronLeft from "mdi-material-ui/ChevronLeft";
-import ChevronRight from "mdi-material-ui/ChevronRight";
+// ** Icon Imports
+import Icon from "src/@core/components/icon";
 
 // ** Theme Config Import
 import themeConfig from "src/configs/themeConfig";
@@ -97,7 +95,7 @@ const HorizontalNavGroup = (props: Props) => {
   // ** Hooks & Vars
   const theme = useTheme();
   const router = useRouter();
-  const currentURL = router.pathname;
+  const currentURL = router.asPath;
   const { skin, direction } = settings;
   const {
     navSubItemIcon,
@@ -131,12 +129,10 @@ const HorizontalNavGroup = (props: Props) => {
           }
         },
         {
-          name: "flip",
           enabled: true,
+          name: "flip",
           options: {
-            // @ts-ignore
-            boundary: window,
-            fallbackPlacements: ["auto-start", "right"]
+            boundary: document.body
           }
         }
       ]
@@ -167,8 +163,9 @@ const HorizontalNavGroup = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.asPath]);
 
-  const IconTag = item.icon ? item.icon : navSubItemIcon;
-  const ToggleIcon = direction === "rtl" ? ChevronLeft : ChevronRight;
+  const icon = item.icon ? item.icon : navSubItemIcon;
+  const toggleIcon =
+    direction === "rtl" ? "mdi:chevron-left" : "mdi:chevron-right";
 
   const WrapperCondition = horizontalMenuToggle === "click";
   const MainWrapper = WrapperCondition ? ClickAwayListener : "div";
@@ -215,11 +212,7 @@ const HorizontalNavGroup = (props: Props) => {
                 ? { onClick: handleMenuToggleOnClick }
                 : {})}
               sx={{
-                ...(menuOpen
-                  ? {
-                      backgroundColor: theme.palette.action.hover
-                    }
-                  : {}),
+                ...(menuOpen ? { backgroundColor: "action.hover" } : {}),
                 ...(!hasParent
                   ? {
                       px: 5.5,
@@ -228,7 +221,7 @@ const HorizontalNavGroup = (props: Props) => {
                         boxShadow: 3,
                         backgroundImage: (theme) =>
                           `linear-gradient(98deg, ${theme.palette.customColors.primaryGradient}, ${theme.palette.primary.main} 94%)`,
-                        "& .MuiTypography-root, & .MuiListItemIcon-root, & .MuiSvgIcon-root":
+                        "& .MuiTypography-root, & .MuiListItemIcon-root, & svg":
                           {
                             color: "common.white"
                           }
@@ -252,37 +245,20 @@ const HorizontalNavGroup = (props: Props) => {
                     display: "flex",
                     alignItems: "center",
                     flexDirection: "row",
-                    ...(menuTextTruncate && {
-                      overflow: "hidden"
-                    })
+                    ...(menuTextTruncate && { overflow: "hidden" })
                   }}
                 >
                   <ListItemIcon
-                    sx={{
-                      color: "text.primary",
-                      mr: !hasParent ? 2 : 3
-                    }}
+                    sx={{ color: "text.primary", mr: !hasParent ? 2 : 3 }}
                   >
                     <UserIcon
-                      icon={IconTag}
-                      componentType="horizontal-menu"
-                      iconProps={{
-                        sx:
-                          IconTag === navSubItemIcon
-                            ? {
-                                fontSize: "0.875rem"
-                              }
-                            : {
-                                fontSize: "1.375rem"
-                              }
-                      }}
+                      icon={icon}
+                      fontSize={
+                        icon === navSubItemIcon ? "0.875rem" : "1.375rem"
+                      }
                     />
                   </ListItemIcon>
-                  <Typography
-                    {...(menuTextTruncate && {
-                      noWrap: true
-                    })}
-                  >
+                  <Typography {...(menuTextTruncate && { noWrap: true })}>
                     <Translations text={item.title} />
                   </Typography>
                 </Box>
@@ -290,7 +266,8 @@ const HorizontalNavGroup = (props: Props) => {
                   sx={{
                     ml: 1.6,
                     display: "flex",
-                    alignItems: "center"
+                    alignItems: "center",
+                    color: "text.primary"
                   }}
                 >
                   {item.badgeContent ? (
@@ -308,21 +285,10 @@ const HorizontalNavGroup = (props: Props) => {
                       }}
                     />
                   ) : null}
-                  {hasParent ? (
-                    <ToggleIcon
-                      sx={{
-                        fontSize: "1.375rem",
-                        color: "text.primary"
-                      }}
-                    />
-                  ) : (
-                    <ChevronDown
-                      sx={{
-                        fontSize: "1.375rem",
-                        color: "text.primary"
-                      }}
-                    />
-                  )}
+                  <Icon
+                    icon={hasParent ? toggleIcon : "mdi:chevron-down"}
+                    fontSize="1.375rem"
+                  />
                 </Box>
               </Box>
             </ListItem>
@@ -355,9 +321,7 @@ const HorizontalNavGroup = (props: Props) => {
                       : 0,
                   ...(hasParent
                     ? { position: "fixed !important" }
-                    : {
-                        pt: skin === "bordered" ? 5.5 : 5.75
-                      })
+                    : { pt: skin === "bordered" ? 5.5 : 5.75 })
                 }}
               >
                 <NavigationMenu
@@ -371,10 +335,10 @@ const HorizontalNavGroup = (props: Props) => {
                       : {}),
                     ...(skin === "bordered"
                       ? {
-                          boxShadow: theme.shadows[0],
+                          boxShadow: 0,
                           border: `1px solid ${theme.palette.divider}`
                         }
-                      : { boxShadow: theme.shadows[4] })
+                      : { boxShadow: 4 })
                   }}
                 >
                   <HorizontalNavItems

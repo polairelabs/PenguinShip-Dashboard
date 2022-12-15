@@ -20,6 +20,17 @@ const Avatar = (theme: Theme) => {
     MuiAvatarGroup: {
       styleOverrides: {
         root: {
+          "&.pull-up": {
+            "& .MuiAvatar-root": {
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                zIndex: 2,
+                boxShadow: theme.shadows[3],
+                transform: "translateY(-4px)"
+              }
+            }
+          },
           justifyContent: "flex-end",
           ".MuiCard-root & .MuiAvatar-root": {
             borderColor: theme.palette.background.paper

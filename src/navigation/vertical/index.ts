@@ -1,10 +1,3 @@
-// ** Icon imports
-import HomeOutline from "mdi-material-ui/HomeOutline";
-import EmailOutline from "mdi-material-ui/EmailOutline";
-import ShieldOutline from "mdi-material-ui/ShieldOutline";
-import OfficeBuildingOutline from "mdi-material-ui/OfficeBuildingOutline";
-import ArchiveOutline from "mdi-material-ui/ArchiveOutline";
-
 // ** Type import
 import { VerticalNavItemsType } from "src/@core/layouts/types";
 
@@ -12,28 +5,20 @@ const navigation = (): VerticalNavItemsType => {
   return [
     {
       title: "Home",
-      icon: HomeOutline,
-      path: "/home"
+      path: "/home",
+      icon: "mdi:home-outline"
     },
     {
-      title: "Packages",
-      icon: ArchiveOutline,
-      path: "/packages/list"
+      title: "Second Page",
+      path: "/second-page",
+      icon: "mdi:email-outline"
     },
     {
-      title: "Addresses",
-      icon: OfficeBuildingOutline,
-      path: "/addresses/list"
-    },
-    {
-      title: "Shipments",
-      icon: ShieldOutline,
-      children: [
-        {
-          title: "Add",
-          path: "/shipments/add"
-        }
-      ]
+      path: "/acl",
+      action: "read",
+      subject: "acl-page",
+      title: "Access Control",
+      icon: "mdi:shield-outline"
     }
   ];
 };

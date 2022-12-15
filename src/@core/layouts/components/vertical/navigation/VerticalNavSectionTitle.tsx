@@ -40,7 +40,6 @@ const TypographyHeaderText = styled(Typography)<TypographyProps>(
     lineHeight: "normal",
     letterSpacing: "0.21px",
     textTransform: "uppercase",
-    color: theme.palette.text.disabled,
     fontWeight: theme.typography.fontWeightMedium
   })
 );
@@ -54,30 +53,25 @@ const VerticalNavSectionTitle = (props: Props) => {
   const theme = useTheme();
 
   // ** Vars
-  const { skin, navCollapsed } = settings;
+  const { mode, navCollapsed } = settings;
 
-  const conditionalStyling = () => {
-    if (skin === "semi-dark" && theme.palette.mode === "light") {
+  const conditionalColors = () => {
+    if (mode === "semi-dark") {
       return {
-        color: `rgba(${theme.palette.customColors.dark}, 0.38)`,
+        "& .MuiTypography-root": {
+          color: `rgba(${theme.palette.customColors.dark}, 0.38)`
+        },
         "& .MuiDivider-root:before, & .MuiDivider-root:after, & hr": {
           borderColor: `rgba(${theme.palette.customColors.dark}, ${
             navCollapsed && !navHover ? 0.3 : 0.12
           })`
         }
       };
-    } else if (skin === "semi-dark" && theme.palette.mode === "dark") {
-      return {
-        color: `rgba(${theme.palette.customColors.light}, 0.38)`,
-        "& .MuiDivider-root:before, & .MuiDivider-root:after, & hr": {
-          borderColor: `rgba(${theme.palette.customColors.light}, ${
-            navCollapsed && !navHover ? 0.3 : 0.12
-          })`
-        }
-      };
     } else {
       return {
-        color: theme.palette.text.disabled,
+        "& .MuiTypography-root": {
+          color: "text.disabled"
+        },
         "& .MuiDivider-root:before, & .MuiDivider-root:after, & hr": {
           borderColor: `rgba(${theme.palette.customColors.main}, ${
             navCollapsed && !navHover ? 0.3 : 0.12
@@ -92,7 +86,7 @@ const VerticalNavSectionTitle = (props: Props) => {
       <ListSubheader
         className="nav-section-title"
         sx={{
-          ...conditionalStyling(),
+          ...conditionalColors(),
           ...(navCollapsed && !navHover
             ? {
                 py: 3.5,
@@ -112,10 +106,7 @@ const VerticalNavSectionTitle = (props: Props) => {
               : {
                   width: "100%",
                   textTransform: "uppercase",
-                  "&:before, &:after": {
-                    top: 7,
-                    transform: "none"
-                  },
+                  "&:before, &:after": { top: 7, transform: "none" },
                   "& .MuiDivider-wrapper": {
                     px: 2.5,
                     fontSize: "0.75rem",

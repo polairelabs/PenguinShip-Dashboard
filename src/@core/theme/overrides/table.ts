@@ -41,7 +41,7 @@ const Table = (theme: Theme) => {
     MuiTableRow: {
       styleOverrides: {
         root: {
-          "& .MuiTableCell-head:first-child, & .MuiTableCell-root:first-child ":
+          "& .MuiTableCell-head:not(.MuiTableCell-paddingCheckbox):first-child, & .MuiTableCell-root:not(.MuiTableCell-paddingCheckbox):first-child ":
             {
               paddingLeft: theme.spacing(5)
             },
@@ -54,11 +54,10 @@ const Table = (theme: Theme) => {
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          "& .MuiButton-root": {
-            textTransform: "uppercase",
-            color: theme.palette.text.secondary
-          }
+          borderBottom: `1px solid ${theme.palette.divider}`
+        },
+        paddingCheckbox: {
+          paddingLeft: theme.spacing(2)
         },
         stickyHeader: {
           backgroundColor: theme.palette.customColors.tableHeaderBg

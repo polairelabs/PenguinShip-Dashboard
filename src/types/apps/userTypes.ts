@@ -16,17 +16,17 @@ export type PackagesType = {
 };
 
 export type AddressesType = {
-  id: number,
-  street1: string,
-  street2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  residential: string,
-  name: string,
-  company: string,
-  phone: string,
-  email: string,
-  verified: boolean
-}
+  id: number;
+  street1: string;
+  street2: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  residential: string;
+  name: string;
+  company: string;
+  phone: string;
+  email: string;
+  verified: boolean;
+};

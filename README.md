@@ -1,6 +1,6 @@
 # NavashipFront
 
-To set up the project. First, install the project dependencies 
+To set up the project. First, install the project dependencies
 
 `npm install`
 

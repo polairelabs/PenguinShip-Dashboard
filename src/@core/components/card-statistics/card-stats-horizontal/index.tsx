@@ -6,9 +6,8 @@ import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import MuiAvatar, { AvatarProps } from "@mui/material/Avatar";
 
-// ** Icons Imports
-import ChevronUp from "mdi-material-ui/ChevronUp";
-import ChevronDown from "mdi-material-ui/ChevronDown";
+// ** Icon Imports
+import Icon from "src/@core/components/icon";
 
 // ** Types Imports
 import { CardStatsHorizontalProps } from "src/@core/components/card-statistics/types";
@@ -27,9 +26,14 @@ const Avatar = styled(MuiAvatar)<AvatarProps>(({ theme }) => ({
 
 const CardStatsHorizontal = (props: CardStatsHorizontalProps) => {
   // ** Props
-  const { title, color, icon, stats, trend, trendNumber } = props;
-
-  const TrendIcon = trend === "positive" ? ChevronUp : ChevronDown;
+  const {
+    title,
+    icon,
+    stats,
+    trendNumber,
+    color = "primary",
+    trend = "positive"
+  } = props;
 
   return (
     <Card
@@ -56,20 +60,31 @@ const CardStatsHorizontal = (props: CardStatsHorizontalProps) => {
             >
               <Typography
                 variant="h6"
-                sx={{
-                  mr: 1,
-                  fontWeight: 600,
-                  lineHeight: 1.05
-                }}
+                sx={{ mr: 1, fontWeight: 600, lineHeight: 1.05 }}
               >
                 {stats}
               </Typography>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <TrendIcon
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                <Box
+                  component="span"
                   sx={{
+                    display: "inline-flex",
                     color: trend === "positive" ? "success.main" : "error.main"
                   }}
-                />
+                >
+                  <Icon
+                    icon={
+                      trend === "positive"
+                        ? "mdi:chevron-up"
+                        : "mdi:chevron-down"
+                    }
+                  />
+                </Box>
                 <Typography
                   variant="caption"
                   sx={{
@@ -89,8 +104,3 @@ const CardStatsHorizontal = (props: CardStatsHorizontalProps) => {
 };
 
 export default CardStatsHorizontal;
-
-CardStatsHorizontal.defaultProps = {
-  color: "primary",
-  trend: "positive"
-};

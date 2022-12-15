@@ -10,17 +10,14 @@ import Switch from "@mui/material/Switch";
 import Divider from "@mui/material/Divider";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
-import InputLabel from "@mui/material/InputLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import Typography from "@mui/material/Typography";
 import Box, { BoxProps } from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import MuiDrawer, { DrawerProps } from "@mui/material/Drawer";
 
-// ** Icons Imports
-import Check from "mdi-material-ui/Check";
-import Close from "mdi-material-ui/Close";
-import CogOutline from "mdi-material-ui/CogOutline";
+// ** Icon Imports
+import Icon from "src/@core/components/icon";
 
 // ** Type Import
 import { Settings } from "src/@core/context/settingsContext";
@@ -37,6 +34,7 @@ const Toggler = styled(Box)<BoxProps>(({ theme }) => ({
   padding: theme.spacing(2),
   zIndex: theme.zIndex.modal,
   transform: "translateY(-50%)",
+  color: theme.palette.common.white,
   backgroundColor: theme.palette.primary.main,
   borderTopLeftRadius: theme.shape.borderRadius,
   borderBottomLeftRadius: theme.shape.borderRadius
@@ -106,7 +104,7 @@ const Customizer = () => {
   return (
     <div className="customizer">
       <Toggler className="customizer-toggler" onClick={() => setOpen(true)}>
-        <CogOutline sx={{ height: 20, width: 20, color: "common.white" }} />
+        <Icon icon="mdi:cog-outline" fontSize={20} />
       </Toggler>
       <Drawer open={open} hideBackdrop anchor="right" variant="persistent">
         <Box
@@ -136,7 +134,7 @@ const Customizer = () => {
               transform: "translateY(-50%)"
             }}
           >
-            <Close fontSize="small" />
+            <Icon icon="mdi:close" fontSize={20} />
           </IconButton>
         </Box>
         <PerfectScrollbar options={{ wheelPropagation: false }}>
@@ -144,11 +142,7 @@ const Customizer = () => {
             <Typography
               component="p"
               variant="caption"
-              sx={{
-                mb: 4,
-                color: "text.disabled",
-                textTransform: "uppercase"
-              }}
+              sx={{ mb: 4, color: "text.disabled", textTransform: "uppercase" }}
             >
               Theming
             </Typography>
@@ -179,6 +173,33 @@ const Customizer = () => {
                   label="Bordered"
                   control={<Radio />}
                 />
+              </RadioGroup>
+            </Box>
+
+            {/* Mode */}
+            <Box sx={{ mb: 4 }}>
+              <Typography>Mode</Typography>
+              <RadioGroup
+                row
+                value={mode}
+                onChange={(e) => handleChange("mode", e.target.value as any)}
+                sx={{
+                  "& .MuiFormControlLabel-label": {
+                    fontSize: ".875rem",
+                    color: "text.secondary"
+                  }
+                }}
+              >
+                <FormControlLabel
+                  value="light"
+                  label="Light"
+                  control={<Radio />}
+                />
+                <FormControlLabel
+                  value="dark"
+                  label="Dark"
+                  control={<Radio />}
+                />
                 {layout === "horizontal" ? null : (
                   <FormControlLabel
                     value="semi-dark"
@@ -189,43 +210,8 @@ const Customizer = () => {
               </RadioGroup>
             </Box>
 
-            {/* Mode */}
-            <Box sx={{ mb: 4 }}>
-              <Typography>Mode</Typography>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <InputLabel
-                  htmlFor="change-mode"
-                  sx={{
-                    cursor: "pointer",
-                    fontSize: "0.875rem",
-                    color: "text.secondary"
-                  }}
-                >
-                  Light
-                </InputLabel>
-                <Switch
-                  id="change-mode"
-                  name="change-mode"
-                  checked={mode === "dark"}
-                  onChange={(e) =>
-                    handleChange("mode", e.target.checked ? "dark" : "light")
-                  }
-                />
-                <InputLabel
-                  htmlFor="change-mode"
-                  sx={{
-                    cursor: "pointer",
-                    fontSize: "0.875rem",
-                    color: "text.secondary"
-                  }}
-                >
-                  Dark
-                </InputLabel>
-              </Box>
-            </Box>
-
             {/* Color Picker */}
-            <Box>
+            <div>
               <Typography sx={{ mb: 2.5 }}>Primary Color</Typography>
               <Box sx={{ display: "flex" }}>
                 <ColorBox
@@ -238,7 +224,9 @@ const Customizer = () => {
                       : { "&:hover": { boxShadow: 4 } })
                   }}
                 >
-                  {themeColor === "primary" ? <Check fontSize="small" /> : null}
+                  {themeColor === "primary" ? (
+                    <Icon icon="mdi:check" fontSize={20} />
+                  ) : null}
                 </ColorBox>
                 <ColorBox
                   onClick={() => handleChange("themeColor", "secondary")}
@@ -250,7 +238,7 @@ const Customizer = () => {
                   }}
                 >
                   {themeColor === "secondary" ? (
-                    <Check fontSize="small" />
+                    <Icon icon="mdi:check" fontSize={20} />
                   ) : null}
                 </ColorBox>
                 <ColorBox
@@ -262,7 +250,9 @@ const Customizer = () => {
                       : { "&:hover": { boxShadow: 4 } })
                   }}
                 >
-                  {themeColor === "success" ? <Check fontSize="small" /> : null}
+                  {themeColor === "success" ? (
+                    <Icon icon="mdi:check" fontSize={20} />
+                  ) : null}
                 </ColorBox>
                 <ColorBox
                   onClick={() => handleChange("themeColor", "error")}
@@ -273,7 +263,9 @@ const Customizer = () => {
                       : { "&:hover": { boxShadow: 4 } })
                   }}
                 >
-                  {themeColor === "error" ? <Check fontSize="small" /> : null}
+                  {themeColor === "error" ? (
+                    <Icon icon="mdi:check" fontSize={20} />
+                  ) : null}
                 </ColorBox>
                 <ColorBox
                   onClick={() => handleChange("themeColor", "warning")}
@@ -284,7 +276,9 @@ const Customizer = () => {
                       : { "&:hover": { boxShadow: 4 } })
                   }}
                 >
-                  {themeColor === "warning" ? <Check fontSize="small" /> : null}
+                  {themeColor === "warning" ? (
+                    <Icon icon="mdi:check" fontSize={20} />
+                  ) : null}
                 </ColorBox>
                 <ColorBox
                   onClick={() => handleChange("themeColor", "info")}
@@ -296,23 +290,21 @@ const Customizer = () => {
                       : { "&:hover": { boxShadow: 4 } })
                   }}
                 >
-                  {themeColor === "info" ? <Check fontSize="small" /> : null}
+                  {themeColor === "info" ? (
+                    <Icon icon="mdi:check" fontSize={20} />
+                  ) : null}
                 </ColorBox>
               </Box>
-            </Box>
+            </div>
           </CustomizerSpacing>
 
-          <Divider sx={{ m: 0 }} />
+          <Divider sx={{ m: "0 !important" }} />
 
           <CustomizerSpacing className="customizer-body">
             <Typography
               component="p"
               variant="caption"
-              sx={{
-                mb: 4,
-                color: "text.disabled",
-                textTransform: "uppercase"
-              }}
+              sx={{ mb: 4, color: "text.disabled", textTransform: "uppercase" }}
             >
               Layout
             </Typography>
@@ -455,17 +447,13 @@ const Customizer = () => {
             </Box>
           </CustomizerSpacing>
 
-          <Divider sx={{ m: 0 }} />
+          <Divider sx={{ m: "0 !important" }} />
 
           <CustomizerSpacing className="customizer-body">
             <Typography
               component="p"
               variant="caption"
-              sx={{
-                mb: 4,
-                color: "text.disabled",
-                textTransform: "uppercase"
-              }}
+              sx={{ mb: 4, color: "text.disabled", textTransform: "uppercase" }}
             >
               Menu
             </Typography>

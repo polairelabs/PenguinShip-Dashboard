@@ -24,8 +24,8 @@ const FooterContent = () => {
           ❤️
         </Box>
         {` by `}
-        <Link target="_blank" href="https://polairelabs.com">
-          Polairelabs
+        <Link target="_blank" href="https://themeselection.com/">
+          ThemeSelection
         </Link>
       </Typography>
       {hidden ? null : (
@@ -38,10 +38,10 @@ const FooterContent = () => {
           }}
         >
           <Link target="_blank" href="https://themeselection.com/license/">
-            Terms & Conditions
+            License
           </Link>
-          <Link target="_blank" href="https://polairelabs.com/">
-            About Us
+          <Link target="_blank" href="https://themeselection.com/">
+            More Themes
           </Link>
           <Link
             target="_blank"
@@ -49,7 +49,7 @@ const FooterContent = () => {
           >
             Documentation
           </Link>
-          <Link target="_blank" href="https://polairelabs.com/support/">
+          <Link target="_blank" href="https://themeselection.com/support/">
             Support
           </Link>
         </Box>

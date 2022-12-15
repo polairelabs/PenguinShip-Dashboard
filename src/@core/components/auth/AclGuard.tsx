@@ -36,7 +36,7 @@ const AclGuard = (props: AclGuardProps) => {
   const auth = useAuth();
   const router = useRouter();
 
-  // If guestGuard is true and packages is not logged in or its an error page, render the page without checking access
+  // If guestGuard is true and user is not logged in or its an error page, render the page without checking access
   if (
     guestGuard ||
     router.route === "/404" ||
@@ -46,12 +46,12 @@ const AclGuard = (props: AclGuardProps) => {
     return <>{children}</>;
   }
 
-  // User is logged in, build ability for the packages based on his role
+  // User is logged in, build ability for the user based on his role
   if (auth.user && auth.user.role && !ability) {
     setAbility(buildAbilityFor(auth.user.role, aclAbilities.subject));
   }
 
-  // Check the access of current packages and render pages
+  // Check the access of current user and render pages
   if (ability && ability.can(aclAbilities.action, aclAbilities.subject)) {
     return (
       <AbilityContext.Provider value={ability}>
@@ -60,7 +60,7 @@ const AclGuard = (props: AclGuardProps) => {
     );
   }
 
-  // Render Not Authorized component if the current packages has limited access
+  // Render Not Authorized component if the current user has limited access
   return (
     <BlankLayout>
       <NotAuthorized />

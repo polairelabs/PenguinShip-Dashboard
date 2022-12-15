@@ -1,22 +1,28 @@
 // ** MUI Imports
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 
-// ** Icons Imports
-import DotsVertical from "mdi-material-ui/DotsVertical";
-
 // ** Custom Components Imports
 import CustomAvatar from "src/@core/components/mui/avatar";
+import OptionsMenu from "src/@core/components/option-menu";
 
 // ** Types Imports
 import { CardStatsVerticalProps } from "src/@core/components/card-statistics/types";
 
 const CardStatsVertical = (props: CardStatsVerticalProps) => {
   // ** Props
-  const { title, subtitle, color, icon, stats, trend, trendNumber } = props;
+  const {
+    title,
+    subtitle,
+    icon,
+    stats,
+    trendNumber,
+    optionsMenuProps,
+    color = "primary",
+    trend = "positive"
+  } = props;
 
   return (
     <Card>
@@ -32,14 +38,18 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
           <CustomAvatar color={color} sx={{ boxShadow: 3, mr: 4 }}>
             {icon}
           </CustomAvatar>
-          <IconButton
-            size="small"
-            aria-label="settings"
-            className="card-more-options"
-            sx={{ color: "text.secondary" }}
-          >
-            <DotsVertical />
-          </IconButton>
+          {optionsMenuProps ? (
+            <OptionsMenu {...optionsMenuProps} />
+          ) : (
+            <OptionsMenu
+              options={["Refresh", "Share", "Update"]}
+              iconButtonProps={{
+                size: "small",
+                className: "card-more-options",
+                sx: { color: "text.secondary" }
+              }}
+            />
+          )}
         </Box>
         <Typography sx={{ fontWeight: 600, fontSize: "0.875rem" }}>
           {title}
@@ -59,9 +69,7 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
           <Typography
             component="sup"
             variant="caption"
-            sx={{
-              color: trend === "positive" ? "success.main" : "error.main"
-            }}
+            sx={{ color: trend === "positive" ? "success.main" : "error.main" }}
           >
             {trendNumber}
           </Typography>
@@ -73,8 +81,3 @@ const CardStatsVertical = (props: CardStatsVerticalProps) => {
 };
 
 export default CardStatsVertical;
-
-CardStatsVertical.defaultProps = {
-  color: "primary",
-  trend: "positive"
-};
