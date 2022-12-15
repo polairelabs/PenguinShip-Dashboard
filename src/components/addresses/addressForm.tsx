@@ -26,7 +26,7 @@ export type AddressDetails = {
   country: string;
 };
 
-const AddressForm = ({ handleDialogToggle }) => {
+const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>({
     street1: "",
     street2: "",
@@ -56,7 +56,7 @@ const AddressForm = ({ handleDialogToggle }) => {
     city: yup.string().required(),
     country: yup.string().required(),
     state: yup.string().required(),
-    zip: yup.string().required()
+    zip: yup.string().required(),
   });
 
   const {
@@ -76,9 +76,12 @@ const AddressForm = ({ handleDialogToggle }) => {
 
   const handleData = (data: AddressDetails) => {
     dispatch(addAddress({ ...data }));
-    toast.success("Address was successfully added", {
+    toast.success("Address was successfully created", {
       position: "top-center"
     });
+    if (setCreatedAddress) {
+      setCreatedAddress(true);
+    }
     handleDialogToggle();
   };
 
@@ -245,11 +248,11 @@ const AddressForm = ({ handleDialogToggle }) => {
                   display: "flex",
                   flexWrap: "wrap",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "flex-end",
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  Add address
+                  Create address
                 </Button>
               </Box>
             </Grid>

@@ -152,7 +152,7 @@ const SidebarAddPackage = (props: SidebarAddPackageType) => {
       sx={{ "& .MuiDrawer-paper": { width: { xs: 300, sm: 400 } } }}
     >
       <Header>
-        <Typography variant="h6">Add Package</Typography>
+        <Typography variant="h6">Add Parcel</Typography>
         <Close
           fontSize="small"
           onClick={handleClose}

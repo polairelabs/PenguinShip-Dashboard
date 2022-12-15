@@ -8,20 +8,12 @@ import {
   Typography
 } from "@mui/material";
 import { Close } from "mdi-material-ui";
-import PackageForm from "./packagesForm";
+import PackageForm from "./packageForm";
 
-const PackageModal = ({ open, handleDialogToggle }) => {
+// setCreatedPackage will track if a new package was created
+const PackageModal = ({ open, handleDialogToggle, setCreatedPackage }) => {
   return (
-    <Box
-      sx={{
-        p: 5,
-        pb: 3,
-        display: "flex",
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "space-between"
-      }}
-    >
+    <Box>
       <Dialog
         fullWidth
         open={open}
@@ -32,7 +24,10 @@ const PackageModal = ({ open, handleDialogToggle }) => {
       >
         <DialogTitle sx={{ pt: 12, ml: { xs: "1rem", sm: "2.2rem" } }}>
           <Typography variant="h4" component="span" sx={{ mb: 2 }}>
-            ADD NEW PACKAGE
+            Create Parcel
+          </Typography>
+          <Typography variant="body2">
+            This is a form used to save a parcel for future use.
           </Typography>
           <IconButton
             size="small"
@@ -51,7 +46,7 @@ const PackageModal = ({ open, handleDialogToggle }) => {
             position: "relative"
           }}
         >
-          <PackageForm handleDialogToggle={handleDialogToggle} />
+          <PackageForm handleDialogToggle={handleDialogToggle} setCreatedPackage={setCreatedPackage} />
         </DialogContent>
       </Dialog>
     </Box>

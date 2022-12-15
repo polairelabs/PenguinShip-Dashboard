@@ -1,80 +1,70 @@
-// ** Redux Imports
 import { Dispatch } from "redux";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-// ** Axios Imports
-import axios from "axios";
 import BaseApi from "../../../api/api";
-
-interface DataParams {
-  weight: number;
-  lengthObj: number;
-  width: number;
-  height: number;
-}
+import { Rate } from "../../../types/apps/navashipInterfaces";
 
 interface Redux {
   getState: any;
   dispatch: Dispatch<any>;
 }
 
-// ** Fetch Packages
-export const fetchData = createAsyncThunk(
-  "appPackages/fetchData",
-  async (p) => {
-    const response = await axios.get("http://localhost:8080/apps/packages/");
-
-    return response.data;
-  }
-);
-
-// ** Add User
-export const addPackages = createAsyncThunk(
-  "appPackages/addPackage",
+export const createShipment = createAsyncThunk(
+  "shipments/createShipment",
   async (
-    data: { [key: string]: number | string },
+    data: { [key: string]: number | string | undefined },
     { getState, dispatch }: Redux
   ) => {
-    const response = await BaseApi.post("/shipments", data);
-    dispatch(fetchData());
-
-    return response;
+    console.log("A.A Creating this shipment", data);
+    const res = await BaseApi.post("/shipments", data);
+    console.log("res", res);
+    return res;
   }
 );
 
-// ** Delete Packages
-export const deletePackages = createAsyncThunk(
-  "appPackages/deletePackage",
-  async (id: number | string, { getState, dispatch }: Redux) => {
-    const response = await axios.delete(
-      "http://localhost:8080/apps/packages/",
-      {
-        data: id
-      }
-    );
-    dispatch(fetchData());
-
-    return response.data;
+export const buyShipmentRate = createAsyncThunk(
+  "shipments/setShipmentRate",
+  async (
+    data: { [key: string]: number | string | undefined },
+    { getState, dispatch }: Redux
+  ) => {
+    return await BaseApi.post("/shipments/buy", data);
   }
 );
 
-export const appPackagesSlice = createSlice({
-  name: "appPackages",
+export const shipmentsSlice = createSlice({
+  name: "shipments",
   initialState: {
-    data: [],
+    data: {},
+    rates: [] as Rate[],
     total: 1,
     params: {},
-    allData: []
+    allData: [],
+    createShipmentStatus: "",
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchData.fulfilled, (state, action) => {
-      state.data = action.payload.packages;
-      state.total = action.payload.total;
-      state.params = action.payload.params;
-      state.allData = action.payload.allData;
-    });
+    builder
+      .addCase(createShipment.fulfilled, (state, action) => {
+        state.data = action.payload;
+        state.rates = action.payload.rates;
+        state.rates = action.payload.rates.sort((r1: Rate, r2: Rate) => r1?.rate - r2.rate);
+        state.createShipmentStatus = "CREATED";
+        console.log(state.createShipmentStatus);
+        // state.total = action.payload.total;
+        // state.params = action.payload.params;
+        // state.allData = action.payload.allData;
+      })
+      .addCase(createShipment.rejected, (state, action) => {
+        state.data = {};
+        state.rates = [];
+        state.createShipmentStatus = "FAILED";
+        console.log(state.createShipmentStatus);
+      })
+      .addCase(buyShipmentRate.rejected, (state, action) => {
+        console.log("REJECTED BUY!!");
+      });
   }
 });
 
-export default appPackagesSlice.reducer;
+export default shipmentsSlice.reducer;

@@ -11,18 +11,10 @@ import {
 import { Close } from "mdi-material-ui";
 import AddressForm from "./addressForm";
 
-const AddressModal = ({ open, handleDialogToggle }) => {
+// setCreatedAddress will track if a new address was created
+const AddressModal = ({ open, handleDialogToggle, setCreatedAddress }) => {
   return (
-    <Box
-      sx={{
-        p: 5,
-        pb: 3,
-        display: "flex",
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "space-between"
-      }}
-    >
+    <Box>
       <Dialog
         fullWidth
         open={open}
@@ -33,7 +25,7 @@ const AddressModal = ({ open, handleDialogToggle }) => {
       >
         <DialogTitle sx={{ pt: 12, ml: { xs: "1rem", sm: "2.2rem" } }}>
           <Typography variant="h4" component="span" sx={{ mb: 2 }}>
-            ADD NEW ADDRESS
+            Create Address
           </Typography>
           <Typography variant="body2">
             This is an autocomplete form to save an address for future use.
@@ -55,7 +47,7 @@ const AddressModal = ({ open, handleDialogToggle }) => {
             position: "relative"
           }}
         >
-          <AddressForm handleDialogToggle={handleDialogToggle} />
+          <AddressForm handleDialogToggle={handleDialogToggle} setCreatedAddress={setCreatedAddress} />
         </DialogContent>
       </Dialog>
     </Box>

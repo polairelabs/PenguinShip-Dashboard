@@ -46,6 +46,7 @@ export const BaseApi = {
       const response = await http.post(url, body);
       return Promise.resolve(response.data);
     } catch (error) {
+      console.log("error", error);
       return Promise.reject(error);
     }
   },

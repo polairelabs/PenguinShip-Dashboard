@@ -1,25 +1,36 @@
-// ** Type import
 import { VerticalNavItemsType } from "src/@core/layouts/types";
 
 const navigation = (): VerticalNavItemsType => {
   return [
     {
       title: "Home",
-      path: "/home",
-      icon: "mdi:home-outline"
+      icon: "mdi:home-outline",
+      path: "/home"
     },
     {
-      title: "Second Page",
-      path: "/second-page",
-      icon: "mdi:email-outline"
+      title: "Parcels",
+      icon: "mdi:archive-outline",
+      path: "/packages/list"
     },
     {
-      path: "/acl",
-      action: "read",
-      subject: "acl-page",
-      title: "Access Control",
-      icon: "mdi:shield-outline"
-    }
+      title: "Addresses",
+      icon: "mdi:office-building-outline",
+      path: "/addresses/list"
+    },
+    {
+      title: "Shipments",
+      icon: "mdi:shield-outline",
+      children: [
+        {
+          title: "Create Label",
+          path: "/shipments/add"
+        },
+        {
+          title: "My Labels",
+          path: "/shipments/list"
+        }
+      ]
+    },
   ];
 };
 

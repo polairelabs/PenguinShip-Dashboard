@@ -5,8 +5,6 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CardContent from "@mui/material/CardContent";
-import AddressAutoCompleteField from "../fields/addressAutoCompleteField";
-import { addAddress } from "../../store/apps/addresses";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
 import { useForm, Controller } from "react-hook-form";
@@ -26,7 +24,7 @@ export type PackageDetails = {
   monetaryValue: string;
 };
 
-const PackageForm = ({ handleDialogToggle }) => {
+const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
   const [packageDetails, setPackageDetails] = useState<PackageDetails>({
     name: "",
     weight: "",
@@ -118,6 +116,11 @@ const PackageForm = ({ handleDialogToggle }) => {
     toast.success("Package was successfully added", {
       position: "top-center"
     });
+
+    if (setCreatedPackage) {
+      setCreatedPackage(true);
+    }
+
     handleDialogToggle();
   };
 
@@ -232,7 +235,7 @@ const PackageForm = ({ handleDialogToggle }) => {
                     2. Package Dimensions
                   </Typography>
                 </Grid>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={4}>
                   <Controller
                     name="length"
                     control={control}
@@ -261,7 +264,7 @@ const PackageForm = ({ handleDialogToggle }) => {
                     </FormHelperText>
                   )}
                 </Grid>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={4}>
                   <Controller
                     name="width"
                     control={control}
@@ -290,7 +293,7 @@ const PackageForm = ({ handleDialogToggle }) => {
                     </FormHelperText>
                   )}
                 </Grid>
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                   <Controller
                     name="height"
                     control={control}
@@ -328,11 +331,11 @@ const PackageForm = ({ handleDialogToggle }) => {
                   display: "flex",
                   flexWrap: "wrap",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "flex-end",
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  Add package
+                  Create Parcel
                 </Button>
               </Box>
             </Grid>

@@ -2,7 +2,6 @@ import { useState, useEffect, MouseEvent, useCallback } from "react";
 
 import Link from "next/link";
 
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
@@ -21,19 +20,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { fetchPackages, deletePackage } from "src/store/apps/packages";
 
-// ** Types Imports
 import { RootState, AppDispatch } from "src/store";
-import { PackagesType } from "src/types/apps/userTypes";
+import { Package } from "src/types/apps/navashipInterfaces";
 
-// ** Custom Components Imports
 import TableHeader from "src/views/packages/list/TableHeader";
-import AddPackageDrawer from "src/views/packages/list/AddPackagesDrawer";
-import Button from "@mui/material/Button";
-import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 
 interface CellType {
-  row: PackagesType;
+  row: Package;
 }
 
 const MenuItemLink = styled("a")(({ theme }) => ({
@@ -108,58 +102,55 @@ const RowOptions = ({ id }: { id: number | string }) => {
 const columns = [
   {
     flex: 0.2,
-    minWidth: 230,
+    minWidth: 250,
     field: "name",
     headerName: "Name",
     renderCell: ({ row }: CellType) => {
-      const { id, name, weight } = row;
-
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              flexDirection: "column"
-            }}
-          >
-            <Typography>{row.name}</Typography>
-          </Box>
-        </Box>
-      );
-    }
-  },
-  {
-    flex: 0.2,
-    minWidth: 250,
-    field: "weight",
-    headerName: "weight",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap variant="body2">
-          {row.weight}
+        <Typography noWrap>
+          {row.name}
         </Typography>
       );
     }
   },
   {
     flex: 0.15,
-    field: "value",
     minWidth: 150,
-    headerName: "Value",
+    field: "value",
+    headerName: "Value ($)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography
-            noWrap
-            sx={{
-              color: "text.secondary",
-              textTransform: "capitalize"
-            }}
-          >
-            {row.value}
-          </Typography>
-        </Box>
+        <Typography noWrap>
+          {row.value}
+        </Typography>
+      );
+    }
+  },
+  {
+    flex: 0.15,
+    minWidth: 120,
+    field: "weight",
+    headerName: "Weight (oz)",
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap>
+          {row.weight}
+        </Typography>
+      );
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
+    field: "length",
+    headerName: "Length (in)",
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap sx={{
+          color: "text.secondary",
+        }}>
+          {row.length}
+        </Typography>
       );
     }
   },
@@ -167,11 +158,28 @@ const columns = [
     flex: 0.1,
     minWidth: 110,
     field: "width",
-    headerName: "Width",
+    headerName: "Width (in)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+        <Typography noWrap sx={{
+          color: "text.secondary",
+        }}>
           {row.width}
+        </Typography>
+      );
+    }
+  },
+  {
+    flex: 0.1,
+    minWidth: 110,
+    field: "height",
+    headerName: "Height (in)",
+    renderCell: ({ row }: CellType) => {
+      return (
+        <Typography noWrap sx={{
+          color: "text.secondary",
+        }}>
+          {row.height}
         </Typography>
       );
     }
@@ -188,7 +196,6 @@ const columns = [
 
 const PackagesList = () => {
   const [value, setValue] = useState<number>(10);
-  const [addPackageOpen, setAddPackageOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -202,23 +209,12 @@ const PackagesList = () => {
     setOpen(!open);
   };
 
-  const toggleAddPackageDrawer = () => setAddPackageOpen(!addPackageOpen);
-
-  const data = () => {
-    debugger;
-    console.log("STORE DATA", store.data);
-    if (store.data) {
-      return store.data;
-    }
-    return "";
-  };
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={handleDialogToggle} toggleLabel="Add package" />
-          <PackageModal open={open} handleDialogToggle={handleDialogToggle} />
+          <TableHeader toggle={handleDialogToggle} toggleLabel="Add parcel" />
+          <PackageModal open={open} handleDialogToggle={handleDialogToggle} setCreatedPackage={undefined} />
 
           <DataGrid
             autoHeight
@@ -232,7 +228,6 @@ const PackagesList = () => {
           />
         </Card>
       </Grid>
-      <AddPackageDrawer open={addPackageOpen} toggle={toggleAddPackageDrawer} />
     </Grid>
   );
 };

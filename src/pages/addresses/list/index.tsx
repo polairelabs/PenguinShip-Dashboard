@@ -19,14 +19,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAddresses } from "src/store/apps/addresses";
 
 import { RootState, AppDispatch } from "src/store";
-import { AddressesType } from "src/types/apps/userTypes";
+import { Address } from "src/types/apps/navashipInterfaces";
 
 import AddressModal from "src/components/addresses/addressModal";
-import Button from "@mui/material/Button";
 import TableHeader from "../../../views/packages/list/TableHeader";
 
 interface CellType {
-  row: AddressesType;
+  row: Address;
 }
 
 const MenuItemLink = styled("a")(({ theme }) => ({
@@ -39,8 +38,6 @@ const MenuItemLink = styled("a")(({ theme }) => ({
 }));
 
 const RowOptions = ({ id }: { id: number | string }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const rowOptionsOpen = Boolean(anchorEl);
@@ -98,7 +95,7 @@ const columns = [
     headerName: "Street 1",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap variant="body2">
+        <Typography noWrap>
           {row.street1}
         </Typography>
       );
@@ -106,22 +103,16 @@ const columns = [
   },
   {
     flex: 0.15,
-    field: "street2",
     minWidth: 150,
+    field: "street2",
     headerName: "Street 2",
     renderCell: ({ row }: CellType) => {
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography
-            noWrap
-            sx={{
-              color: "text.secondary",
-              textTransform: "capitalize"
-            }}
-          >
-            {row.street2}
-          </Typography>
-        </Box>
+        <Typography noWrap sx={{
+          color: "text.secondary",
+        }}>
+          {row.street2}
+        </Typography>
       );
     }
   },
@@ -132,7 +123,7 @@ const columns = [
     field: "city",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+        <Typography noWrap>
           {row.city}
         </Typography>
       );
@@ -145,7 +136,7 @@ const columns = [
     headerName: "Zip Code",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+        <Typography noWrap>
           {row.zip}
         </Typography>
       );
@@ -158,7 +149,7 @@ const columns = [
     headerName: "State",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+        <Typography noWrap>
           {row.state}
         </Typography>
       );
@@ -171,7 +162,7 @@ const columns = [
     headerName: "Country",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{ textTransform: "capitalize" }}>
+        <Typography noWrap>
           {row.country}
         </Typography>
       );
@@ -205,7 +196,7 @@ const AddressesList = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader toggle={handleDialogToggle} toggleLabel="Add address" />
-          <AddressModal open={open} handleDialogToggle={handleDialogToggle} />
+          <AddressModal open={open} handleDialogToggle={handleDialogToggle} setCreatedAddress={undefined} />
 
           <DataGrid
             autoHeight
