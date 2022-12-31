@@ -51,7 +51,7 @@ const UserDropdown = (props: Props) => {
 
   // ** Hooks
   const router = useRouter();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   // ** Vars
   const { direction } = settings;
@@ -61,6 +61,7 @@ const UserDropdown = (props: Props) => {
   };
 
   const handleDropdownClose = (url?: string) => {
+    console.log(user);
     if (url) {
       router.push(url);
     }
@@ -99,7 +100,6 @@ const UserDropdown = (props: Props) => {
         }}
       >
         <Avatar
-          alt="John Doe"
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
           src="/images/avatars/1.png"
@@ -130,7 +130,6 @@ const UserDropdown = (props: Props) => {
               }}
             >
               <Avatar
-                alt="John Doe"
                 src="/images/avatars/1.png"
                 sx={{ width: "2.5rem", height: "2.5rem" }}
               />
@@ -143,7 +142,7 @@ const UserDropdown = (props: Props) => {
                 flexDirection: "column"
               }}
             >
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{user?.firstName + " " + user?.lastName}</Typography>
               <Typography
                 variant="body2"
                 sx={{
@@ -151,41 +150,34 @@ const UserDropdown = (props: Props) => {
                   color: "text.disabled"
                 }}
               >
-                Admin
+                {user?.role}
               </Typography>
             </Box>
           </Box>
         </Box>
         <Divider sx={{ mt: 0, mb: 1 }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <AccountOutline sx={{ mr: 2 }} />
-            Profile
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <EmailOutline sx={{ mr: 2 }} />
-            Inbox
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <MessageOutline sx={{ mr: 2 }} />
-            Chat
-          </Box>
-        </MenuItem>
-        <Divider />
+        {/*<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>*/}
+        {/*  <Box sx={styles}>*/}
+        {/*    <AccountOutline sx={{ mr: 2 }} />*/}
+        {/*    Profile*/}
+        {/*  </Box>*/}
+        {/*</MenuItem>*/}
+        {/*<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>*/}
+        {/*  <Box sx={styles}>*/}
+        {/*    <EmailOutline sx={{ mr: 2 }} />*/}
+        {/*    Inbox*/}
+        {/*  </Box>*/}
+        {/*</MenuItem>*/}
+        {/*<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>*/}
+        {/*  <Box sx={styles}>*/}
+        {/*    <MessageOutline sx={{ mr: 2 }} />*/}
+        {/*    Chat*/}
+        {/*  </Box>*/}
+        {/*</MenuItem>*/}
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <CogOutline sx={{ mr: 2 }} />
             Settings
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <CurrencyUsd sx={{ mr: 2 }} />
-            Pricing
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>

@@ -23,11 +23,8 @@ export default function AddressAutoCompleteField({
     libraries: places
   });
 
-  if (!isLoaded) return <div>Loading...</div>;
-  /*
   if (loadError) {
     // If the google api won't work for some reason, load the field without any auto complete feature
-    console.log("Error!!!!!!");
     return (
       <TextField
         fullWidth
@@ -38,7 +35,9 @@ export default function AddressAutoCompleteField({
       />
     );
   }
-  */
+
+  if (!isLoaded) return <div>Loading...</div>;
+
   return (
     <PlacesAutoCompleteComboBox
       setAddressDetails={setAddressDetails}

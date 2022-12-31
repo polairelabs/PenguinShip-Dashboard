@@ -1,16 +1,7 @@
-// ** React Imports
 import { createContext, useEffect, useState, ReactNode } from "react";
-
-// ** Next Import
 import { useRouter } from "next/router";
-
-// ** Axios
 import axios from "axios";
-
-// ** Config
 import authConfig from "src/configs/auth";
-
-// ** Types
 import {
   AuthValuesType,
   RegisterParams,
@@ -19,7 +10,6 @@ import {
   UserDataType
 } from "./types";
 
-// ** Defaults
 const defaultProvider: AuthValuesType = {
   user: null,
   loading: true,
@@ -39,14 +29,12 @@ type Props = {
 };
 
 const AuthProvider = ({ children }: Props) => {
-  // ** States
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user);
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
   const [isInitialized, setIsInitialized] = useState<boolean>(
     defaultProvider.isInitialized
   );
 
-  // ** Hooks
   const router = useRouter();
 
   useEffect(() => {

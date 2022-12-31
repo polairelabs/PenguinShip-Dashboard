@@ -20,20 +20,14 @@ const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   }
 }))
 
-interface RateSelectProps {
-
-}
-
 const RateSelect = ({rates, selectedRate, setSelectedRate, showRateError}) => {
   const deliveryDays = (rate) => {
     return rate.deliveryDays ? `Delivery in ${rate.deliveryDays} ${rate.deliveryDays > 1 ? "days" : "day"}` : "";
   }
 
-  // useEffect(() => {
-  //   toast.success("A shipment was created", {
-  //     position: "top-center"
-  //   });
-  // })
+  const serviceDisplayName = (service: string) => {
+    return service.replace(/([A-Z])/g, ' $1');
+  }
 
   return (
     // component="div" sx={{ height: 370 , overflow: "overflow-y" }}
@@ -49,7 +43,7 @@ const RateSelect = ({rates, selectedRate, setSelectedRate, showRateError}) => {
         }
       </Grid>
       <Box sx={{"mt": 2}}>
-        {rates.map((rate) =>
+        {rates?.map((rate) =>
           (
             <BoxWrapper
               onClick={() => setSelectedRate(rate)}
@@ -65,7 +59,7 @@ const RateSelect = ({rates, selectedRate, setSelectedRate, showRateError}) => {
               />
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography sx={{ fontWeight: 600 }}>{rate.carrier} - {rate.service}</Typography>
+                  <Typography sx={{ fontWeight: 600 }}>{rate.carrier} - {serviceDisplayName(rate.service)}</Typography>
                   <Typography sx={{ fontWeight: 700 }}>${rate.rate}</Typography>
                   {/*<Typography variant='body2'>{rate.id} - {selectedRate?.id}</Typography>*/}
                 </Box>
@@ -76,7 +70,7 @@ const RateSelect = ({rates, selectedRate, setSelectedRate, showRateError}) => {
         )}
       </Box>
 
-      {rates.length === 0 && (
+      {(!rates || rates?.length === 0) && (
         <Typography variant="body2">
           No rates found
         </Typography>
