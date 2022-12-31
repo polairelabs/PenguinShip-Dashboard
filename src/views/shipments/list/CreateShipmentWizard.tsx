@@ -1,6 +1,5 @@
 import { ChangeEvent, Fragment, useEffect, useState } from "react";
 
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Step from "@mui/material/Step";
 import Grid from "@mui/material/Grid";
@@ -21,7 +20,6 @@ import StepperCustomDot from "./StepperCustomDot";
 import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
-import BaseApi from "../../../api/api";
 import { createShipment, buyShipmentRate } from "../../../store/apps/shipments";
 import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
@@ -94,11 +92,14 @@ const packageSchema = additionalInfoSchema.shape({
   parcel: yup.string().required("Parcel is required"),
 });
 
-const StepperLinearWithValidation = (props) => {
+const CreateShipmentWizard = (props) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const dispatch = useDispatch<AppDispatch>();
 
   const shipmentStore = useSelector((state: RootState) => state.shipments);
+
+  let createShipmentStatus;
+  let buyShipmentRateStatus;
 
   // Lists from the store
   const addresses = useSelector((state: RootState) => state.addresses.data) as Address[];
@@ -125,6 +126,8 @@ const StepperLinearWithValidation = (props) => {
   const [createNewShipment, setCreateNewShipment] = useState<boolean>(true);
   // Create shipment loading
   const [createShipmentLoading, setCreateShipmentLoading] = useState<boolean>(false);
+  // Select rate loading
+  const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
 
   // Modals
   const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
@@ -194,6 +197,23 @@ const StepperLinearWithValidation = (props) => {
     }
   }, [lastInsertedPackage]);
 
+  useEffect(() => {
+    createShipmentStatus = shipmentStore.createShipmentStatus;
+    buyShipmentRateStatus = shipmentStore.buyShipmentRateStatus;
+    if (createShipmentStatus === "CREATED") {
+      toast.success("Shipment successfully created", {
+        position: "top-center"
+      });
+
+      setActiveStep(activeStep + 1);
+    } else if (createShipmentStatus === "FAILED") {
+      toast.error("Error creating shipment", {
+        position: "top-center"
+      });
+      return;
+    }
+  }, [shipmentStore.createShipmentStatus])
+
   const asAddressValues = (address: Address | null) => {
     return {
       id: address?.id ,
@@ -230,7 +250,7 @@ const StepperLinearWithValidation = (props) => {
       // if (deliveryAddress) {
       //   setSelectableAddresses((list: (Address)[]) => [...list, deliveryAddress]);
       // }
-      setDeliveryAddress({...asAddressValues(null)});
+      setDeliveryAddress({...deliveryAddress, ...asAddressValues(null)});
     }
   };
 
@@ -319,27 +339,23 @@ const StepperLinearWithValidation = (props) => {
       const createShipmentPayload = {
         fromAddressId: sourceAddress?.id,
         toAddressId: deliveryAddress?.id,
-        parcelId: selectedPackage?.id
+        parcelId: selectedPackage?.id,
+        senderName: sourceAddress?.name,
+        senderCompany: sourceAddress?.company,
+        senderPhone: sourceAddress?.phone,
+        senderEmail: sourceAddress?.email,
+        receiverName: deliveryAddress?.name,
+        receiverCompany: deliveryAddress?.company,
+        receiverPhone: deliveryAddress?.phone,
+        receiverEmail: deliveryAddress?.email,
       };
 
-      console.log("SHIPMENT CREATED, STORE HAS CHANGED", createShipmentPayload);
       setCreateShipmentLoading(true);
       await dispatch(createShipment(createShipmentPayload));
       setCreateShipmentLoading(false);
-      console.log("A.A", shipmentStore.createShipmentStatus);
-      if (shipmentStore.createShipmentStatus === "CREATED") {
-        toast.success("Shipment successfully created", {
-          position: "top-center"
-        });
-      } else if (shipmentStore.createShipmentStatus === "FAILED") {
-        toast.error("An error has occurred while creating the shipment", {
-          position: "top-center"
-        });
-        return;
-      }
-    }
 
-    setActiveStep(activeStep + 1);
+      // use effect will handle next page stepper
+    }
   };
 
   const onSubmitSelectRate = async () => {
@@ -354,17 +370,28 @@ const StepperLinearWithValidation = (props) => {
       return;
     }
 
+    setSelectRateLoading(true);
     await dispatch(buyShipmentRate(setShipmentRatePayload));
-    if (activeStep === steps.length - 1) {
-      toast.success("Label was successfully created", {
+    setSelectRateLoading(false);
+
+    if (shipmentStore.buyShipmentRateStatus === "CREATED") {
+      toast.success("Label successfully created", {
         position: "top-center"
       });
-      setSourceAddress(null);
-      setDeliveryAddress(null);
-      setSelectedPackage(null);
-      setSelectedRate(null);
-      setActiveStep(0);
+    } else if (shipmentStore.buyShipmentRateStatus === "FAILED") {
+      toast.success("Error creating label", {
+        position: "top-center"
+      });
     }
+
+    toast.success("Label was successfully created", {
+      position: "top-center"
+    });
+    setSourceAddress(null);
+    setDeliveryAddress(null);
+    setSelectedPackage(null);
+    setSelectedRate(null);
+    setActiveStep(0);
   };
 
   const getStepContent = (step: number) => {
@@ -372,7 +399,7 @@ const StepperLinearWithValidation = (props) => {
       case 0:
         return (
           <form key={0} onSubmit={handleSourceAddressSubmit(onSubmitAddress)}>
-            <Grid container item spacing={12}>
+            <Grid container spacing={12}>
               <SelectAddressFormController
                 addressType={AddressType.SOURCE}
                 currentAddress={sourceAddress}
@@ -515,9 +542,15 @@ const StepperLinearWithValidation = (props) => {
                   onClick={handleBack}>
                   Back
                 </Button>
-                <Button size="large" type="submit" variant="contained" disabled={rates.length == 0}>
+                <LoadingButton
+                  size="large"
+                  type="submit"
+                  disabled={rates?.length == 0 || selectedRate == null}
+                  loading={selectRateLoading}
+                  loadingIndicator="Loading..."
+                  variant="contained">
                   Buy label
-                </Button>
+                </LoadingButton>
               </Grid>
             </Grid>
           </form>
@@ -623,4 +656,4 @@ const StepperLinearWithValidation = (props) => {
   );
 };
 
-export default StepperLinearWithValidation;
+export default CreateShipmentWizard;

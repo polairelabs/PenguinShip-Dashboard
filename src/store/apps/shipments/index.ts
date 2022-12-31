@@ -13,12 +13,13 @@ export const createShipment = createAsyncThunk(
   "shipments/createShipment",
   async (
     data: { [key: string]: number | string | undefined },
-    { getState, dispatch }: Redux
+    { getState, dispatch, rejectWithValue }
   ) => {
-    console.log("A.A Creating this shipment", data);
-    const res = await BaseApi.post("/shipments", data);
-    console.log("res", res);
-    return res;
+    try {
+      return await BaseApi.post("/shipments", data);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
 );
 
@@ -41,16 +42,16 @@ export const shipmentsSlice = createSlice({
     params: {},
     allData: [],
     createShipmentStatus: "",
+    buyShipmentRateStatus: "",
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createShipment.fulfilled, (state, action) => {
         state.data = action.payload;
-        state.rates = action.payload.rates;
-        state.rates = action.payload.rates.sort((r1: Rate, r2: Rate) => r1?.rate - r2.rate);
+        state.rates = action.payload?.rates;
+        state.rates = action.payload?.rates?.sort((r1: Rate, r2: Rate) => r1?.rate - r2.rate);
         state.createShipmentStatus = "CREATED";
-        console.log(state.createShipmentStatus);
         // state.total = action.payload.total;
         // state.params = action.payload.params;
         // state.allData = action.payload.allData;
@@ -59,10 +60,12 @@ export const shipmentsSlice = createSlice({
         state.data = {};
         state.rates = [];
         state.createShipmentStatus = "FAILED";
-        console.log(state.createShipmentStatus);
+      })
+      .addCase(buyShipmentRate.fulfilled, (state, action) => {
+        state.buyShipmentRateStatus = "CREATED";
       })
       .addCase(buyShipmentRate.rejected, (state, action) => {
-        console.log("REJECTED BUY!!");
+        state.buyShipmentRateStatus = "FAILED";
       });
   }
 });

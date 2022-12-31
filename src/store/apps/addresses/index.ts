@@ -58,7 +58,6 @@ export const addressesSlice = createSlice({
       })
       .addCase(addAddress.fulfilled, (state, action) => {
         state.lastInsertedAddress = action.payload;
-        console.log("Added address!!");
       });
   }
 });

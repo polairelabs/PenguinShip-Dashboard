@@ -16,7 +16,6 @@ import FormHelperText from "@mui/material/FormHelperText";
 import { toast } from "react-hot-toast";
 
 // See: https://www.uxmatters.com/mt/archives/2008/06/international-address-fields-in-web-forms.php
-
 export type AddressDetails = {
   street1: string;
   street2?: string;

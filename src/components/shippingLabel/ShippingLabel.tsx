@@ -15,9 +15,13 @@ const ShippingLabel = ({sourceAddress, deliveryAddress, parcel, rate}: ShippingL
     return address?.street1 ? address?.street1 +  (address?.street2 ? " , " + address?.street2 : "") + ", " + address?.zip + ", " + address?.city + ", " + address?.country : "";
   }
 
+  const serviceDisplayName = (service: string) => {
+    return service.replace(/([A-Z])/g, ' $1');
+  }
+
   return (
     <Grid item xs={12} sm={6} direction="column">
-      <Box display="flex" flexDirection="column" sx={{"height": 370, "borderLeft": 1, "pl": 5, }}>
+      <Box display="flex" flexDirection="column" sx={{"pl": 5, "mb": 5 }}>
         <Typography variant="body1" sx={{textAlign: "left"}} mb={4}>
           Preview
         </Typography>
@@ -106,7 +110,7 @@ const ShippingLabel = ({sourceAddress, deliveryAddress, parcel, rate}: ShippingL
         {rate && (
           <Grid item>
             <Typography variant="body2" component="div">
-              <Box fontWeight="bold" display="inline">Shipping service:</Box> {rate?.carrier} - {rate?.service}
+              <Box fontWeight="bold" display="inline">Shipping service:</Box> {rate?.carrier} - {serviceDisplayName(rate?.service)}
             </Typography>
           </Grid>
         )}

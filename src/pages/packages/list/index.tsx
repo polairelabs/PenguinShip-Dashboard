@@ -78,14 +78,6 @@ const RowOptions = ({ id }: { id: number | string }) => {
         }}
         PaperProps={{ style: { minWidth: "8rem" } }}
       >
-        <MenuItem sx={{ p: 0 }}>
-          <Link href={`/apps/user/view/${id}`} passHref>
-            <MenuItemLink>
-              <EyeOutline fontSize="small" sx={{ mr: 2 }} />
-              View
-            </MenuItemLink>
-          </Link>
-        </MenuItem>
         <MenuItem onClick={handleRowOptionsClose}>
           <PencilOutline fontSize="small" sx={{ mr: 2 }} />
           Edit
