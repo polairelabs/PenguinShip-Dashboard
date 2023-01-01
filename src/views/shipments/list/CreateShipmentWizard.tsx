@@ -198,6 +198,7 @@ const CreateShipmentWizard = (props) => {
   }, [lastInsertedPackage]);
 
   useEffect(() => {
+    // Handle next page from shipment to rates (Once rate state change fo to the next page)
     createShipmentStatus = shipmentStore.createShipmentStatus;
     buyShipmentRateStatus = shipmentStore.buyShipmentRateStatus;
     if (createShipmentStatus === "CREATED") {
@@ -212,7 +213,8 @@ const CreateShipmentWizard = (props) => {
       });
       return;
     }
-  }, [shipmentStore.createShipmentStatus])
+  }, [shipmentStore.data])
+
 
   const asAddressValues = (address: Address | null) => {
     return {
@@ -276,7 +278,6 @@ const CreateShipmentWizard = (props) => {
   }
 
   const {
-    reset: sourceAddressReset,
     control: sourceAddressControl,
     handleSubmit: handleSourceAddressSubmit,
     formState: { errors: sourceAddressErrors },
@@ -355,6 +356,9 @@ const CreateShipmentWizard = (props) => {
       setCreateShipmentLoading(false);
 
       // use effect will handle next page stepper
+    } else {
+      // No new shipment is created
+      setActiveStep(activeStep + 1);
     }
   };
 

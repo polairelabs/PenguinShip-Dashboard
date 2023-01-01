@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import BaseApi from "../../../api/api";
-import { Rate } from "../../../types/apps/navashipInterfaces";
+import { Rate, Shipment } from "../../../types/apps/navashipInterfaces";
 
 interface Redux {
   getState: any;
@@ -36,7 +36,7 @@ export const buyShipmentRate = createAsyncThunk(
 export const shipmentsSlice = createSlice({
   name: "shipments",
   initialState: {
-    data: {},
+    data: {} as Shipment,
     rates: [] as Rate[],
     total: 1,
     params: {},
@@ -57,7 +57,7 @@ export const shipmentsSlice = createSlice({
         // state.allData = action.payload.allData;
       })
       .addCase(createShipment.rejected, (state, action) => {
-        state.data = {};
+        state.data.id = "";
         state.rates = [];
         state.createShipmentStatus = "FAILED";
       })

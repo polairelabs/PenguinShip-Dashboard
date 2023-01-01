@@ -6,7 +6,7 @@ export interface Package {
   length: number;
   width: number;
   height: number;
-};
+}
 
 export interface Address {
   id: number,
@@ -23,7 +23,12 @@ export interface Address {
   phone?: string,
   email?: string,
   verified?: boolean
-};
+}
+
+export interface Shipment {
+  id: string; // id from easypost
+  rates: Rate[];
+}
 
 export interface Rate {
   id: string; // id from easypost
