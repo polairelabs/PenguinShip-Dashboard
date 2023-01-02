@@ -1,12 +1,5 @@
-// ** MUI Imports
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import CreateShipmentWizard from "../../../views/shipments/list/CreateShipmentWizard";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../store";
-import { useEffect, useState } from "react";
-import { fetchAddresses } from "../../../store/apps/addresses";
-import BaseApi from "../../../api/api";
 
 const ShipmentWizard = () => {
   return (

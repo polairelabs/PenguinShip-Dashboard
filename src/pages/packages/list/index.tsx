@@ -212,7 +212,6 @@ const PackagesList = () => {
             autoHeight
             rows={store.data}
             columns={columns}
-            checkboxSelection
             pageSize={value}
             disableSelectionOnClick
             rowsPerPageOptions={[10, 25, 50]}

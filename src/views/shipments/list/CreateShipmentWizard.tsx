@@ -104,7 +104,7 @@ const CreateShipmentWizard = (props) => {
   // Lists from the store
   const addresses = useSelector((state: RootState) => state.addresses.data) as Address[];
   const packages = useSelector((state: RootState) => state.packages.data) as Package[];
-  const rates = useSelector((state: RootState) => state.shipments.rates) as Rate[];
+  const rates = useSelector((state: RootState) => state.shipments.createdShipmentRates) as Rate[];
 
   // Selectable lists as to not change the store when we filter on them
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
@@ -213,7 +213,7 @@ const CreateShipmentWizard = (props) => {
       });
       return;
     }
-  }, [shipmentStore.data])
+  }, [shipmentStore.createdShipment])
 
 
   const asAddressValues = (address: Address | null) => {
@@ -364,7 +364,7 @@ const CreateShipmentWizard = (props) => {
 
   const onSubmitSelectRate = async () => {
     const setShipmentRatePayload = {
-      easypostShipmentId: shipmentStore.data?.id,
+      easypostShipmentId: shipmentStore.createdShipment?.id,
       easypostRateId: selectedRate?.id
     };
 

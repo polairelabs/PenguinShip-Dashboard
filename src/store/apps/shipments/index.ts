@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import BaseApi from "../../../api/api";
-import { Rate, Shipment } from "../../../types/apps/navashipInterfaces";
+import { CreatedShipment, Rate, Shipment } from "../../../types/apps/navashipInterfaces";
 
 interface Redux {
   getState: any;
@@ -33,32 +33,34 @@ export const buyShipmentRate = createAsyncThunk(
   }
 );
 
+export const fetchShipments = createAsyncThunk(
+  "shipments/fetchShipments",
+  async () => {
+    return await BaseApi.get("/shipments");
+  }
+);
+
 export const shipmentsSlice = createSlice({
   name: "shipments",
   initialState: {
-    data: {} as Shipment,
-    rates: [] as Rate[],
-    total: 1,
-    params: {},
-    allData: [],
+    // createdShipment is to retrieve the array of rates of th shipment + its easypost id
+    createdShipment: {} as CreatedShipment,
+    createdShipmentRates: [] as Rate[],
+    allShipments: [] as Shipment[],
     createShipmentStatus: "",
-    buyShipmentRateStatus: "",
+    buyShipmentRateStatus: ""
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createShipment.fulfilled, (state, action) => {
-        state.data = action.payload;
-        state.rates = action.payload?.rates;
-        state.rates = action.payload?.rates?.sort((r1: Rate, r2: Rate) => r1?.rate - r2.rate);
+        state.createdShipment = action.payload;
+        state.createdShipmentRates = action.payload?.rates?.sort((r1: Rate, r2: Rate) => r1?.rate - r2.rate);
         state.createShipmentStatus = "CREATED";
-        // state.total = action.payload.total;
-        // state.params = action.payload.params;
-        // state.allData = action.payload.allData;
       })
       .addCase(createShipment.rejected, (state, action) => {
-        state.data.id = "";
-        state.rates = [];
+        state.createdShipment.id = "";
+        state.createdShipmentRates = [];
         state.createShipmentStatus = "FAILED";
       })
       .addCase(buyShipmentRate.fulfilled, (state, action) => {
@@ -66,6 +68,9 @@ export const shipmentsSlice = createSlice({
       })
       .addCase(buyShipmentRate.rejected, (state, action) => {
         state.buyShipmentRateStatus = "FAILED";
+      })
+      .addCase(fetchShipments.fulfilled, (state, action) => {
+        state.allShipments = action.payload;
       });
   }
 });

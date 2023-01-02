@@ -1,6 +1,5 @@
-import { useState, useEffect, MouseEvent, ReactElement } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
@@ -9,23 +8,23 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-
 import DotsVertical from "mdi-material-ui/DotsVertical";
 import PencilOutline from "mdi-material-ui/PencilOutline";
 import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchAddresses } from "src/store/apps/addresses";
+import { deletePackage } from "src/store/apps/packages";
 
-import { RootState, AppDispatch } from "src/store";
-import { Address } from "src/types/apps/navashipInterfaces";
+import { AppDispatch, RootState } from "src/store";
+import { Package, Shipment } from "src/types/apps/navashipInterfaces";
 
-import AddressModal from "src/components/addresses/addressModal";
-import TableHeader from "../../../views/packages/list/TableHeader";
+import TableHeader from "src/views/packages/list/TableHeader";
+import PackageModal from "../../../components/packages/packagesModal";
+import { fetchShipments } from "../../../store/apps/shipments";
 
 interface CellType {
-  row: Address;
+  row: Shipment;
 }
 
 const MenuItemLink = styled("a")(({ theme }) => ({
@@ -38,6 +37,8 @@ const MenuItemLink = styled("a")(({ theme }) => ({
 }));
 
 const RowOptions = ({ id }: { id: number | string }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const rowOptionsOpen = Boolean(anchorEl);
@@ -50,7 +51,7 @@ const RowOptions = ({ id }: { id: number | string }) => {
   };
 
   const handleDelete = () => {
-    // dispatch(deletePackages(id));
+    dispatch(deletePackage(id));
     handleRowOptionsClose();
   };
 
@@ -91,101 +92,32 @@ const columns = [
   {
     flex: 0.2,
     minWidth: 250,
-    field: "street1",
-    headerName: "Street 1",
+    field: "trackingcode",
+    headerName: "Tracking Code",
     renderCell: ({ row }: CellType) => {
       return (
         <Typography noWrap>
-          {row.street1}
+          {row.trackingCode}
         </Typography>
       );
     }
   },
-  {
-    flex: 0.15,
-    minWidth: 150,
-    field: "street2",
-    headerName: "Street 2",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap sx={{
-          color: "text.secondary",
-        }}>
-          {row.street2}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    headerName: "City",
-    field: "city",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.city}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: "zip",
-    headerName: "Zip Code",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.zip}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: "state",
-    headerName: "State",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.state}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: "country",
-    headerName: "Country",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.country}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    sortable: false,
-    field: "actions",
-    headerName: "Actions",
-    renderCell: ({ row }: CellType) => <RowOptions id={row.id} />
-  }
 ];
 
-const AddressesList = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const store = useSelector((state: RootState) => state.addresses);
+const ShipmentsList = () => {
+  const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
 
+  const dispatch = useDispatch<AppDispatch>();
+  const store = useSelector((state: RootState) => state.shipments);
+
   useEffect(() => {
-    dispatch(fetchAddresses());
+    dispatch(fetchShipments());
   }, [dispatch]);
+
+  useEffect(() => {
+    console.log(store.allShipments);
+  }, [store.allShipments]);
 
   const handleDialogToggle = () => {
     setOpen(!open);
@@ -195,15 +127,18 @@ const AddressesList = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={handleDialogToggle} toggleLabel="Add address" />
-          <AddressModal open={open} handleDialogToggle={handleDialogToggle} setCreatedAddress={undefined} />
+          <TableHeader toggle={handleDialogToggle} toggleLabel="Add parcel" />
+          <PackageModal open={open} handleDialogToggle={handleDialogToggle} setCreatedPackage={undefined} />
 
           <DataGrid
             autoHeight
-            rows={store.data}
+            rows={store.allShipments}
             columns={columns}
+            checkboxSelection
+            pageSize={value}
             disableSelectionOnClick
             rowsPerPageOptions={[10, 25, 50]}
+            onPageSizeChange={(newPageSize: number) => setValue(newPageSize)}
           />
         </Card>
       </Grid>
@@ -211,4 +146,4 @@ const AddressesList = () => {
   );
 };
 
-export default AddressesList;
+export default ShipmentsList;
