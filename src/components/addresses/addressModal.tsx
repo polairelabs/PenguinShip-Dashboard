@@ -47,7 +47,10 @@ const AddressModal = ({ open, handleDialogToggle, setCreatedAddress }) => {
             position: "relative"
           }}
         >
-          <AddressForm handleDialogToggle={handleDialogToggle} setCreatedAddress={setCreatedAddress} />
+          <AddressForm
+            handleDialogToggle={handleDialogToggle}
+            setCreatedAddress={setCreatedAddress}
+          />
         </DialogContent>
       </Dialog>
     </Box>

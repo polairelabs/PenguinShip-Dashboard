@@ -21,7 +21,9 @@ import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import { createShipment, buyShipmentRate } from "../../../store/apps/shipments";
-import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
+import SelectAddressFormController, {
+  AddressType
+} from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
@@ -63,33 +65,48 @@ const defaultAdditionalInfoValues = {
   name: "",
   company: "",
   phone: "",
-  email: "",
-}
+  email: ""
+};
 
 const defaultPackageValues = {
   parcel: ""
 };
 
-const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 const additionalInfoSchema = yup.object().shape({
-  name: yup.string().optional().max(30, "Name must be at most 30 characters").nullable(true),
-  company: yup.string().optional().max(30,"Company must be at most 30 characters").nullable(true),
+  name: yup
+    .string()
+    .optional()
+    .max(30, "Name must be at most 30 characters")
+    .nullable(true),
+  company: yup
+    .string()
+    .optional()
+    .max(30, "Company must be at most 30 characters")
+    .nullable(true),
   email: yup.string().email("Email is not valid").optional().nullable(true),
   // transform() empty string into a null
-  phone: yup.string().nullable().transform((v, o) => (o === '' ? null : v)).matches(phoneRegExp, "Phone number is not valid").optional().nullable(true),
+  phone: yup
+    .string()
+    .nullable()
+    .transform((v, o) => (o === "" ? null : v))
+    .matches(phoneRegExp, "Phone number is not valid")
+    .optional()
+    .nullable(true)
 });
 
 const fromAddressSchema = additionalInfoSchema.shape({
-  source: yup.string().required("Source address is required"),
+  source: yup.string().required("Source address is required")
 });
 
 const deliveryAddressSchema = additionalInfoSchema.shape({
-  delivery: yup.string().required("Delivery address is required"),
+  delivery: yup.string().required("Delivery address is required")
 });
 
 const packageSchema = additionalInfoSchema.shape({
-  parcel: yup.string().required("Parcel is required"),
+  parcel: yup.string().required("Parcel is required")
 });
 
 const CreateShipmentWizard = (props) => {
@@ -102,16 +119,26 @@ const CreateShipmentWizard = (props) => {
   let buyShipmentRateStatus;
 
   // Lists from the store
-  const addresses = useSelector((state: RootState) => state.addresses.data) as Address[];
-  const packages = useSelector((state: RootState) => state.packages.data) as Package[];
-  const rates = useSelector((state: RootState) => state.shipments.createdShipmentRates) as Rate[];
+  const addresses = useSelector(
+    (state: RootState) => state.addresses.data
+  ) as Address[];
+  const packages = useSelector(
+    (state: RootState) => state.packages.data
+  ) as Package[];
+  const rates = useSelector(
+    (state: RootState) => state.shipments.createdShipmentRates
+  ) as Rate[];
 
   // Selectable lists as to not change the store when we filter on them
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
   const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
 
-  const lastInsertedAddress = useSelector((state: RootState) => state.addresses.lastInsertedAddress) as Address;
-  const lastInsertedPackage = useSelector((state: RootState) => state.packages.lastInsertedPackage) as Package;
+  const lastInsertedAddress = useSelector(
+    (state: RootState) => state.addresses.lastInsertedAddress
+  ) as Address;
+  const lastInsertedPackage = useSelector(
+    (state: RootState) => state.packages.lastInsertedPackage
+  ) as Package;
 
   // Selected entities
   const [sourceAddress, setSourceAddress] = useState<Address | null>();
@@ -125,7 +152,8 @@ const CreateShipmentWizard = (props) => {
   // To create a shipment or keep old one
   const [createNewShipment, setCreateNewShipment] = useState<boolean>(true);
   // Create shipment loading
-  const [createShipmentLoading, setCreateShipmentLoading] = useState<boolean>(false);
+  const [createShipmentLoading, setCreateShipmentLoading] =
+    useState<boolean>(false);
   // Select rate loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
 
@@ -213,24 +241,26 @@ const CreateShipmentWizard = (props) => {
       });
       return;
     }
-  }, [shipmentStore.createdShipment])
-
+  }, [shipmentStore.createdShipment]);
 
   const asAddressValues = (address: Address | null) => {
     return {
-      id: address?.id ,
+      id: address?.id,
       street1: address?.street1,
       street2: address?.street2,
       city: address?.city,
       state: address?.state,
       zip: address?.zip,
-      country: address?.country,
+      country: address?.country
     } as Address;
-  }
+  };
 
   const handleSourceAddressChange = (newSourceAddress: Address | null) => {
     if (newSourceAddress) {
-      setSourceAddress({...sourceAddress, ...asAddressValues(newSourceAddress)});
+      setSourceAddress({
+        ...sourceAddress,
+        ...asAddressValues(newSourceAddress)
+      });
       // setSelectableAddresses(
       //   selectableAddresses.filter((address) => address.id !== newSourceAddress?.id)
       // );
@@ -238,13 +268,18 @@ const CreateShipmentWizard = (props) => {
       // if (sourceAddress) {
       //   setSelectableAddresses((list: (Address)[]) => [...list, sourceAddress]);
       // }
-      setSourceAddress({...sourceAddress, ...asAddressValues(null)})
+      setSourceAddress({ ...sourceAddress, ...asAddressValues(null) });
     }
-  }
+  };
 
-  const handleDestinationAddressChange = (newDeliveryAddress: Address | null) => {
+  const handleDestinationAddressChange = (
+    newDeliveryAddress: Address | null
+  ) => {
     if (newDeliveryAddress) {
-      setDeliveryAddress({...deliveryAddress, ...asAddressValues(newDeliveryAddress)});
+      setDeliveryAddress({
+        ...deliveryAddress,
+        ...asAddressValues(newDeliveryAddress)
+      });
       // setSelectableAddresses(
       //   selectableAddresses.filter((address) => address.id !== deliveryAddress?.id)
       // );
@@ -252,7 +287,7 @@ const CreateShipmentWizard = (props) => {
       // if (deliveryAddress) {
       //   setSelectableAddresses((list: (Address)[]) => [...list, deliveryAddress]);
       // }
-      setDeliveryAddress({...deliveryAddress, ...asAddressValues(null)});
+      setDeliveryAddress({ ...deliveryAddress, ...asAddressValues(null) });
     }
   };
 
@@ -265,27 +300,41 @@ const CreateShipmentWizard = (props) => {
     const additionalInfoDetailValue = event.target.value;
 
     const newAddressAdditionalInfoValue = {};
-    newAddressAdditionalInfoValue[additionalInfoDetailName] = additionalInfoDetailValue;
+    newAddressAdditionalInfoValue[additionalInfoDetailName] =
+      additionalInfoDetailValue;
     return newAddressAdditionalInfoValue;
   };
 
-  const handleSourceAdditionalInfoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSourceAddress({ ...sourceAddress, ...handleAdditionalInfoChange(event)} as Address);
-  }
+  const handleSourceAdditionalInfoChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setSourceAddress({
+      ...sourceAddress,
+      ...handleAdditionalInfoChange(event)
+    } as Address);
+  };
 
-  const handleDeliveryAdditionalInfoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setDeliveryAddress({ ...deliveryAddress, ...handleAdditionalInfoChange(event)} as Address);
-  }
+  const handleDeliveryAdditionalInfoChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setDeliveryAddress({
+      ...deliveryAddress,
+      ...handleAdditionalInfoChange(event)
+    } as Address);
+  };
 
   const {
     control: sourceAddressControl,
     handleSubmit: handleSourceAddressSubmit,
-    formState: { errors: sourceAddressErrors },
+    formState: { errors: sourceAddressErrors }
   } = useForm({
     mode: "onBlur",
-    defaultValues: {...defaultSourceAddressValues, ...defaultAdditionalInfoValues},
+    defaultValues: {
+      ...defaultSourceAddressValues,
+      ...defaultAdditionalInfoValues
+    },
     resolver: async (data, context, options) => {
-      const schemaValues = { "source": sourceAddress?.street1, ...sourceAddress };
+      const schemaValues = { source: sourceAddress?.street1, ...sourceAddress };
       // @ts-ignore
       return yupResolver(fromAddressSchema)(schemaValues, context, options);
     }
@@ -296,9 +345,15 @@ const CreateShipmentWizard = (props) => {
     handleSubmit: handleDeliveryAddressSubmit,
     formState: { errors: deliveryAddressErrors }
   } = useForm({
-    defaultValues: {...defaultDeliveryAddressValues, ...defaultAdditionalInfoValues},
+    defaultValues: {
+      ...defaultDeliveryAddressValues,
+      ...defaultAdditionalInfoValues
+    },
     resolver: async (data, context, options) => {
-      const schemaValues = { "delivery": deliveryAddress?.street1, ...deliveryAddress };
+      const schemaValues = {
+        delivery: deliveryAddress?.street1,
+        ...deliveryAddress
+      };
       // @ts-ignore
       return yupResolver(deliveryAddressSchema)(schemaValues, context, options);
     }
@@ -311,15 +366,13 @@ const CreateShipmentWizard = (props) => {
   } = useForm({
     defaultValues: defaultPackageValues,
     resolver: async (data, context, options) => {
-      const schemaValues = { "parcel": selectedPackage?.name };
+      const schemaValues = { parcel: selectedPackage?.name };
       // @ts-ignore
       return yupResolver(packageSchema)(schemaValues, context, options);
     }
   });
 
-  const {
-    handleSubmit: handleRateSubmit,
-  } = useForm();
+  const { handleSubmit: handleRateSubmit } = useForm();
 
   const handleBack = () => {
     const prevActiveStep = activeStep - 1;
@@ -348,7 +401,7 @@ const CreateShipmentWizard = (props) => {
         receiverName: deliveryAddress?.name,
         receiverCompany: deliveryAddress?.company,
         receiverPhone: deliveryAddress?.phone,
-        receiverEmail: deliveryAddress?.email,
+        receiverEmail: deliveryAddress?.email
       };
 
       setCreateShipmentLoading(true);
@@ -409,11 +462,13 @@ const CreateShipmentWizard = (props) => {
                 currentAddress={sourceAddress}
                 selectableAddresses={selectableAddresses}
                 handleAddressChange={handleSourceAddressChange}
-                handleAddressAdditionalInformationChange={handleSourceAdditionalInfoChange}
+                handleAddressAdditionalInformationChange={
+                  handleSourceAdditionalInfoChange
+                }
                 control={sourceAddressControl}
                 errors={sourceAddressErrors}
                 handleAddressModalToggle={handleAddressModalToggle}
-               />
+              />
               <ShippingLabel
                 sourceAddress={sourceAddress}
                 deliveryAddress={deliveryAddress}
@@ -423,12 +478,14 @@ const CreateShipmentWizard = (props) => {
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}>
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
                 <Button
                   size="large"
                   variant="outlined"
                   color="secondary"
-                  disabled>
+                  disabled
+                >
                   Back
                 </Button>
                 <Button size="large" type="submit" variant="contained">
@@ -447,7 +504,9 @@ const CreateShipmentWizard = (props) => {
                 currentAddress={deliveryAddress}
                 selectableAddresses={selectableAddresses}
                 handleAddressChange={handleDestinationAddressChange}
-                handleAddressAdditionalInformationChange={handleDeliveryAdditionalInfoChange}
+                handleAddressAdditionalInformationChange={
+                  handleDeliveryAdditionalInfoChange
+                }
                 control={deliveryAddressControl}
                 errors={deliveryAddressErrors}
                 handleAddressModalToggle={handleAddressModalToggle}
@@ -461,12 +520,14 @@ const CreateShipmentWizard = (props) => {
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}>
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
                 <Button
                   size="large"
                   variant="outlined"
                   color="secondary"
-                  onClick={handleBack}>
+                  onClick={handleBack}
+                >
                   Back
                 </Button>
                 <Button size="large" type="submit" variant="contained">
@@ -497,12 +558,14 @@ const CreateShipmentWizard = (props) => {
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}>
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
                 <Button
                   size="large"
                   variant="outlined"
                   color="secondary"
-                  onClick={handleBack}>
+                  onClick={handleBack}
+                >
                   Back
                 </Button>
                 <LoadingButton
@@ -510,7 +573,8 @@ const CreateShipmentWizard = (props) => {
                   type="submit"
                   loading={createShipmentLoading}
                   loadingIndicator="Loading..."
-                  variant="contained">
+                  variant="contained"
+                >
                   {createNewShipment ? "Create shipment" : "Next"}
                 </LoadingButton>
               </Grid>
@@ -538,12 +602,14 @@ const CreateShipmentWizard = (props) => {
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}>
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
                 <Button
                   size="large"
                   variant="outlined"
                   color="secondary"
-                  onClick={handleBack}>
+                  onClick={handleBack}
+                >
                   Back
                 </Button>
                 <LoadingButton
@@ -552,7 +618,8 @@ const CreateShipmentWizard = (props) => {
                   disabled={rates?.length == 0 || selectedRate == null}
                   loading={selectRateLoading}
                   loadingIndicator="Loading..."
-                  variant="contained">
+                  variant="contained"
+                >
                   Buy label
                 </LoadingButton>
               </Grid>
@@ -649,13 +716,19 @@ const CreateShipmentWizard = (props) => {
 
       <Divider sx={{ m: 0 }} />
 
-      <CardContent>
-        {renderContent()}
-      </CardContent>
+      <CardContent>{renderContent()}</CardContent>
 
       {/* Modals */}
-      <AddressModal open={openAddressModal} handleDialogToggle={handleAddressModalToggle} setCreatedAddress={setCreatedAddress} />
-      <PackageModal open={openPackageModal} handleDialogToggle={handlePackageModalToggle} setCreatedPackage={setCreatedPackage} />
+      <AddressModal
+        open={openAddressModal}
+        handleDialogToggle={handleAddressModalToggle}
+        setCreatedAddress={setCreatedAddress}
+      />
+      <PackageModal
+        open={openPackageModal}
+        handleDialogToggle={handlePackageModalToggle}
+        setCreatedPackage={setCreatedPackage}
+      />
     </Card>
   );
 };

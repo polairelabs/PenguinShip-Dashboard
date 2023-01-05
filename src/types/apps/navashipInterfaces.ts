@@ -9,20 +9,20 @@ export interface Package {
 }
 
 export interface Address {
-  id: number,
-  street1: string,
-  street2: string,
-  city: string,
-  state: string,
-  zip: string,
-  country: string,
-  residential?: boolean,
+  id: number;
+  street1: string;
+  street2: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  residential?: boolean;
   // Person address info
-  name?: string,
-  company?: string,
-  phone?: string,
-  email?: string,
-  verified?: boolean
+  name?: string;
+  company?: string;
+  phone?: string;
+  email?: string;
+  verified?: boolean;
 }
 
 export interface Shipment {
@@ -31,13 +31,13 @@ export interface Shipment {
   toAddress: Address;
   fromAddress: Address;
   parcel: Package;
-  shipmentStatus: string;
+  navashipShipmentStatus: string;
+  easypostShipmentStatus: string;
   rate: Rate;
   createdAt: Date;
   updatedAt: Date;
   trackingCode: string;
   postageLabelUrl: string;
-  easypostShipmentStatus: string;
   publicTrackingUrl: string;
   additionalInfoJson: string;
 }
@@ -60,4 +60,11 @@ export interface Rate {
 export interface CreatedShipment {
   id: string; // id from easypost
   rates: Rate[];
+}
+
+export interface Person {
+  name: string;
+  company: string;
+  phone: string;
+  email: string;
 }

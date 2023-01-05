@@ -130,7 +130,10 @@ const Register = () => {
     password: yup.string().min(5).required(),
     firstName: yup.string().min(3).required("Firstname is required"),
     lastName: yup.string().min(3).required("Lastname is required"),
-    email: yup.string().email("Email must be in a valid format").required("Email is required"),
+    email: yup
+      .string()
+      .email("Email must be in a valid format")
+      .required("Email is required"),
     terms: yup
       .bool()
       .oneOf([true], "You must accept the privacy policy & terms")

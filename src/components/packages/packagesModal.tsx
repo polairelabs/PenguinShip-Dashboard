@@ -46,7 +46,10 @@ const PackageModal = ({ open, handleDialogToggle, setCreatedPackage }) => {
             position: "relative"
           }}
         >
-          <PackageForm handleDialogToggle={handleDialogToggle} setCreatedPackage={setCreatedPackage} />
+          <PackageForm
+            handleDialogToggle={handleDialogToggle}
+            setCreatedPackage={setCreatedPackage}
+          />
         </DialogContent>
       </Dialog>
     </Box>

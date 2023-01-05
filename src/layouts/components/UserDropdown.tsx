@@ -142,7 +142,9 @@ const UserDropdown = (props: Props) => {
                 flexDirection: "column"
               }}
             >
-              <Typography sx={{ fontWeight: 600 }}>{user?.firstName + " " + user?.lastName}</Typography>
+              <Typography sx={{ fontWeight: 600 }}>
+                {user?.firstName + " " + user?.lastName}
+              </Typography>
               <Typography
                 variant="body2"
                 sx={{

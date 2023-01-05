@@ -2,7 +2,11 @@ import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import BaseApi from "../../../api/api";
-import { CreatedShipment, Rate, Shipment } from "../../../types/apps/navashipInterfaces";
+import {
+  CreatedShipment,
+  Rate,
+  Shipment
+} from "../../../types/apps/navashipInterfaces";
 
 interface Redux {
   getState: any;
@@ -55,7 +59,9 @@ export const shipmentsSlice = createSlice({
     builder
       .addCase(createShipment.fulfilled, (state, action) => {
         state.createdShipment = action.payload;
-        state.createdShipmentRates = action.payload?.rates?.sort((r1: Rate, r2: Rate) => r1?.rate - r2.rate);
+        state.createdShipmentRates = action.payload?.rates?.sort(
+          (r1: Rate, r2: Rate) => r1?.rate - r2.rate
+        );
         state.createShipmentStatus = "CREATED";
       })
       .addCase(createShipment.rejected, (state, action) => {

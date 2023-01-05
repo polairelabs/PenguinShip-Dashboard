@@ -98,11 +98,7 @@ const columns = [
     field: "name",
     headerName: "Name",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.name}
-        </Typography>
-      );
+      return <Typography noWrap>{row.name}</Typography>;
     }
   },
   {
@@ -111,11 +107,7 @@ const columns = [
     field: "value",
     headerName: "Value ($)",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.value}
-        </Typography>
-      );
+      return <Typography noWrap>{row.value}</Typography>;
     }
   },
   {
@@ -124,11 +116,7 @@ const columns = [
     field: "weight",
     headerName: "Weight (oz)",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.weight}
-        </Typography>
-      );
+      return <Typography noWrap>{row.weight}</Typography>;
     }
   },
   {
@@ -138,9 +126,12 @@ const columns = [
     headerName: "Length (in)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{
-          color: "text.secondary",
-        }}>
+        <Typography
+          noWrap
+          sx={{
+            color: "text.secondary"
+          }}
+        >
           {row.length}
         </Typography>
       );
@@ -153,9 +144,12 @@ const columns = [
     headerName: "Width (in)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{
-          color: "text.secondary",
-        }}>
+        <Typography
+          noWrap
+          sx={{
+            color: "text.secondary"
+          }}
+        >
           {row.width}
         </Typography>
       );
@@ -168,9 +162,12 @@ const columns = [
     headerName: "Height (in)",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{
-          color: "text.secondary",
-        }}>
+        <Typography
+          noWrap
+          sx={{
+            color: "text.secondary"
+          }}
+        >
           {row.height}
         </Typography>
       );
@@ -206,7 +203,11 @@ const PackagesList = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader toggle={handleDialogToggle} toggleLabel="Add parcel" />
-          <PackageModal open={open} handleDialogToggle={handleDialogToggle} setCreatedPackage={undefined} />
+          <PackageModal
+            open={open}
+            handleDialogToggle={handleDialogToggle}
+            setCreatedPackage={undefined}
+          />
 
           <DataGrid
             autoHeight

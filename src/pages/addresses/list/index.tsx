@@ -94,11 +94,7 @@ const columns = [
     field: "street1",
     headerName: "Street 1",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.street1}
-        </Typography>
-      );
+      return <Typography noWrap>{row.street1}</Typography>;
     }
   },
   {
@@ -108,9 +104,12 @@ const columns = [
     headerName: "Street 2",
     renderCell: ({ row }: CellType) => {
       return (
-        <Typography noWrap sx={{
-          color: "text.secondary",
-        }}>
+        <Typography
+          noWrap
+          sx={{
+            color: "text.secondary"
+          }}
+        >
           {row.street2}
         </Typography>
       );
@@ -122,11 +121,7 @@ const columns = [
     headerName: "City",
     field: "city",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.city}
-        </Typography>
-      );
+      return <Typography noWrap>{row.city}</Typography>;
     }
   },
   {
@@ -135,11 +130,7 @@ const columns = [
     field: "zip",
     headerName: "Zip Code",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.zip}
-        </Typography>
-      );
+      return <Typography noWrap>{row.zip}</Typography>;
     }
   },
   {
@@ -148,11 +139,7 @@ const columns = [
     field: "state",
     headerName: "State",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.state}
-        </Typography>
-      );
+      return <Typography noWrap>{row.state}</Typography>;
     }
   },
   {
@@ -161,11 +148,7 @@ const columns = [
     field: "country",
     headerName: "Country",
     renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap>
-          {row.country}
-        </Typography>
-      );
+      return <Typography noWrap>{row.country}</Typography>;
     }
   },
   {
@@ -196,7 +179,11 @@ const AddressesList = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader toggle={handleDialogToggle} toggleLabel="Add address" />
-          <AddressModal open={open} handleDialogToggle={handleDialogToggle} setCreatedAddress={undefined} />
+          <AddressModal
+            open={open}
+            handleDialogToggle={handleDialogToggle}
+            setCreatedAddress={undefined}
+          />
 
           <DataGrid
             autoHeight

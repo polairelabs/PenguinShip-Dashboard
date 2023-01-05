@@ -118,10 +118,7 @@ const App = (props: ExtendedAppProps) => {
       <CacheProvider value={emotionCache}>
         <Head>
           <title>{`${themeConfig.templateName}`}</title>
-          <meta
-            name="description"
-            content={`${themeConfig.templateName}`}
-          />
+          <meta name="description" content={`${themeConfig.templateName}`} />
           <meta
             name="keywords"
             content="Navaship, Shipment, Labels, Easypost, Shipment dashboard"

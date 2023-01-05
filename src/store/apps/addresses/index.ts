@@ -41,7 +41,7 @@ export const addressesSlice = createSlice({
     params: {},
     allData: [],
     status: "IDLE",
-    lastInsertedAddress: {},
+    lastInsertedAddress: {}
   },
   reducers: {},
   extraReducers: (builder) => {

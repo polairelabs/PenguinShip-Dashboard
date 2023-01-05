@@ -35,7 +35,7 @@ const navigation = (): VerticalNavItemsType => {
           path: "/shipments/list"
         }
       ]
-    },
+    }
   ];
 };
 

@@ -55,7 +55,7 @@ const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
     city: yup.string().required(),
     country: yup.string().required(),
     state: yup.string().required(),
-    zip: yup.string().required(),
+    zip: yup.string().required()
   });
 
   const {
@@ -247,7 +247,7 @@ const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
                   display: "flex",
                   flexWrap: "wrap",
                   alignItems: "center",
-                  justifyContent: "flex-end",
+                  justifyContent: "flex-end"
                 }}
               >
                 <Button type="submit" variant="contained" size="large">

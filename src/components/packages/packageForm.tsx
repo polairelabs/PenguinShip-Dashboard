@@ -331,7 +331,7 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
                   display: "flex",
                   flexWrap: "wrap",
                   alignItems: "center",
-                  justifyContent: "flex-end",
+                  justifyContent: "flex-end"
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
