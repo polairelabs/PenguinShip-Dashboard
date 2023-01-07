@@ -1,6 +1,4 @@
-import { useState, useEffect, MouseEvent, useCallback } from "react";
-
-import Link from "next/link";
+import { MouseEvent, useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Menu from "@mui/material/Menu";
@@ -10,17 +8,15 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-
-import EyeOutline from "mdi-material-ui/EyeOutline";
 import DotsVertical from "mdi-material-ui/DotsVertical";
 import PencilOutline from "mdi-material-ui/PencilOutline";
 import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchPackages, deletePackage } from "src/store/apps/packages";
+import { deletePackage, fetchPackages } from "src/store/apps/packages";
 
-import { RootState, AppDispatch } from "src/store";
+import { AppDispatch, RootState } from "src/store";
 import { Package } from "src/types/apps/navashipInterfaces";
 
 import TableHeader from "src/views/packages/list/TableHeader";

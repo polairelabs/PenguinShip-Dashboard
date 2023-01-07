@@ -60,8 +60,8 @@ const SelectPackageFormController = ({
   };
 
   return (
-    <Grid item xs={12} sm={6} direction="column">
-      <Grid item xs={12} sm={6}>
+    <Box sx={{ height: "34vh" }}>
+      <Grid item xs={12} sm={12} mb={8}>
         <FormControl fullWidth>
           <Controller
             name="first-name"
@@ -81,6 +81,7 @@ const SelectPackageFormController = ({
                     value={value}
                     label="Choose parcel"
                     variant="standard"
+                    placeholder={"Search or select a parcel"}
                   />
                 )}
               />
@@ -93,50 +94,27 @@ const SelectPackageFormController = ({
           </FormHelperText>
         )}
       </Grid>
-      <Grid item sx={{ mt: 4 }} xs={12} sm={12}>
-        <Box display="flex" justifyContent="flex-end">
-          <Button
-            sx={{ padding: 2 }}
-            onClick={handlePackageModalToggle}
-            variant="contained"
-          >
-            Add Parcel
-          </Button>
-        </Box>
-        <Box display="flex" justifyContent="flex-end">
-          <Typography
-            noWrap
-            sx={{
-              color: "text.secondary",
-              fontSize: 12,
-              mt: 1
-            }}
-          >
-            Parcel doesn't exist?
-          </Typography>
-        </Box>
-      </Grid>
       <Grid container spacing={2} my={1}>
         <Grid item xs={12} mb={4}>
           <Typography variant="body2">Additional add-ons</Typography>
         </Grid>
-        <Grid container spacing={2} my={1} sx={{ ml: 2 }}>
-          <FormControlLabel
-            label="Insure Parcel"
-            sx={{ mt: 2 }}
-            control={<Switch onChange={insureParcelSwitch} />}
-          />
-          <TextField
-            disabled
-            sx={{ width: 80 }}
-            value={currentParcel?.value ? "$" + currentParcel?.value : ""}
-            label="Value"
-            InputLabelProps={{ shrink: true }}
-            hidden={showInsuranceValueField}
-          />
-        </Grid>
+        {/*<Grid container spacing={2} my={1} sx={{ ml: 2 }}>*/}
+        {/*  <FormControlLabel*/}
+        {/*    label="Insure Parcel"*/}
+        {/*    sx={{ mt: 2 }}*/}
+        {/*    control={<Switch onChange={insureParcelSwitch} />}*/}
+        {/*  />*/}
+        {/*  <TextField*/}
+        {/*    disabled*/}
+        {/*    sx={{ width: 80 }}*/}
+        {/*    value={currentParcel?.value ? "$" + currentParcel?.value : ""}*/}
+        {/*    label="Value"*/}
+        {/*    InputLabelProps={{ shrink: true }}*/}
+        {/*    hidden={showInsuranceValueField}*/}
+        {/*  />*/}
+        {/*</Grid>*/}
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 

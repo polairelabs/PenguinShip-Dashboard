@@ -24,6 +24,7 @@ import TableHeader from "src/views/packages/list/TableHeader";
 import { fetchShipments } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link } from "@mui/material";
+import { capitalizeFirstLettersOnly } from "../../../utils";
 
 interface CellType {
   row: Shipment;
@@ -103,24 +104,10 @@ const getRecipientAddress = (shipment: Shipment) => {
   return shipment.toAddress;
 };
 
-const lowerCaseAllWordsExceptFirstLetters = (word: string) =>
-  word.replaceAll(/\S*/g, (w) => `${w.slice(0, 1)}${w.slice(1).toLowerCase()}`);
-
-const capitalizeFirstLettersOnly = (word: string) => {
-  const words = word.split(" ");
-  return words
-    .map(lowerCaseAllWordsExceptFirstLetters)
-    .map(
-      (w) =>
-        w?.charAt(0).toUpperCase() +
-        w?.slice(1) +
-        (words.indexOf(w) === words.length - 1 ? "," : " ")
-    );
-};
-
 const dateToHumanReadableFormat = (date: Date) => {
+  const dateObj = new Date(date);
   return (
-    new Date(date).toDateString() + ", " + new Date(date).toLocaleTimeString()
+    dateObj.toDateString() + ", " + dateObj.toLocaleTimeString()
   );
 };
 
@@ -145,7 +132,9 @@ const columns = [
             }}
             alt={row?.rate?.carrier}
             src={getCarrierImageSrc(row)}
-          ></Box>
+          >
+
+          </Box>
         );
       }
     }
@@ -185,8 +174,8 @@ const columns = [
       const status =
         row?.navashipShipmentStatus !== "DRAFT"
           ? row?.easypostShipmentStatus === "unknown"
-            ? row?.navashipShipmentStatus
-            : row?.easypostShipmentStatus
+          ? row?.navashipShipmentStatus
+          : row?.easypostShipmentStatus
           : row?.navashipShipmentStatus;
       console.log("status", status);
       const statusColors = {

@@ -1,4 +1,4 @@
-import { ChangeEvent, Fragment, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Step from "@mui/material/Step";
@@ -20,10 +20,8 @@ import StepperCustomDot from "./StepperCustomDot";
 import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
-import { createShipment, buyShipmentRate } from "../../../store/apps/shipments";
-import SelectAddressFormController, {
-  AddressType
-} from "../../../components/addresses/selectAddressFormController";
+import { buyShipmentRate, createShipment } from "../../../store/apps/shipments";
+import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
@@ -33,23 +31,31 @@ import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 import { fetchPackages } from "../../../store/apps/packages";
+import { Box } from "@mui/material";
 
 const steps = [
   {
     title: "Source address",
-    subtitle: "Set source address"
+    subtitle: "Set source address",
+    description: "Select an existing source address",
+    notExist: "Address doesn't exist?"
   },
   {
     title: "Delivery address",
-    subtitle: "Set delivery address"
+    subtitle: "Set delivery address",
+    description: "Select an existing delivery address",
+    notExist: "Address doesn't exist?"
   },
   {
     title: "Parcel",
-    subtitle: "Set the parcel to be sent"
+    subtitle: "Set the parcel to be sent",
+    description: "Select an existing parcel",
+    notExist: "Parcel doesn't exist?"
   },
   {
     title: "Rates",
-    subtitle: "Choose a shipping rate"
+    subtitle: "Choose a shipping rate",
+    description: "Select one of these following rates",
   }
 ];
 
@@ -328,7 +334,7 @@ const CreateShipmentWizard = (props) => {
     handleSubmit: handleSourceAddressSubmit,
     formState: { errors: sourceAddressErrors }
   } = useForm({
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
       ...defaultSourceAddressValues,
       ...defaultAdditionalInfoValues
@@ -456,25 +462,61 @@ const CreateShipmentWizard = (props) => {
       case 0:
         return (
           <form key={0} onSubmit={handleSourceAddressSubmit(onSubmitAddress)}>
-            <Grid container spacing={12}>
-              <SelectAddressFormController
-                addressType={AddressType.SOURCE}
-                currentAddress={sourceAddress}
-                selectableAddresses={selectableAddresses}
-                handleAddressChange={handleSourceAddressChange}
-                handleAddressAdditionalInformationChange={
-                  handleSourceAdditionalInfoChange
-                }
-                control={sourceAddressControl}
-                errors={sourceAddressErrors}
-                handleAddressModalToggle={handleAddressModalToggle}
-              />
-              <ShippingLabel
-                sourceAddress={sourceAddress}
-                deliveryAddress={deliveryAddress}
-                parcel={selectedPackage}
-                rate={selectedRate}
-              />
+            <Grid container>
+              <Grid item xs={12} sm={6} direction="column">
+                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                  {steps[activeStep].description}
+                </Typography>
+                <SelectAddressFormController
+                  addressType={AddressType.SOURCE}
+                  currentAddress={sourceAddress}
+                  selectableAddresses={selectableAddresses}
+                  handleAddressChange={handleSourceAddressChange}
+                  handleAddressAdditionalInformationChange={
+                    handleSourceAdditionalInfoChange
+                  }
+                  control={sourceAddressControl}
+                  errors={sourceAddressErrors}
+                  handleAddressModalToggle={handleAddressModalToggle}
+                />
+              </Grid>
+              <Grid item container sm={1} direction="column"
+                    justifyContent="center"
+                    alignItems="center">
+                <Divider
+                  orientation="vertical"
+                />
+              </Grid>
+              <Grid item xs={12} sm={5} direction="column">
+                <Grid item xs={12} sm={12}>
+                  <Box>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                        {steps[activeStep].notExist}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Button
+                        sx={{ padding: 2 }}
+                        onClick={handleAddressModalToggle}
+                        variant="outlined"
+                        color="info"
+                      >
+                        Create Address
+                      </Button>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Divider
+                  orientation="horizontal" sx={{ width: "50%", display: "flex", my: 4 }}
+                />
+                <ShippingLabel
+                  sourceAddress={sourceAddress}
+                  deliveryAddress={deliveryAddress}
+                  parcel={selectedPackage}
+                  rate={selectedRate}
+                />
+              </Grid>
               <Grid
                 item
                 xs={12}
@@ -498,25 +540,61 @@ const CreateShipmentWizard = (props) => {
       case 1:
         return (
           <form key={0} onSubmit={handleDeliveryAddressSubmit(onSubmitAddress)}>
-            <Grid container item spacing={12}>
-              <SelectAddressFormController
-                addressType={AddressType.DELIVERY}
-                currentAddress={deliveryAddress}
-                selectableAddresses={selectableAddresses}
-                handleAddressChange={handleDestinationAddressChange}
-                handleAddressAdditionalInformationChange={
-                  handleDeliveryAdditionalInfoChange
-                }
-                control={deliveryAddressControl}
-                errors={deliveryAddressErrors}
-                handleAddressModalToggle={handleAddressModalToggle}
-              />
-              <ShippingLabel
-                sourceAddress={sourceAddress}
-                deliveryAddress={deliveryAddress}
-                parcel={selectedPackage}
-                rate={selectedRate}
-              />
+            <Grid container>
+              <Grid item xs={12} sm={6} direction="column">
+                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                  {steps[activeStep].description}
+                </Typography>
+                <SelectAddressFormController
+                  addressType={AddressType.DELIVERY}
+                  currentAddress={deliveryAddress}
+                  selectableAddresses={selectableAddresses}
+                  handleAddressChange={handleDestinationAddressChange}
+                  handleAddressAdditionalInformationChange={
+                    handleDeliveryAdditionalInfoChange
+                  }
+                  control={deliveryAddressControl}
+                  errors={deliveryAddressErrors}
+                  handleAddressModalToggle={handleAddressModalToggle}
+                />
+              </Grid>
+              <Grid item container sm={1} direction="column"
+                    justifyContent="center"
+                    alignItems="center">
+                <Divider
+                  orientation="vertical"
+                />
+              </Grid>
+              <Grid item xs={12} sm={5} direction="column">
+                <Grid item xs={12} sm={12}>
+                  <Box>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                        {steps[activeStep].notExist}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Button
+                        sx={{ padding: 2 }}
+                        onClick={handleAddressModalToggle}
+                        variant="outlined"
+                        color="info"
+                      >
+                        Create Address
+                      </Button>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Divider
+                  orientation="horizontal" sx={{ width: "50%", display: "flex", my: 4 }}
+                />
+                <ShippingLabel
+                  sourceAddress={sourceAddress}
+                  deliveryAddress={deliveryAddress}
+                  parcel={selectedPackage}
+                  rate={selectedRate}
+                />
+              </Grid>
               <Grid
                 item
                 xs={12}
@@ -540,25 +618,61 @@ const CreateShipmentWizard = (props) => {
       case 2:
         return (
           <form key={1} onSubmit={handlePackageSubmit(onSubmitCreateShipment)}>
-            <Grid container spacing={12}>
-              <SelectPackageFormController
-                currentParcel={selectedPackage}
-                selectablePackages={selectablePackages}
-                handleSelectedPackageChange={handleSelectedPackageChange}
-                control={packageControl}
-                errors={packageErrors}
-                handlePackageModalToggle={handlePackageModalToggle}
-              />
-              <ShippingLabel
-                sourceAddress={sourceAddress}
-                deliveryAddress={deliveryAddress}
-                parcel={selectedPackage}
-                rate={selectedRate}
-              />
+            <Grid container>
+              <Grid item xs={12} sm={6} direction="column">
+                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                  {steps[activeStep].description}
+                </Typography>
+                <SelectPackageFormController
+                  currentParcel={selectedPackage}
+                  selectablePackages={selectablePackages}
+                  handleSelectedPackageChange={handleSelectedPackageChange}
+                  control={packageControl}
+                  errors={packageErrors}
+                  handlePackageModalToggle={handlePackageModalToggle}
+                />
+              </Grid>
+              <Grid item container sm={1} direction="column"
+                    justifyContent="center"
+                    alignItems="center">
+                <Divider
+                  orientation="vertical"
+                />
+              </Grid>
+              <Grid item xs={12} sm={5} direction="column">
+                <Grid item xs={12} sm={12}>
+                  <Box>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                        {steps[activeStep].notExist}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Button
+                        sx={{ padding: 2 }}
+                        onClick={handlePackageModalToggle}
+                        variant="outlined"
+                        color="info"
+                      >
+                        Create Parcel
+                      </Button>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Divider
+                  orientation="horizontal" sx={{ width: "50%", display: "flex", my: 4 }}
+                />
+                <ShippingLabel
+                  sourceAddress={sourceAddress}
+                  deliveryAddress={deliveryAddress}
+                  parcel={selectedPackage}
+                  rate={selectedRate}
+                />
+              </Grid>
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
+                sx={{ display: "flex", justifyContent: "space-between"}}
               >
                 <Button
                   size="large"
@@ -584,21 +698,35 @@ const CreateShipmentWizard = (props) => {
       case 3:
         return (
           <form key={2} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
-            <Grid container item spacing={12}>
+            <Grid container>
               <Grid item xs={12} sm={6} direction="column">
-                <RateSelect
-                  rates={rates}
-                  selectedRate={selectedRate}
-                  setSelectedRate={setSelectedRate}
-                  showRateError={showRateError}
+                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                  {steps[activeStep].description}
+                </Typography>
+                <Box height={"34vh"}>
+                  <RateSelect
+                    rates={rates}
+                    selectedRate={selectedRate}
+                    setSelectedRate={setSelectedRate}
+                    showRateError={showRateError}
+                  />
+                </Box>
+              </Grid>
+              <Grid item container sm={1} direction="column"
+                    justifyContent="center"
+                    alignItems="center">
+                <Divider
+                  orientation="vertical"
                 />
               </Grid>
-              <ShippingLabel
-                sourceAddress={sourceAddress}
-                deliveryAddress={deliveryAddress}
-                parcel={selectedPackage}
-                rate={selectedRate}
-              />
+              <Grid item xs={12} sm={5} direction="column">
+                <ShippingLabel
+                  sourceAddress={sourceAddress}
+                  deliveryAddress={deliveryAddress}
+                  parcel={selectedPackage}
+                  rate={selectedRate}
+                />
+              </Grid>
               <Grid
                 item
                 xs={12}
@@ -632,18 +760,6 @@ const CreateShipmentWizard = (props) => {
   };
 
   const renderContent = () => {
-    // if (activeStep === steps.length) {
-    //   return (
-    //     <Fragment>
-    //       <Typography>All steps are completed!</Typography>
-    //       <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end" }}>
-    //         <Button size="large" variant="contained" onClick={handleReset}>
-    //           Reset
-    //         </Button>
-    //       </Box>
-    //     </Fragment>
-    //   );
-    // } else {}
     return getStepContent(activeStep);
   };
 
@@ -656,37 +772,6 @@ const CreateShipmentWizard = (props) => {
               const labelProps: {
                 error?: boolean;
               } = {};
-              // if (index === activeStep) {
-              //   labelProps.error = false;
-              //   if (
-              //     (sourceAddressErrors.email ||
-              //       sourceAddressErrors.username ||
-              //       sourceAddressErrors.password ||
-              //       sourceAddressErrors["confirm-password"]) &&
-              //     activeStep === 0
-              //   ) {
-              //     labelProps.error = true;
-              //   } else if (
-              //     (personalErrors.country ||
-              //       personalErrors.language ||
-              //       personalErrors["last-name"] ||
-              //       personalErrors["first-name"]) &&
-              //     activeStep === 1
-              //   ) {
-              //     labelProps.error = true;
-              //   } else if (
-              //     (socialErrors.google ||
-              //       socialErrors.twitter ||
-              //       socialErrors.facebook ||
-              //       socialErrors.linkedIn) &&
-              //     activeStep === 2
-              //   ) {
-              //     labelProps.error = true;
-              //   } else {
-              //     labelProps.error = false;
-              //   }
-              // }
-
               return (
                 <Step key={index}>
                   <StepLabel

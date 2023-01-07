@@ -28,66 +28,61 @@ const RateSelect = ({
 }) => {
   const deliveryDays = (rate) => {
     return rate.deliveryDays
-      ? `Delivery in ${rate.deliveryDays} ${
+      ? `- Delivery in ${rate.deliveryDays} ${
           rate.deliveryDays > 1 ? "days" : "day"
         }`
       : "";
   };
 
-  const serviceDisplayName = (service: string) => {
-    return service.replace(/([A-Z])/g, " $1");
-  };
-
   return (
-    // component="div" sx={{ height: 370 , overflow: "overflow-y" }}
-    <Box>
-      <Grid item sm={6}>
-        {showRateError && (
-          <FormHelperText
-            sx={{ color: "error.main", ml: 1 }}
-            id="validation-schema-first-name"
-          >
-            Rate is required
-          </FormHelperText>
+    <Box sx={{ height: "30vh", overflowY: "auto"}}>
+      <Grid item>
+        <Grid item sm={6}>
+          {showRateError && (
+            <FormHelperText
+              sx={{ color: "error.main", ml: 1 }}
+              id="validation-schema-first-name"
+            >
+              Rate is required
+            </FormHelperText>
+          )}
+        </Grid>
+        <Box>
+          {rates?.map((rate) => (
+            <BoxWrapper
+              height={"10vh"}
+              onClick={() => setSelectedRate(rate)}
+              sx={
+                rate.id === selectedRate?.id
+                  ? { borderColor: "primary.main" }
+                  : {}
+              }
+              key={rate.id}
+            >
+              <Radio
+                value="standard"
+                checked={rate.id === selectedRate?.id}
+                name="form-layouts-collapsible-options-radio"
+                inputProps={{ "aria-label": "Standard Delivery" }}
+                sx={{ mr: 2, ml: -2.5, mt: -2.5, alignItems: "flex-start"}}
+              />
+              <Box sx={{ width: "100%" }}>
+                <Box
+                  sx={{ mb: 2, display: "flex", justifyContent: "space-between" }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    {rate.carrier} {rate.service}
+                  </Typography>
+                </Box>
+                <Typography variant="body2">{rate.rate} {rate.currency} {deliveryDays(rate)}</Typography>
+              </Box>
+            </BoxWrapper>
+          ))}
+        </Box>
+        {(!rates || rates?.length === 0) && (
+          <Typography variant="body2">No rates found</Typography>
         )}
       </Grid>
-      <Box sx={{ mt: 2 }}>
-        {rates?.map((rate) => (
-          <BoxWrapper
-            onClick={() => setSelectedRate(rate)}
-            sx={
-              rate.id === selectedRate?.id
-                ? { borderColor: "primary.main" }
-                : {}
-            }
-            key={rate.id}
-          >
-            <Radio
-              value="standard"
-              checked={rate.id === selectedRate?.id}
-              name="form-layouts-collapsible-options-radio"
-              inputProps={{ "aria-label": "Standard Delivery" }}
-              sx={{ mr: 2, ml: -2.5, mt: -2.5, alignItems: "flex-start" }}
-            />
-            <Box sx={{ width: "100%" }}>
-              <Box
-                sx={{ mb: 2, display: "flex", justifyContent: "space-between" }}
-              >
-                <Typography sx={{ fontWeight: 600 }}>
-                  {rate.carrier} - {serviceDisplayName(rate.service)}
-                </Typography>
-                <Typography sx={{ fontWeight: 700 }}>${rate.rate}</Typography>
-                {/*<Typography variant='body2'>{rate.id} - {selectedRate?.id}</Typography>*/}
-              </Box>
-              <Typography variant="body2">{deliveryDays(rate)}</Typography>
-            </Box>
-          </BoxWrapper>
-        ))}
-      </Box>
-
-      {(!rates || rates?.length === 0) && (
-        <Typography variant="body2">No rates found</Typography>
-      )}
     </Box>
   );
 };

@@ -11,117 +11,94 @@ interface ShippingLabelProps {
 }
 
 const ShippingLabel = ({
-  sourceAddress,
-  deliveryAddress,
-  parcel,
-  rate
-}: ShippingLabelProps) => {
+                         sourceAddress,
+                         deliveryAddress,
+                         parcel,
+                         rate
+                       }: ShippingLabelProps) => {
   const addressLabel = (address: Address | null) => {
     return address?.street1
       ? address?.street1 +
-          (address?.street2 ? " , " + address?.street2 : "") +
-          ", " +
-          address?.zip +
-          ", " +
-          address?.city +
-          ", " +
-          address?.country
+      (address?.street2 ? " , " + address?.street2 : "") +
+      ", " +
+      address?.zip +
+      ", " +
+      address?.city +
+      ", " +
+      address?.country
       : "";
   };
 
-  const serviceDisplayName = (service: string) => {
-    return service.replace(/([A-Z])/g, " $1");
+  const displayAdditionalPersonInfo = (address: Address) => {
+    const infos = [address.name, address.company, address.phone, address.email].filter(value => value != "").filter(value => value != undefined);
+    return infos.map((value, index) => value + (infos[index + 1] ? ", " : ""));
   };
 
   return (
-    <Grid item xs={12} sm={6} direction="column">
-      <Box display="flex" flexDirection="column" sx={{ pl: 5, mb: 5 }}>
-        <Typography variant="body1" sx={{ textAlign: "left" }} mb={4}>
-          Preview
-        </Typography>
-        {sourceAddress?.street1 && (
-          <Grid item sx={{ mb: 3 }}>
-            <Typography variant="body2" component="div">
-              <Box fontWeight="bold" display="inline">
-                From:
-              </Box>{" "}
-              {addressLabel(sourceAddress)}
-            </Typography>
-            <Box>
-              {sourceAddress?.name && (
-                <Typography variant="body2">{sourceAddress?.name}</Typography>
-              )}
-              {sourceAddress?.company && (
-                <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-                  {sourceAddress?.company}
-                </Typography>
-              )}
-              {sourceAddress?.phone && (
-                <Typography variant="body2">{sourceAddress?.phone}</Typography>
-              )}
-              {sourceAddress?.email && (
-                <Typography variant="body2">{sourceAddress?.email}</Typography>
-              )}
+    <Box>
+      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}>
+        Shipping Label (preview)
+      </Typography>
+      {sourceAddress?.street1 && (
+        <Grid item sx={{ mb: 3 }}>
+          <Typography variant="body2" component="div">
+            <Box fontWeight="bold" display="inline">
+              From:
+            </Box>{" "}
+            {addressLabel(sourceAddress)}
+          </Typography>
+          <Box>
+            {(sourceAddress?.name || sourceAddress?.company || sourceAddress?.phone || sourceAddress?.email) && (
+              <Typography variant="body2">{displayAdditionalPersonInfo(sourceAddress)}</Typography>
+            )}
+          </Box>
+        </Grid>
+      )}
+      {deliveryAddress?.street1 && (
+        <Grid item sx={{ mb: 3 }}>
+          <Typography variant="body2" component="div">
+            <Box fontWeight="bold" display="inline">
+              Ship to:
+            </Box>{" "}
+            {addressLabel(deliveryAddress)}
+          </Typography>
+          {(deliveryAddress?.name || deliveryAddress?.company || deliveryAddress?.phone || deliveryAddress?.email) && (
+            <Typography variant="body2">{displayAdditionalPersonInfo(deliveryAddress)}</Typography>
+          )}
+        </Grid>
+      )}
+      {parcel?.name && (
+        <Grid item sx={{ mb: 3 }}>
+          <Typography variant="body2" component="div">
+            <Box fontWeight="bold" display="inline">
+              Parcel information
             </Box>
-          </Grid>
-        )}
-        {deliveryAddress?.street1 && (
-          <Grid item sx={{ mb: 3 }}>
-            <Typography variant="body2" component="div">
-              <Box fontWeight="bold" display="inline">
-                Ship to:
-              </Box>{" "}
-              {addressLabel(deliveryAddress)}
+          </Typography>
+          {parcel?.length && (
+            <Typography variant="body2">
+              {parcel?.length}" x {parcel?.width}" x {parcel?.height}"
             </Typography>
-            {deliveryAddress?.name && (
-              <Typography variant="body2">{deliveryAddress?.name}</Typography>
-            )}
-            {deliveryAddress?.company && (
-              <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-                {deliveryAddress?.company}
-              </Typography>
-            )}
-            {deliveryAddress?.phone && (
-              <Typography variant="body2">{deliveryAddress?.phone}</Typography>
-            )}
-            {deliveryAddress?.email && (
-              <Typography variant="body2">{deliveryAddress?.email}</Typography>
-            )}
-          </Grid>
-        )}
-        {parcel?.name && (
-          <Grid item sx={{ mb: 3 }}>
-            <Typography variant="body2" component="div">
-              <Box fontWeight="bold" display="inline">
-                Parcel information
-              </Box>
-            </Typography>
-            {parcel?.length && (
-              <Typography variant="body2">
-                {parcel?.length}" x {parcel?.width}" x {parcel?.height}"
-              </Typography>
-            )}
-            {parcel?.weight && (
-              <Typography variant="body2">{parcel?.weight} oz</Typography>
-            )}
-            {parcel?.value && (
-              <Typography variant="body2">${parcel?.value}</Typography>
-            )}
-          </Grid>
-        )}
+          )}
+          {parcel?.weight && (
+            <Typography variant="body2">{parcel?.weight} oz</Typography>
+          )}
+          {parcel?.value && (
+            <Typography variant="body2">${parcel?.value}</Typography>
+          )}
+        </Grid>
+      )}
 
-        {rate && (
-          <Grid item>
-            <Typography variant="body2" component="div">
-              <Box fontWeight="bold" display="inline">
-                Shipping service:
-              </Box>{" "}
-              {rate?.carrier} - {serviceDisplayName(rate?.service)}
-            </Typography>
-          </Grid>
-        )}
-      </Box>
-    </Grid>
+      {rate && (
+        <Grid item>
+          <Typography variant="body2" component="div">
+            <Box fontWeight="bold" display="inline">
+              Shipping service:
+            </Box>{" "}
+            {rate?.carrier} - {rate?.service}
+          </Typography>
+        </Grid>
+      )}
+    </Box>
   );
 };
 

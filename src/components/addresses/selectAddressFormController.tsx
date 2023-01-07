@@ -6,7 +6,6 @@ import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Address } from "../../types/apps/navashipInterfaces";
 import { ChangeEvent } from "react";
-import Button from "@mui/material/Button";
 
 export enum AddressType {
   SOURCE = "source",
@@ -27,15 +26,15 @@ interface AddressSelectProps {
 }
 
 const SelectAddressFormController = ({
-  addressType,
-  currentAddress,
-  selectableAddresses,
-  handleAddressChange,
-  handleAddressAdditionalInformationChange,
-  control,
-  errors,
-  handleAddressModalToggle
-}: AddressSelectProps) => {
+                                       addressType,
+                                       currentAddress,
+                                       selectableAddresses,
+                                       handleAddressChange,
+                                       handleAddressAdditionalInformationChange,
+                                       control,
+                                       errors,
+                                       handleAddressModalToggle
+                                     }: AddressSelectProps) => {
   const fieldName = addressType.toString();
   const labelName =
     fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
@@ -71,8 +70,8 @@ const SelectAddressFormController = ({
   };
 
   return (
-    <Grid item xs={12} sm={6} direction="column">
-      <Grid item xs={12} sm={12}>
+    <Box sx={{ height: "34vh" }}>
+      <Grid item xs={12} sm={12} mb={8}>
         <FormControl fullWidth>
           <Controller
             name={fieldName}
@@ -91,6 +90,7 @@ const SelectAddressFormController = ({
                     value={value}
                     label={labelName}
                     variant="standard"
+                    placeholder={"Search or select an address"}
                   />
                 )}
               />
@@ -103,35 +103,10 @@ const SelectAddressFormController = ({
           </FormHelperText>
         )}
       </Grid>
-      <Grid item sx={{ mt: 4 }} xs={12} sm={12}>
-        <Box display="flex" justifyContent="flex-end">
-          <Button
-            sx={{ padding: 2 }}
-            onClick={handleAddressModalToggle}
-            variant="contained"
-          >
-            Add Address
-          </Button>
-        </Box>
-        <Box display="flex" justifyContent="flex-end">
-          <Typography
-            noWrap
-            sx={{
-              color: "text.secondary",
-              fontSize: 12,
-              mt: 1
-            }}
-          >
-            Address doesn't exist?
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid container spacing={2} my={1}>
-        <Grid item xs={12} mb={4}>
+      <Grid container spacing={2} my={8}>
+        <Grid item xs={12} mb={2}>
           <Typography variant="body2">
-            Additional {fieldName === "source" ? "Sender" : "Receiver"}{" "}
-            Information
+            {fieldName === "source" ? "Sender" : "Receiver"}{" "} Information
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -219,7 +194,7 @@ const SelectAddressFormController = ({
           )}
         </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 
