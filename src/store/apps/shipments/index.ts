@@ -88,5 +88,6 @@ export const shipmentsSlice = createSlice({
   }
 });
 
-export const { clearCreateShipmentStatus, clearBuyShipmentRateStatus } = shipmentsSlice.actions;
+export const { clearCreateShipmentStatus, clearBuyShipmentRateStatus } =
+  shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

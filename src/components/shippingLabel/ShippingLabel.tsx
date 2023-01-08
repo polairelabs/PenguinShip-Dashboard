@@ -11,40 +11,45 @@ interface ShippingLabelProps {
 }
 
 const ShippingLabel = ({
-                         sourceAddress,
-                         deliveryAddress,
-                         parcel,
-                         rate
-                       }: ShippingLabelProps) => {
+  sourceAddress,
+  deliveryAddress,
+  parcel,
+  rate
+}: ShippingLabelProps) => {
   const addressLabel = (address: Address | null) => {
     return address?.street1
       ? address?.street1 +
-      (address?.street2 ? " , " + address?.street2 : "") +
-      ", " +
-      address?.zip +
-      ", " +
-      address?.city +
-      ", " +
-      address?.country
+          (address?.street2 ? " , " + address?.street2 : "") +
+          ", " +
+          address?.zip +
+          ", " +
+          address?.city +
+          ", " +
+          address?.country
       : "";
   };
 
   const displayAdditionalPersonInfo = (address: Address) => {
-    const infos = [address.name, address.company, address.phone, address.email].filter(value => value != "").filter(value => value != undefined);
+    const infos = [address.name, address.company, address.phone, address.email]
+      .filter((value) => value != "")
+      .filter((value) => value != undefined);
     return infos.map((value, index) => value + (infos[index + 1] ? ", " : ""));
   };
 
   const deliveryDays = (rate) => {
     return rate.deliveryDays
       ? `Delivery in ${rate.deliveryDays} ${
-        rate.deliveryDays > 1 ? "days" : "day"
-      }`
+          rate.deliveryDays > 1 ? "days" : "day"
+        }`
       : "";
   };
 
   return (
-    <Box sx={{ height: "22vh", overflowY: "auto"}}>
-      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}>
+    <Box sx={{ height: "22vh", overflowY: "auto" }}>
+      <Typography
+        variant="body2"
+        sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}
+      >
         Shipping Label (preview)
       </Typography>
       {sourceAddress?.street1 && (
@@ -55,8 +60,13 @@ const ShippingLabel = ({
             </Box>{" "}
             {addressLabel(sourceAddress)}
           </Typography>
-          {(sourceAddress?.name || sourceAddress?.company || sourceAddress?.phone || sourceAddress?.email) && (
-            <Typography variant="body2">{displayAdditionalPersonInfo(sourceAddress)}</Typography>
+          {(sourceAddress?.name ||
+            sourceAddress?.company ||
+            sourceAddress?.phone ||
+            sourceAddress?.email) && (
+            <Typography variant="body2">
+              {displayAdditionalPersonInfo(sourceAddress)}
+            </Typography>
           )}
         </Grid>
       )}
@@ -68,8 +78,13 @@ const ShippingLabel = ({
             </Box>{" "}
             {addressLabel(deliveryAddress)}
           </Typography>
-          {(deliveryAddress?.name || deliveryAddress?.company || deliveryAddress?.phone || deliveryAddress?.email) && (
-            <Typography variant="body2">{displayAdditionalPersonInfo(deliveryAddress)}</Typography>
+          {(deliveryAddress?.name ||
+            deliveryAddress?.company ||
+            deliveryAddress?.phone ||
+            deliveryAddress?.email) && (
+            <Typography variant="body2">
+              {displayAdditionalPersonInfo(deliveryAddress)}
+            </Typography>
           )}
         </Grid>
       )}
@@ -102,9 +117,7 @@ const ShippingLabel = ({
             </Box>{" "}
             {rate?.carrier} {rate?.service} - {rate?.rate} {rate?.currency}
           </Typography>
-          <Typography variant="body2" >
-            {deliveryDays(rate)}
-          </Typography>
+          <Typography variant="body2">{deliveryDays(rate)}</Typography>
         </Grid>
       )}
     </Box>

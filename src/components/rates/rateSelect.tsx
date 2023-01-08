@@ -35,7 +35,7 @@ const RateSelect = ({
   };
 
   return (
-    <Box sx={{ height: "30vh", overflowY: "auto"}}>
+    <Box sx={{ height: "30vh", overflowY: "auto" }}>
       <Grid item>
         <Grid item sm={6}>
           {showRateError && (
@@ -64,17 +64,23 @@ const RateSelect = ({
                 checked={rate.id === selectedRate?.id}
                 name="form-layouts-collapsible-options-radio"
                 inputProps={{ "aria-label": "Standard Delivery" }}
-                sx={{ mr: 2, ml: -2.5, mt: -2.5, alignItems: "flex-start"}}
+                sx={{ mr: 2, ml: -2.5, mt: -2.5, alignItems: "flex-start" }}
               />
               <Box sx={{ width: "100%" }}>
                 <Box
-                  sx={{ mb: 2, display: "flex", justifyContent: "space-between" }}
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    justifyContent: "space-between"
+                  }}
                 >
                   <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                     {rate.carrier} {rate.service}
                   </Typography>
                 </Box>
-                <Typography variant="body2">{rate.rate} {rate.currency} {deliveryDays(rate)}</Typography>
+                <Typography variant="body2">
+                  {rate.rate} {rate.currency} {deliveryDays(rate)}
+                </Typography>
               </Box>
             </BoxWrapper>
           ))}

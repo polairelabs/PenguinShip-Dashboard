@@ -106,9 +106,7 @@ const getRecipientAddress = (shipment: Shipment) => {
 
 const dateToHumanReadableFormat = (date: Date) => {
   const dateObj = new Date(date);
-  return (
-    dateObj.toDateString() + ", " + dateObj.toLocaleTimeString()
-  );
+  return dateObj.toDateString() + ", " + dateObj.toLocaleTimeString();
 };
 
 const columns = [
@@ -132,9 +130,7 @@ const columns = [
             }}
             alt={row?.rate?.carrier}
             src={getCarrierImageSrc(row)}
-          >
-
-          </Box>
+          ></Box>
         );
       }
     }
@@ -174,8 +170,8 @@ const columns = [
       const status =
         row?.navashipShipmentStatus !== "DRAFT"
           ? row?.easypostShipmentStatus === "unknown"
-          ? row?.navashipShipmentStatus
-          : row?.easypostShipmentStatus
+            ? row?.navashipShipmentStatus
+            : row?.easypostShipmentStatus
           : row?.navashipShipmentStatus;
       console.log("status", status);
       const statusColors = {

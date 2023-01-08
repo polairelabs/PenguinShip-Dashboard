@@ -51,7 +51,7 @@ export const addressesSlice = createSlice({
       })
       .addCase(fetchAddresses.fulfilled, (state, action) => {
         // Add an index to all addresses
-        action.payload.map((address, index) => address.index = index);
+        action.payload.map((address, index) => (address.index = index));
         state.data = action.payload;
         state.status = "SUCCESS";
       })

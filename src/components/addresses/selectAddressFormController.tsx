@@ -26,15 +26,15 @@ interface AddressSelectProps {
 }
 
 const SelectAddressFormController = ({
-                                       addressType,
-                                       currentAddress,
-                                       selectableAddresses,
-                                       handleAddressChange,
-                                       handleAddressAdditionalInformationChange,
-                                       control,
-                                       errors,
-                                       handleAddressModalToggle
-                                     }: AddressSelectProps) => {
+  addressType,
+  currentAddress,
+  selectableAddresses,
+  handleAddressChange,
+  handleAddressAdditionalInformationChange,
+  control,
+  errors,
+  handleAddressModalToggle
+}: AddressSelectProps) => {
   const fieldName = addressType.toString();
   const labelName =
     fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
@@ -106,7 +106,7 @@ const SelectAddressFormController = ({
       <Grid container spacing={2} my={8}>
         <Grid item xs={12} mb={2}>
           <Typography variant="body2">
-            {fieldName === "source" ? "Sender" : "Receiver"}{" "} Information
+            {fieldName === "source" ? "Sender" : "Receiver"} Information
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>

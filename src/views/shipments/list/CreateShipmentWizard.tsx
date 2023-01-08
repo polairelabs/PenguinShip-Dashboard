@@ -26,7 +26,9 @@ import {
   clearCreateShipmentStatus,
   createShipment
 } from "../../../store/apps/shipments";
-import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
+import SelectAddressFormController, {
+  AddressType
+} from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
@@ -305,7 +307,11 @@ const CreateShipmentWizard = (props) => {
 
   const putBackDeliveryAddress = () => {
     if (deliveryAddress?.street1) {
-      selectableAddresses.splice(deliveryAddress.index ?? 0, 0, deliveryAddress);
+      selectableAddresses.splice(
+        deliveryAddress.index ?? 0,
+        0,
+        deliveryAddress
+      );
       setSelectableAddresses(selectableAddresses);
     }
   };
@@ -318,7 +324,9 @@ const CreateShipmentWizard = (props) => {
         ...sourceAddress,
         ...asAddressValues(newSourceAddress)
       });
-      const newSelectableAddresses = selectableAddresses.filter((address) => address.id !== newSourceAddress?.id);
+      const newSelectableAddresses = selectableAddresses.filter(
+        (address) => address.id !== newSourceAddress?.id
+      );
       setSelectableAddresses(newSelectableAddresses);
     } else {
       // newSourceAddress is undefined - Clear sourceAddress when user hits "clear" on the auto complete
@@ -337,7 +345,9 @@ const CreateShipmentWizard = (props) => {
         ...deliveryAddress,
         ...asAddressValues(newDeliveryAddress)
       });
-      const newSelectableAddresses = selectableAddresses.filter((address) => address.id !== newDeliveryAddress?.id);
+      const newSelectableAddresses = selectableAddresses.filter(
+        (address) => address.id !== newDeliveryAddress?.id
+      );
       setSelectableAddresses(newSelectableAddresses);
     } else {
       putBackDeliveryAddress();
@@ -495,7 +505,10 @@ const CreateShipmentWizard = (props) => {
           <form key={0} onSubmit={handleSourceAddressSubmit(onSubmitAddress)}>
             <Grid container>
               <Grid item xs={12} sm={6} direction="column">
-                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                >
                   {steps[activeStep].description}
                 </Typography>
                 <SelectAddressFormController
@@ -511,18 +524,24 @@ const CreateShipmentWizard = (props) => {
                   handleAddressModalToggle={handleAddressModalToggle}
                 />
               </Grid>
-              <Grid item container sm={1} direction="column"
-                    justifyContent="center"
-                    alignItems="center">
-                <Divider
-                  orientation="vertical"
-                />
+              <Grid
+                item
+                container
+                sm={1}
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Divider orientation="vertical" />
               </Grid>
               <Grid item xs={12} sm={5} direction="column">
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                      >
                         {steps[activeStep].notExist}
                       </Typography>
                     </Box>
@@ -539,7 +558,8 @@ const CreateShipmentWizard = (props) => {
                   </Box>
                 </Grid>
                 <Divider
-                  orientation="horizontal" sx={{ width: "50%", display: "flex", my: 4 }}
+                  orientation="horizontal"
+                  sx={{ width: "50%", display: "flex", my: 4 }}
                 />
                 <ShippingLabel
                   sourceAddress={sourceAddress}
@@ -573,7 +593,10 @@ const CreateShipmentWizard = (props) => {
           <form key={0} onSubmit={handleDeliveryAddressSubmit(onSubmitAddress)}>
             <Grid container>
               <Grid item xs={12} sm={6} direction="column">
-                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                >
                   {steps[activeStep].description}
                 </Typography>
                 <SelectAddressFormController
@@ -589,18 +612,24 @@ const CreateShipmentWizard = (props) => {
                   handleAddressModalToggle={handleAddressModalToggle}
                 />
               </Grid>
-              <Grid item container sm={1} direction="column"
-                    justifyContent="center"
-                    alignItems="center">
-                <Divider
-                  orientation="vertical"
-                />
+              <Grid
+                item
+                container
+                sm={1}
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Divider orientation="vertical" />
               </Grid>
               <Grid item xs={12} sm={5} direction="column">
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                      >
                         {steps[activeStep].notExist}
                       </Typography>
                     </Box>
@@ -617,7 +646,8 @@ const CreateShipmentWizard = (props) => {
                   </Box>
                 </Grid>
                 <Divider
-                  orientation="horizontal" sx={{ width: "50%", display: "flex", my: 4 }}
+                  orientation="horizontal"
+                  sx={{ width: "50%", display: "flex", my: 4 }}
                 />
                 <ShippingLabel
                   sourceAddress={sourceAddress}
@@ -651,7 +681,10 @@ const CreateShipmentWizard = (props) => {
           <form key={1} onSubmit={handlePackageSubmit(onSubmitCreateShipment)}>
             <Grid container>
               <Grid item xs={12} sm={6} direction="column">
-                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                >
                   {steps[activeStep].description}
                 </Typography>
                 <SelectPackageFormController
@@ -663,18 +696,24 @@ const CreateShipmentWizard = (props) => {
                   handlePackageModalToggle={handlePackageModalToggle}
                 />
               </Grid>
-              <Grid item container sm={1} direction="column"
-                    justifyContent="center"
-                    alignItems="center">
-                <Divider
-                  orientation="vertical"
-                />
+              <Grid
+                item
+                container
+                sm={1}
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Divider orientation="vertical" />
               </Grid>
               <Grid item xs={12} sm={5} direction="column">
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                      >
                         {steps[activeStep].notExist}
                       </Typography>
                     </Box>
@@ -691,7 +730,8 @@ const CreateShipmentWizard = (props) => {
                   </Box>
                 </Grid>
                 <Divider
-                  orientation="horizontal" sx={{ width: "50%", display: "flex", my: 4 }}
+                  orientation="horizontal"
+                  sx={{ width: "50%", display: "flex", my: 4 }}
                 />
                 <ShippingLabel
                   sourceAddress={sourceAddress}
@@ -731,7 +771,10 @@ const CreateShipmentWizard = (props) => {
           <form key={2} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
             <Grid container>
               <Grid item xs={12} sm={6} direction="column">
-                <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                >
                   {steps[activeStep].description}
                 </Typography>
                 <Box height={"34vh"}>
@@ -743,12 +786,15 @@ const CreateShipmentWizard = (props) => {
                   />
                 </Box>
               </Grid>
-              <Grid item container sm={1} direction="column"
-                    justifyContent="center"
-                    alignItems="center">
-                <Divider
-                  orientation="vertical"
-                />
+              <Grid
+                item
+                container
+                sm={1}
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Divider orientation="vertical" />
               </Grid>
               <Grid item xs={12} sm={5} direction="column">
                 <ShippingLabel
