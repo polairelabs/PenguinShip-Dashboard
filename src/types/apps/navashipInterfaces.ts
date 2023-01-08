@@ -9,6 +9,7 @@ export interface Package {
 }
 
 export interface Address {
+  index?: number; // use to add/remove address from selectable address list
   id: number;
   street1: string;
   street2: string;

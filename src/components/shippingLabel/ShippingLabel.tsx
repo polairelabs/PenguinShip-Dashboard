@@ -34,8 +34,16 @@ const ShippingLabel = ({
     return infos.map((value, index) => value + (infos[index + 1] ? ", " : ""));
   };
 
+  const deliveryDays = (rate) => {
+    return rate.deliveryDays
+      ? `Delivery in ${rate.deliveryDays} ${
+        rate.deliveryDays > 1 ? "days" : "day"
+      }`
+      : "";
+  };
+
   return (
-    <Box>
+    <Box sx={{ height: "22vh", overflowY: "auto"}}>
       <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}>
         Shipping Label (preview)
       </Typography>
@@ -47,11 +55,9 @@ const ShippingLabel = ({
             </Box>{" "}
             {addressLabel(sourceAddress)}
           </Typography>
-          <Box>
-            {(sourceAddress?.name || sourceAddress?.company || sourceAddress?.phone || sourceAddress?.email) && (
-              <Typography variant="body2">{displayAdditionalPersonInfo(sourceAddress)}</Typography>
-            )}
-          </Box>
+          {(sourceAddress?.name || sourceAddress?.company || sourceAddress?.phone || sourceAddress?.email) && (
+            <Typography variant="body2">{displayAdditionalPersonInfo(sourceAddress)}</Typography>
+          )}
         </Grid>
       )}
       {deliveryAddress?.street1 && (
@@ -90,11 +96,14 @@ const ShippingLabel = ({
 
       {rate && (
         <Grid item>
-          <Typography variant="body2" component="div">
+          <Typography variant="body2">
             <Box fontWeight="bold" display="inline">
               Shipping service:
             </Box>{" "}
-            {rate?.carrier} {rate?.service}
+            {rate?.carrier} {rate?.service} - {rate?.rate} {rate?.currency}
+          </Typography>
+          <Typography variant="body2" >
+            {deliveryDays(rate)}
           </Typography>
         </Grid>
       )}

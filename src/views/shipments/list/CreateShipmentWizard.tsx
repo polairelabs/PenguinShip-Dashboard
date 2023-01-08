@@ -20,13 +20,17 @@ import StepperCustomDot from "./StepperCustomDot";
 import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
-import { buyShipmentRate, clearBuyShipmentRateStatus, createShipment } from "../../../store/apps/shipments";
+import {
+  buyShipmentRate,
+  clearBuyShipmentRateStatus,
+  clearCreateShipmentStatus,
+  createShipment
+} from "../../../store/apps/shipments";
 import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
 import { fetchAddresses } from "../../../store/apps/addresses";
-import { clearCreateShipmentStatus } from "../../../store/apps/shipments";
 import RateSelect from "../../../components/rates/rateSelect";
 import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
@@ -56,7 +60,7 @@ const steps = [
   {
     title: "Rates",
     subtitle: "Choose a shipping rate",
-    description: "Select one of these following rates",
+    description: "Select one of these following rates"
   }
 ];
 
@@ -252,6 +256,8 @@ const CreateShipmentWizard = (props) => {
       toast.success("Label was successfully created", {
         position: "top-center"
       });
+      putBackSourceAddress();
+      putBackDeliveryAddress();
       setSourceAddress(null);
       setDeliveryAddress(null);
       setSelectedPackage(null);
@@ -268,6 +274,7 @@ const CreateShipmentWizard = (props) => {
   const asAddressValues = (address: Address | null) => {
     return {
       id: address?.id,
+      index: address?.index,
       street1: address?.street1,
       street2: address?.street2,
       city: address?.city,
@@ -277,20 +284,46 @@ const CreateShipmentWizard = (props) => {
     } as Address;
   };
 
+  const clearSourceAddress = () => {
+    if (sourceAddress?.street1) {
+      setSourceAddress({ ...sourceAddress, ...asAddressValues(null) });
+    }
+  };
+
+  const clearDeliveryAddress = () => {
+    if (deliveryAddress?.street1) {
+      setDeliveryAddress({ ...deliveryAddress, ...asAddressValues(null) });
+    }
+  };
+
+  const putBackSourceAddress = () => {
+    if (sourceAddress?.street1) {
+      selectableAddresses.splice(sourceAddress.index ?? 0, 0, sourceAddress);
+      setSelectableAddresses(selectableAddresses);
+    }
+  };
+
+  const putBackDeliveryAddress = () => {
+    if (deliveryAddress?.street1) {
+      selectableAddresses.splice(deliveryAddress.index ?? 0, 0, deliveryAddress);
+      setSelectableAddresses(selectableAddresses);
+    }
+  };
+
   const handleSourceAddressChange = (newSourceAddress: Address | null) => {
     if (newSourceAddress) {
+      putBackSourceAddress();
+      clearSourceAddress(); // Clear if source address already selected
       setSourceAddress({
         ...sourceAddress,
         ...asAddressValues(newSourceAddress)
       });
-      // setSelectableAddresses(
-      //   selectableAddresses.filter((address) => address.id !== newSourceAddress?.id)
-      // );
+      const newSelectableAddresses = selectableAddresses.filter((address) => address.id !== newSourceAddress?.id);
+      setSelectableAddresses(newSelectableAddresses);
     } else {
-      // if (sourceAddress) {
-      //   setSelectableAddresses((list: (Address)[]) => [...list, sourceAddress]);
-      // }
-      setSourceAddress({ ...sourceAddress, ...asAddressValues(null) });
+      // newSourceAddress is undefined - Clear sourceAddress when user hits "clear" on the auto complete
+      putBackSourceAddress();
+      clearSourceAddress();
     }
   };
 
@@ -298,18 +331,17 @@ const CreateShipmentWizard = (props) => {
     newDeliveryAddress: Address | null
   ) => {
     if (newDeliveryAddress) {
+      putBackDeliveryAddress();
+      clearDeliveryAddress(); // Clear if delivery address already selected
       setDeliveryAddress({
         ...deliveryAddress,
         ...asAddressValues(newDeliveryAddress)
       });
-      // setSelectableAddresses(
-      //   selectableAddresses.filter((address) => address.id !== deliveryAddress?.id)
-      // );
+      const newSelectableAddresses = selectableAddresses.filter((address) => address.id !== newDeliveryAddress?.id);
+      setSelectableAddresses(newSelectableAddresses);
     } else {
-      // if (deliveryAddress) {
-      //   setSelectableAddresses((list: (Address)[]) => [...list, deliveryAddress]);
-      // }
-      setDeliveryAddress({ ...deliveryAddress, ...asAddressValues(null) });
+      putBackDeliveryAddress();
+      clearDeliveryAddress();
     }
   };
 
@@ -671,7 +703,7 @@ const CreateShipmentWizard = (props) => {
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between"}}
+                sx={{ display: "flex", justifyContent: "space-between" }}
               >
                 <Button
                   size="large"
