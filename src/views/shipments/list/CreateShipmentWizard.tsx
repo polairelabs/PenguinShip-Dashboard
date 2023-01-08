@@ -20,12 +20,13 @@ import StepperCustomDot from "./StepperCustomDot";
 import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
-import { buyShipmentRate, createShipment } from "../../../store/apps/shipments";
+import { buyShipmentRate, clearBuyShipmentRateStatus, createShipment } from "../../../store/apps/shipments";
 import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
 import { fetchAddresses } from "../../../store/apps/addresses";
+import { clearCreateShipmentStatus } from "../../../store/apps/shipments";
 import RateSelect from "../../../components/rates/rateSelect";
 import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
@@ -120,9 +121,6 @@ const CreateShipmentWizard = (props) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const shipmentStore = useSelector((state: RootState) => state.shipments);
-
-  let createShipmentStatus;
-  let buyShipmentRateStatus;
 
   // Lists from the store
   const addresses = useSelector(
@@ -224,7 +222,7 @@ const CreateShipmentWizard = (props) => {
 
   // If new package was created in Package Modal
   useEffect(() => {
-    // Populate address with the last inserted
+    // Populate package with the last inserted
     if (createdPackage) {
       setSelectedPackage(lastInsertedPackage);
       setCreatedPackage(false);
@@ -232,22 +230,40 @@ const CreateShipmentWizard = (props) => {
   }, [lastInsertedPackage]);
 
   useEffect(() => {
-    // Handle next page from shipment to rates (Once rate state change fo to the next page)
-    createShipmentStatus = shipmentStore.createShipmentStatus;
-    buyShipmentRateStatus = shipmentStore.buyShipmentRateStatus;
-    if (createShipmentStatus === "CREATED") {
-      toast.success("Shipment successfully created", {
+    // Handle next page from shipment to rates (Once shipment object in the store changes)
+    if (shipmentStore.createShipmentStatus === "CREATED") {
+      toast.success("Shipment was successfully created", {
         position: "top-center"
       });
 
       setActiveStep(activeStep + 1);
-    } else if (createShipmentStatus === "FAILED") {
+    } else if (shipmentStore.createShipmentStatus === "FAILED") {
       toast.error("Error creating shipment", {
         position: "top-center"
       });
-      return;
     }
-  }, [shipmentStore.createdShipment]);
+
+    dispatch(clearCreateShipmentStatus());
+  }, [shipmentStore.createShipmentStatus]);
+
+  useEffect(() => {
+    // Handle page once rate is bought
+    if (shipmentStore.buyShipmentRateStatus === "CREATED") {
+      toast.success("Label was successfully created", {
+        position: "top-center"
+      });
+      setSourceAddress(null);
+      setDeliveryAddress(null);
+      setSelectedPackage(null);
+      setSelectedRate(null);
+      setActiveStep(0);
+    } else if (shipmentStore.buyShipmentRateStatus === "FAILED") {
+      toast.error("Error buying label", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearBuyShipmentRateStatus());
+  }, [shipmentStore.buyShipmentRateStatus]);
 
   const asAddressValues = (address: Address | null) => {
     return {
@@ -437,24 +453,7 @@ const CreateShipmentWizard = (props) => {
     await dispatch(buyShipmentRate(setShipmentRatePayload));
     setSelectRateLoading(false);
 
-    if (shipmentStore.buyShipmentRateStatus === "CREATED") {
-      toast.success("Label successfully created", {
-        position: "top-center"
-      });
-    } else if (shipmentStore.buyShipmentRateStatus === "FAILED") {
-      toast.success("Error creating label", {
-        position: "top-center"
-      });
-    }
-
-    toast.success("Label was successfully created", {
-      position: "top-center"
-    });
-    setSourceAddress(null);
-    setDeliveryAddress(null);
-    setSelectedPackage(null);
-    setSelectedRate(null);
-    setActiveStep(0);
+    // use effect handle toaster message and reset
   };
 
   const getStepContent = (step: number) => {

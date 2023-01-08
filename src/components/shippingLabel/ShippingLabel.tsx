@@ -94,7 +94,7 @@ const ShippingLabel = ({
             <Box fontWeight="bold" display="inline">
               Shipping service:
             </Box>{" "}
-            {rate?.carrier} - {rate?.service}
+            {rate?.carrier} {rate?.service}
           </Typography>
         </Grid>
       )}

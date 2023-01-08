@@ -54,7 +54,14 @@ export const shipmentsSlice = createSlice({
     createShipmentStatus: "",
     buyShipmentRateStatus: ""
   },
-  reducers: {},
+  reducers: {
+    clearCreateShipmentStatus: (state) => {
+      state.createShipmentStatus = "";
+    },
+    clearBuyShipmentRateStatus: (state) => {
+      state.buyShipmentRateStatus = "";
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createShipment.fulfilled, (state, action) => {
@@ -81,4 +88,5 @@ export const shipmentsSlice = createSlice({
   }
 });
 
+export const { clearCreateShipmentStatus, clearBuyShipmentRateStatus } = shipmentsSlice.actions;
 export default shipmentsSlice.reducer;
