@@ -717,7 +717,7 @@ const CreateShipmentWizard = (props) => {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Divider orientation="horizontal" />
+                <Divider orientation="vertical" />
               </Grid>
               <Grid item xs={12} sm={5} direction="column">
                 <Grid item xs={12} sm={12}>
