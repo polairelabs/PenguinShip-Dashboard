@@ -103,7 +103,7 @@ const SelectAddressFormController = ({
           </FormHelperText>
         )}
       </Grid>
-      <Grid container spacing={2} my={8}>
+      <Grid container spacing={2}>
         <Grid item xs={12} mb={2}>
           <Typography variant="body2">
             {fieldName === "source" ? "Sender" : "Receiver"} Information

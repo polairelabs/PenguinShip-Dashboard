@@ -178,7 +178,7 @@ const AddressesList = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={handleDialogToggle} toggleLabel="Add address" />
+          <TableHeader toggle={handleDialogToggle} toggleLabel="Create address" />
           <AddressModal
             open={open}
             handleDialogToggle={handleDialogToggle}

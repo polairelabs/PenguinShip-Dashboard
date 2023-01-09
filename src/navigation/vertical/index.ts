@@ -1,7 +1,7 @@
 import HomeOutline from "mdi-material-ui/HomeOutline";
-import ShieldOutline from "mdi-material-ui/ShieldOutline";
-import OfficeBuildingOutline from "mdi-material-ui/OfficeBuildingOutline";
-import ArchiveOutline from "mdi-material-ui/ArchiveOutline";
+import HomeCityOutline from "mdi-material-ui/HomeCityOutline";
+import PackageVariantClosed from "mdi-material-ui/PackageVariantClosed";
+import TruckFastOutline from "mdi-material-ui/TruckFastOutline";
 
 import { VerticalNavItemsType } from "src/@core/layouts/types";
 
@@ -13,29 +13,29 @@ const navigation = (): VerticalNavItemsType => {
       path: "/home"
     },
     {
-      title: "Parcels",
-      icon: ArchiveOutline,
-      path: "/packages/list"
-    },
-    {
-      title: "Addresses",
-      icon: OfficeBuildingOutline,
-      path: "/addresses/list"
-    },
-    {
       title: "Shipments",
-      icon: ShieldOutline,
+      icon: TruckFastOutline,
       children: [
+        {
+          title: "My Labels",
+          path: "/shipments/list"
+        },
         {
           title: "Create Label",
           path: "/shipments/add"
         },
-        {
-          title: "My Labels",
-          path: "/shipments/list"
-        }
       ]
-    }
+    },
+    {
+      title: "Parcels",
+      icon: PackageVariantClosed,
+      path: "/packages/list"
+    },
+    {
+      title: "Addresses",
+      icon: HomeCityOutline,
+      path: "/addresses/list"
+    },
   ];
 };
 

@@ -23,15 +23,15 @@ const TableHeader = (props: TableHeaderProps) => {
         justifyContent: "space-between"
       }}
     >
-      <Button
-        sx={{ mr: 4, mb: 2 }}
-        color="secondary"
-        variant="outlined"
-        startIcon={<ExportVariant fontSize="small" />}
-      >
-        Export
-      </Button>
-      <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
+      {/*<Button*/}
+      {/*  sx={{ mr: 4, mb: 2 }}*/}
+      {/*  color="secondary"*/}
+      {/*  variant="outlined"*/}
+      {/*  startIcon={<ExportVariant fontSize="small" />}*/}
+      {/*>*/}
+      {/*  Export*/}
+      {/*</Button>*/}
+      <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", marginLeft: "auto" }}>
         <Button sx={{ mb: 2 }} onClick={toggle} variant="contained">
           {toggleLabel}
         </Button>

@@ -198,7 +198,7 @@ const PackagesList = () => {
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={handleDialogToggle} toggleLabel="Add parcel" />
+          <TableHeader toggle={handleDialogToggle} toggleLabel="Create parcel" />
           <PackageModal
             open={open}
             handleDialogToggle={handleDialogToggle}

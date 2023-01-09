@@ -45,7 +45,7 @@ const ShippingLabel = ({
   };
 
   return (
-    <Box sx={{ height: "22vh", overflowY: "auto" }}>
+    <Box sx={{ height: "22vh", overflowY: "auto" }} mb={2}>
       <Typography
         variant="body2"
         sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}

@@ -26,9 +26,7 @@ import {
   clearCreateShipmentStatus,
   createShipment
 } from "../../../store/apps/shipments";
-import SelectAddressFormController, {
-  AddressType
-} from "../../../components/addresses/selectAddressFormController";
+import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
@@ -174,6 +172,21 @@ const CreateShipmentWizard = (props) => {
   // Used in modals to select last created entry once a new entry is created
   const [createdAddress, setCreatedAddress] = useState<boolean>(false);
   const [createdPackage, setCreatedPackage] = useState<boolean>(false);
+
+  // const [width, setWidth] = useState<number>(window.innerWidth);
+  //
+  // function handleWindowSizeChange() {
+  //   setWidth(window.innerWidth);
+  // }
+  //
+  // useEffect(() => {
+  //   window.addEventListener("resize", handleWindowSizeChange);
+  //   return () => {
+  //     window.removeEventListener("resize", handleWindowSizeChange);
+  //   };
+  // }, []);
+  //
+  // const isMobile = width <= 605;
 
   const handleAddressModalToggle = () => {
     setOpenAddressModal(!openAddressModal);
@@ -535,7 +548,7 @@ const CreateShipmentWizard = (props) => {
                 <Divider orientation="vertical" />
               </Grid>
               <Grid item xs={12} sm={5} direction="column">
-                <Grid item xs={12} sm={12}>
+                <Grid item>
                   <Box>
                     <Box>
                       <Typography
@@ -704,7 +717,7 @@ const CreateShipmentWizard = (props) => {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Divider orientation="vertical" />
+                <Divider orientation="horizontal" />
               </Grid>
               <Grid item xs={12} sm={5} direction="column">
                 <Grid item xs={12} sm={12}>
