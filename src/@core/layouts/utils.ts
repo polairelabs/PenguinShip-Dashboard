@@ -83,7 +83,9 @@ export const removeChildren = (
 
       // @ts-ignore
       if (child.children)
-        removeChildren(child.children, openGroup, currentActiveGroup);
+        { // @ts-ignore
+          removeChildren(child.children, openGroup, currentActiveGroup);
+        }
     }
   });
 };

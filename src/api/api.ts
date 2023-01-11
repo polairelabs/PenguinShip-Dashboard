@@ -44,19 +44,18 @@ function instanceOfApiErrorResponse(error: any): error is ApiErrorResponse {
 
 // TODO fix or remove this
 function handleError(error: unknown): ApiError {
-  if (axios.isAxiosError(error) && error.response) {
-    // @ts-ignore
-    const messages = error?.response?.data?.validation_errors
-      ? error.response.data.validation_errors.map(
-          (item) => `${item.field} ${item.message}`
-        )
-      : [error.response.data.message];
-    return {
-      statusCode: error?.response?.status,
-      messages
-    };
-  }
-
+  // if (axios.isAxiosError(error) && error.response) {
+  //   // @ts-ignore
+  //   const messages = error?.response?.data?.validation_errors
+  //     ? error.response.data.validation_errors.map(
+  //         (item) => `${item.field} ${item.message}`
+  //       )
+  //     : [error.response.data.message];
+  //   return {
+  //     statusCode: error?.response?.status,
+  //     messages
+  //   };
+  // }
   const { data: errorResponse } = (error as any).response;
   if (instanceOfApiErrorResponse(errorResponse)) {
     return {
