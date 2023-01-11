@@ -42,6 +42,7 @@ function instanceOfApiErrorResponse(error: any): error is ApiErrorResponse {
   return "status_code" in error && "status" in error && "message" in error;
 }
 
+// TODO fix or remove this
 function handleError(error: unknown): ApiError {
   if (axios.isAxiosError(error) && error.response) {
     // @ts-ignore

@@ -2,6 +2,7 @@ import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import BaseApi from "../../../api/api";
+import { shipmentsSlice } from "../shipments";
 
 interface Redux {
   getState: any;
@@ -44,9 +45,14 @@ export const packagesSlice = createSlice({
     params: {},
     allData: [],
     status: "IDLE",
+    deleteStatus: "",
     lastInsertedPackage: {}
   },
-  reducers: {},
+  reducers: {
+    clearDeleteStatus: (state) => {
+      state.deleteStatus = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPackages.pending, (state) => {
@@ -61,8 +67,16 @@ export const packagesSlice = createSlice({
       })
       .addCase(addPackage.fulfilled, (state, action) => {
         state.lastInsertedPackage = action.payload;
+      })
+      .addCase(deletePackage.fulfilled, (state, action) => {
+        state.deleteStatus = "SUCCESS";
+      })
+      .addCase(deletePackage.rejected, (state, action) => {
+        state.deleteStatus = "ERROR";
       });
   }
 });
 
+export const { clearDeleteStatus } =
+  packagesSlice.actions;
 export default packagesSlice.reducer;

@@ -31,7 +31,14 @@ const TableHeader = (props: TableHeaderProps) => {
       {/*>*/}
       {/*  Export*/}
       {/*</Button>*/}
-      <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", marginLeft: "auto" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          marginLeft: "auto"
+        }}
+      >
         <Button sx={{ mb: 2 }} onClick={toggle} variant="contained">
           {toggleLabel}
         </Button>

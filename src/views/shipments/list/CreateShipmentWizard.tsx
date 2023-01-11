@@ -26,7 +26,9 @@ import {
   clearCreateShipmentStatus,
   createShipment
 } from "../../../store/apps/shipments";
-import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
+import SelectAddressFormController, {
+  AddressType
+} from "../../../components/addresses/selectAddressFormController";
 import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";

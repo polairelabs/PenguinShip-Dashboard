@@ -25,6 +25,7 @@ import { fetchShipments } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link } from "@mui/material";
 import { capitalizeFirstLettersOnly } from "../../../utils";
+import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
 
 interface CellType {
   row: Shipment;
@@ -259,6 +260,7 @@ const columns = [
 const ShipmentsList = () => {
   const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState("");
 
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.shipments);
@@ -271,12 +273,27 @@ const ShipmentsList = () => {
     setOpen(!open);
   };
 
+  const handleSearch = (searchValue) => {
+    setSearchText(searchValue);
+    // const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
+    //
+    // const filteredRows = data.filter(row => {
+    //   return Object.keys(row).some(field => {
+    //     // @ts-ignore
+    //     return searchRegex.test(row[field].toString())
+    //   })
+    // })
+    // if (searchValue.length) {
+    //   setFilteredData(filteredRows)
+    // } else {
+    //   setFilteredData([])
+    // }
+  };
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={handleDialogToggle} toggleLabel="Create Label" />
-
           <DataGrid
             autoHeight
             rows={store.allShipments}
@@ -285,6 +302,16 @@ const ShipmentsList = () => {
             disableSelectionOnClick
             rowsPerPageOptions={[10, 25, 50]}
             onPageSizeChange={(newPageSize: number) => setValue(newPageSize)}
+            disableColumnSelector
+            components={{ Toolbar: QuickSearchToolbar }}
+            componentsProps={{
+              toolbar: {
+                value: searchText,
+                clearSearch: () => handleSearch(""),
+                onChange: (event) => handleSearch(event.target.value),
+                searchTxtPlaceHolder: "Search labels..."
+              }
+            }}
           />
         </Card>
       </Grid>

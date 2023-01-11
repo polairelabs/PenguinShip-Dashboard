@@ -185,6 +185,7 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
                             <InputAdornment position="start">$</InputAdornment>
                           )
                         }}
+                        helperText="Value is expressed in USD"
                       />
                     )}
                   />

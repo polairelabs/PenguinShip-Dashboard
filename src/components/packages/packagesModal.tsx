@@ -11,6 +11,7 @@ import { Close } from "mdi-material-ui";
 import PackageForm from "./packageForm";
 
 // setCreatedPackage will track if a new package was created
+// Create interface here, with optional param for updateEntity, if exists we want to update it and not create one entity
 const PackageModal = ({ open, handleDialogToggle, setCreatedPackage }) => {
   return (
     <Box>

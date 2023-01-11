@@ -14,13 +14,15 @@ import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { deletePackage, fetchPackages } from "src/store/apps/packages";
+import { clearDeleteStatus, deletePackage, fetchPackages } from "src/store/apps/packages";
 
 import { AppDispatch, RootState } from "src/store";
 import { Package } from "src/types/apps/navashipInterfaces";
 
 import TableHeader from "src/views/packages/list/TableHeader";
 import PackageModal from "../../../components/packages/packagesModal";
+import { Box, Tooltip } from "@mui/material";
+import toast from "react-hot-toast";
 
 interface CellType {
   row: Package;
@@ -87,98 +89,6 @@ const RowOptions = ({ id }: { id: number | string }) => {
   );
 };
 
-const columns = [
-  {
-    flex: 0.2,
-    minWidth: 250,
-    field: "name",
-    headerName: "Name",
-    renderCell: ({ row }: CellType) => {
-      return <Typography noWrap>{row.name}</Typography>;
-    }
-  },
-  {
-    flex: 0.15,
-    minWidth: 150,
-    field: "value",
-    headerName: "Value ($)",
-    renderCell: ({ row }: CellType) => {
-      return <Typography noWrap>{row.value}</Typography>;
-    }
-  },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    field: "weight",
-    headerName: "Weight (oz)",
-    renderCell: ({ row }: CellType) => {
-      return <Typography noWrap>{row.weight}</Typography>;
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: "length",
-    headerName: "Length (in)",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography
-          noWrap
-          sx={{
-            color: "text.secondary"
-          }}
-        >
-          {row.length}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: "width",
-    headerName: "Width (in)",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography
-          noWrap
-          sx={{
-            color: "text.secondary"
-          }}
-        >
-          {row.width}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: "height",
-    headerName: "Height (in)",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography
-          noWrap
-          sx={{
-            color: "text.secondary"
-          }}
-        >
-          {row.height}
-        </Typography>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    sortable: false,
-    field: "actions",
-    headerName: "Actions",
-    renderCell: ({ row }: CellType) => <RowOptions id={row.id} />
-  }
-];
-
 const PackagesList = () => {
   const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
@@ -186,19 +96,166 @@ const PackagesList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.packages);
 
+  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
+
+  const onMouseEnterRow = (event) => {
+    const id = Number(event.currentTarget.getAttribute("data-id"));
+    setHoveredRow(id);
+  };
+
+  const onMouseLeaveRow = (event) => {
+    setHoveredRow(null);
+  };
+
+  const columns = [
+    {
+      flex: 0.5,
+      field: "name",
+      headerName: "Name",
+      renderCell: ({ row }: CellType) => {
+        return <Typography noWrap>{row.name}</Typography>;
+      }
+    },
+    {
+      flex: 0.2,
+      field: "value",
+      headerName: "Value ($)",
+      renderCell: ({ row }: CellType) => {
+        return <Typography noWrap>{row.value}</Typography>;
+      }
+    },
+    {
+      flex: 0.2,
+      field: "weight",
+      headerName: "Weight (oz)",
+      renderCell: ({ row }: CellType) => {
+        return <Typography noWrap>{row.weight}</Typography>;
+      }
+    },
+    {
+      flex: 0.2,
+      field: "length",
+      headerName: "Length (in)",
+      renderCell: ({ row }: CellType) => {
+        return (
+          <Typography
+            noWrap
+            sx={{
+              color: "text.secondary"
+            }}
+          >
+            {row.length}
+          </Typography>
+        );
+      }
+    },
+    {
+      flex: 0.2,
+      field: "width",
+      headerName: "Width (in)",
+      renderCell: ({ row }: CellType) => {
+        return (
+          <Typography
+            noWrap
+            sx={{
+              color: "text.secondary"
+            }}
+          >
+            {row.width}
+          </Typography>
+        );
+      }
+    },
+    {
+      flex: 0.2,
+      field: "height",
+      headerName: "Height (in)",
+      renderCell: ({ row }: CellType) => {
+        return (
+          <Typography
+            noWrap
+            sx={{
+              color: "text.secondary"
+            }}
+          >
+            {row.height}
+          </Typography>
+        );
+      }
+    },
+    {
+      field: "actions",
+      headerName: "",
+      width: 120,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: ({ row }: CellType) => {
+        if (hoveredRow === row.id) {
+          return (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Tooltip title="Edit">
+                <IconButton onClick={() => handleUpdate(row.id)}>
+                  <PencilOutline />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton onClick={() => handleDelete(row.id)}>
+                  <DeleteOutline />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          );
+        } else return null;
+      }
+    }
+  ];
+
   useEffect(() => {
     dispatch(fetchPackages());
   }, [dispatch]);
 
+  // Delete toast
+  useEffect(() => {
+    if (store.deleteStatus === "SUCCESS") {
+      toast.success("Package was successfully deleted", {
+        position: "top-center"
+      });
+    } else if (store.deleteStatus === "ERROR") {
+      toast.error("Error deleting package", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearDeleteStatus());
+  }, [store.deleteStatus]);
+
   const handleDialogToggle = () => {
     setOpen(!open);
+  };
+
+  const handleUpdate = (id) => {
+
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deletePackage(id));
   };
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={handleDialogToggle} toggleLabel="Create parcel" />
+          <TableHeader
+            toggle={handleDialogToggle}
+            toggleLabel="Create parcel"
+          />
           <PackageModal
             open={open}
             handleDialogToggle={handleDialogToggle}
@@ -213,6 +270,19 @@ const PackagesList = () => {
             disableSelectionOnClick
             rowsPerPageOptions={[10, 25, 50]}
             onPageSizeChange={(newPageSize: number) => setValue(newPageSize)}
+            disableColumnSelector
+            componentsProps={{
+              row: {
+                onMouseEnter: onMouseEnterRow,
+                onMouseLeave: onMouseLeaveRow
+              }
+            }}
+            sx={{
+              "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-child(2) .MuiDataGrid-columnSeparator":
+                {
+                  display: "none"
+                }
+            }}
           />
         </Card>
       </Grid>

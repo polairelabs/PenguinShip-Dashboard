@@ -23,7 +23,7 @@ const navigation = (): VerticalNavItemsType => {
         {
           title: "Create Label",
           path: "/shipments/add"
-        },
+        }
       ]
     },
     {
@@ -35,7 +35,7 @@ const navigation = (): VerticalNavItemsType => {
       title: "Addresses",
       icon: HomeCityOutline,
       path: "/addresses/list"
-    },
+    }
   ];
 };
 
