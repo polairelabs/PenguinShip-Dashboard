@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -6,14 +6,16 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CardContent from "@mui/material/CardContent";
 import AddressAutoCompleteField from "../fields/addressAutoCompleteField";
-import { addAddress } from "../../store/apps/addresses";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store";
+import { addAddress, updateAddress } from "../../store/apps/addresses";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { toast } from "react-hot-toast";
+import { Address, Package } from "../../types/apps/navashipInterfaces";
+import { clearCreateStatus, clearUpdateStatus } from "../../store/apps/addresses";
 
 // See: https://www.uxmatters.com/mt/archives/2008/06/international-address-fields-in-web-forms.php
 export type AddressDetails = {
@@ -25,7 +27,13 @@ export type AddressDetails = {
   country: string;
 };
 
-const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
+interface AddressFormProps {
+  handleDialogToggle: () => void;
+  setCreatedPackage?: (value: boolean) => void;
+  addressToEdit?: Address;
+}
+
+const AddressForm = ({ handleDialogToggle, setCreatedAddress, addressToEdit }) => {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>({
     street1: "",
     street2: "",
@@ -34,6 +42,8 @@ const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
     state: "",
     country: ""
   });
+
+  const store = useSelector((state: RootState) => state.addresses);
 
   const defaultValues: AddressDetails = {
     street1: "",
@@ -74,13 +84,12 @@ const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleData = (data: AddressDetails) => {
-    dispatch(addAddress({ ...data }));
-    toast.success("Address was successfully created", {
-      position: "top-center"
-    });
-    if (setCreatedAddress) {
-      setCreatedAddress(true);
+    if (!addressToEdit) {
+      dispatch(addAddress({ ...data }));
+    } else {
+      dispatch(updateAddress({ id: addressToEdit.id, ...data }));
     }
+
     handleDialogToggle();
   };
 
@@ -95,6 +104,45 @@ const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
     setAddressDetails(newAddressDetails);
   };
 
+  useEffect(() => {
+    if (addressToEdit !== undefined) {
+      const addressToPopulate = { ...addressToEdit };
+      setAddressDetails(addressToPopulate);
+    }
+  }, [addressToEdit]);
+
+  // Add toast message
+  useEffect(() => {
+    if (store.createStatus === "SUCCESS") {
+      toast.success("Address was successfully created", {
+        position: "top-center"
+      });
+
+      if (setCreatedAddress) {
+        setCreatedAddress(true);
+      }
+    } else if (store.createStatus === "ERROR") {
+      toast.error("Error creating address", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearCreateStatus());
+  }, [store.createStatus]);
+
+  // Edit toast message
+  useEffect(() => {
+    if (store.updateStatus === "SUCCESS") {
+      toast.success("Address was successfully updated", {
+        position: "top-center"
+      });
+    } else if (store.updateStatus === "ERROR") {
+      toast.error("Error updating address", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearUpdateStatus());
+  }, [store.updateStatus]);
+
   return (
     <Card>
       <CardContent>
@@ -107,9 +155,11 @@ const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <AddressAutoCompleteField
+                    addressDetails={addressDetails}
                     setAddressDetails={setAddressDetails}
                     handleAddressValueChange={handleAddressValueChange}
                     error={Boolean(errors.street1)}
+                    street1Value={addressToEdit?.street1}
                   />
                 )}
               />
@@ -251,7 +301,7 @@ const AddressForm = ({ handleDialogToggle, setCreatedAddress }) => {
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  Create address
+                  {!addressToEdit ? "Create address" : "Edit address"}
                 </Button>
               </Box>
             </Grid>

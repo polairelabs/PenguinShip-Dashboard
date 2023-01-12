@@ -1,18 +1,18 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Typography
-} from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
 import { Close } from "mdi-material-ui";
 import AddressForm from "./addressForm";
+import { Address } from "../../types/apps/navashipInterfaces";
 
-// setCreatedAddress will track if a new address was created
-const AddressModal = ({ open, handleDialogToggle, setCreatedAddress }) => {
+interface AddressModalProps {
+  open: boolean;
+  handleDialogToggle: () => void;
+  setCreatedAddress?: (value: boolean) => void; // // setCreatedAddress will track if a new address was created in shipmentWizard
+  addressToEdit?: Address; // if value is defined, this means that the modal will be used to edit entry
+}
+
+const AddressModal = ({ open, handleDialogToggle, setCreatedAddress, addressToEdit }: AddressModalProps) => {
   return (
     <Box>
       <Dialog
@@ -25,10 +25,10 @@ const AddressModal = ({ open, handleDialogToggle, setCreatedAddress }) => {
       >
         <DialogTitle sx={{ pt: 12, ml: { xs: "1rem", sm: "2.2rem" } }}>
           <Typography variant="h4" component="span" sx={{ mb: 2 }}>
-            Create Address
+            {!addressToEdit ? "Create Address" : "Edit Address"}
           </Typography>
           <Typography variant="body2">
-            This is an autocomplete form to save an address for future use.
+            {!addressToEdit ? "Create a new address" : "Edit existing address"}
           </Typography>
           <IconButton
             size="small"
@@ -50,6 +50,7 @@ const AddressModal = ({ open, handleDialogToggle, setCreatedAddress }) => {
           <AddressForm
             handleDialogToggle={handleDialogToggle}
             setCreatedAddress={setCreatedAddress}
+            addressToEdit={addressToEdit}
           />
         </DialogContent>
       </Dialog>

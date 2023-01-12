@@ -12,13 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { InputAdornment, Typography } from "@mui/material";
-import {
-  addPackage,
-  clearCreateStatus,
-  clearDeleteStatus,
-  clearUpdateStatus,
-  updatePackage
-} from "../../store/apps/packages";
+import { addPackage, clearCreateStatus, clearUpdateStatus, updatePackage } from "../../store/apps/packages";
 import { toast } from "react-hot-toast";
 import { Package } from "../../types/apps/navashipInterfaces";
 
@@ -183,10 +177,6 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage, packageToEdit }: P
       toast.success("Package was successfully updated", {
         position: "top-center"
       });
-
-      if (setCreatedPackage) {
-        setCreatedPackage(true);
-      }
     } else if (store.updateStatus === "ERROR") {
       toast.error("Error updating package", {
         position: "top-center"

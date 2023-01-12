@@ -1,14 +1,10 @@
-import { MouseEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
-import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
 import { DataGrid } from "@mui/x-data-grid";
-import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import DotsVertical from "mdi-material-ui/DotsVertical";
 import PencilOutline from "mdi-material-ui/PencilOutline";
 import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
@@ -28,76 +24,14 @@ interface CellType {
   row: Package;
 }
 
-const MenuItemLink = styled("a")(({ theme }) => ({
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  textDecoration: "none",
-  padding: theme.spacing(1.5, 4),
-  color: theme.palette.text.primary
-}));
-
-const RowOptions = ({ id }: { id: number | string }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const rowOptionsOpen = Boolean(anchorEl);
-
-  const handleRowOptionsClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleRowOptionsClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDelete = () => {
-    dispatch(deletePackage(id));
-    handleRowOptionsClose();
-  };
-
-  return (
-    <>
-      <IconButton size="small" onClick={handleRowOptionsClick}>
-        <DotsVertical />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        open={rowOptionsOpen}
-        onClose={handleRowOptionsClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right"
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right"
-        }}
-        PaperProps={{ style: { minWidth: "8rem" } }}
-      >
-        <MenuItem onClick={handleRowOptionsClose}>
-          <PencilOutline fontSize="small" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <DeleteOutline fontSize="small" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
-  );
-};
-
 const PackagesList = () => {
+  const store = useSelector((state: RootState) => state.packages);
   const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
   const [packageToEdit, setPackageToEdit] = useState<Package | undefined>(undefined);
+  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
-  const store = useSelector((state: RootState) => state.packages);
-
-  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
 
   const onMouseEnterRow = (event) => {
     const id = Number(event.currentTarget.getAttribute("data-id"));
@@ -106,6 +40,20 @@ const PackagesList = () => {
 
   const onMouseLeaveRow = (event) => {
     setHoveredRow(null);
+  };
+
+  const handleDialogToggle = () => {
+    setOpen(!open);
+    setPackageToEdit(undefined);
+  };
+
+  const handleUpdate = (parcel: Package) => {
+    setPackageToEdit(parcel);
+    setOpen(!open);
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deletePackage(id));
   };
 
   const columns = [
@@ -237,20 +185,6 @@ const PackagesList = () => {
     dispatch(clearDeleteStatus());
   }, [store.deleteStatus]);
 
-  const handleDialogToggle = () => {
-    setOpen(!open);
-    setPackageToEdit(undefined);
-  };
-
-  const handleUpdate = (parcel: Package) => {
-    setPackageToEdit(parcel);
-    setOpen(!open);
-  };
-
-  const handleDelete = (id) => {
-    dispatch(deletePackage(id));
-  };
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -264,7 +198,6 @@ const PackagesList = () => {
             handleDialogToggle={handleDialogToggle}
             packageToEdit={packageToEdit}
           />
-
           <DataGrid
             autoHeight
             rows={store.data}

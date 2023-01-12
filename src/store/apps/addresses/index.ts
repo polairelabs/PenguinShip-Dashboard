@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import BaseApi from "../../../api/api";
+import { Status } from "../../index";
 
 interface Redux {
   getState: any;
@@ -26,10 +27,24 @@ export const addAddress = createAsyncThunk(
   }
 );
 
+export const updateAddress = createAsyncThunk(
+  "addresses/updateAddress",
+  async (
+    data: { [key: string]: number | string },
+    { getState, dispatch }: Redux
+  ) => {
+    const response = await BaseApi.put(`/addresses/${data.id}`, data);
+    dispatch(fetchAddresses());
+    return response;
+  }
+);
+
 export const deleteAddress = createAsyncThunk(
   "addresses/deleteAddress",
   async (id: number | string, { getState, dispatch }: Redux) => {
-    // Todo implement
+    const response = await BaseApi.delete(`/addresses/${id}`);
+    dispatch(fetchAddresses());
+    return response;
   }
 );
 
@@ -40,28 +55,62 @@ export const addressesSlice = createSlice({
     total: 1,
     params: {},
     allData: [],
-    fetchDataStatus: "IDLE",
+    fetchDataStatus: "" as Status,
+    createStatus: "" as Status,
+    updateStatus: "" as Status,
+    deleteStatus: "" as Status,
     lastInsertedAddress: {}
   },
-  reducers: {},
+  reducers: {
+    clearFetchDataStatus: (state) => {
+      state.fetchDataStatus = "";
+    },
+    clearCreateStatus: (state) => {
+      state.createStatus = "";
+    },
+    clearUpdateStatus: (state) => {
+      state.updateStatus = "";
+    },
+    clearDeleteStatus: (state) => {
+      state.deleteStatus = "";
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAddresses.pending, (state) => {
-        state.status = "LOADING";
+        state.fetchDataStatus = "LOADING";
       })
       .addCase(fetchAddresses.fulfilled, (state, action) => {
         // Add an index to all addresses
-        action.payload.map((address, index) => (address.index = index));
+        // action.payload.map((address, index) => (address.index = index));
         state.data = action.payload;
-        state.status = "SUCCESS";
+        state.fetchDataStatus = "SUCCESS";
       })
       .addCase(fetchAddresses.rejected, (state) => {
-        state.status = "FAILED";
+        state.fetchDataStatus = "ERROR";
       })
       .addCase(addAddress.fulfilled, (state, action) => {
         state.lastInsertedAddress = action.payload;
+        state.createStatus = "SUCCESS";
+      })
+      .addCase(addAddress.rejected, (state, action) => {
+        state.createStatus = "ERROR";
+      })
+      .addCase(updateAddress.fulfilled, (state, action) => {
+        state.updateStatus = "SUCCESS";
+      })
+      .addCase(updateAddress.rejected, (state, action) => {
+        state.updateStatus = "ERROR";
+      })
+      .addCase(deleteAddress.fulfilled, (state, action) => {
+        state.deleteStatus = "SUCCESS";
+      })
+      .addCase(deleteAddress.rejected, (state, action) => {
+        state.deleteStatus = "ERROR";
       });
   }
 });
 
+export const { clearFetchDataStatus, clearCreateStatus, clearUpdateStatus, clearDeleteStatus } =
+  addressesSlice.actions;
 export default addressesSlice.reducer;

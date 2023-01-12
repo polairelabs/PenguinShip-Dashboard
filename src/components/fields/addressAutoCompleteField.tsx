@@ -14,9 +14,11 @@ type Libraries = (
 const places: Libraries = ["places"];
 
 export default function AddressAutoCompleteField({
+  addressDetails,
   setAddressDetails,
   handleAddressValueChange,
-  error
+  error,
+  street1Value // When we edit an address, this will be defined
 }) {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
@@ -40,17 +42,21 @@ export default function AddressAutoCompleteField({
 
   return (
     <PlacesAutoCompleteComboBox
+      addressDetails={addressDetails}
       setAddressDetails={setAddressDetails}
       handleAddressValueChange={handleAddressValueChange}
       error={error}
+      street1Value={street1Value}
     />
   );
 }
 
 const PlacesAutoCompleteComboBox = ({
+  addressDetails,
   setAddressDetails,
   handleAddressValueChange,
-  error
+  error,
+  street1Value
 }) => {
   const {
     ready,
@@ -81,18 +87,23 @@ const PlacesAutoCompleteComboBox = ({
         }))
       );
 
-      const addressDetails: AddressDetails = {
+      const newAddressDetails: AddressDetails = {
         street1:
           addressDetailsObj.street_number + " " + addressDetailsObj.route,
         city: addressDetailsObj.locality,
         country: addressDetailsObj.country,
         zip: addressDetailsObj.postal_code,
-        state: addressDetailsObj.administrative_area_level_1
+        state: addressDetailsObj.administrative_area_level_1,
+        street2: addressDetails.street2 ?? "",
       };
 
-      setAddressDetails(addressDetails);
+      setAddressDetails(newAddressDetails);
     }
   };
+
+  const handleStreet1Value = (value) => {
+    return (!value ? street1Value : value) || null;
+  }
 
   return (
     <Autocomplete
@@ -100,7 +111,7 @@ const PlacesAutoCompleteComboBox = ({
       id="places-combo-box-autocomplete"
       disabled={!ready}
       options={data}
-      value={value}
+      value={handleStreet1Value(value)}
       getOptionLabel={(option) =>
         typeof option === "string" ? option : option.description
       }
