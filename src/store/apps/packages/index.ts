@@ -90,10 +90,10 @@ export const packagesSlice = createSlice({
       })
       .addCase(addPackage.fulfilled, (state, action) => {
         state.lastInsertedPackage = action.payload;
-        state.createStatus = "SUCCESS"
+        state.createStatus = "SUCCESS";
       })
       .addCase(addPackage.rejected, (state, action) => {
-        state.createStatus = "ERROR"
+        state.createStatus = "ERROR";
       })
       .addCase(updatePackage.fulfilled, (state, action) => {
         state.updateStatus = "SUCCESS";
@@ -110,6 +110,10 @@ export const packagesSlice = createSlice({
   }
 });
 
-export const { clearFetchDataStatus, clearCreateStatus, clearUpdateStatus, clearDeleteStatus } =
-  packagesSlice.actions;
+export const {
+  clearFetchDataStatus,
+  clearCreateStatus,
+  clearUpdateStatus,
+  clearDeleteStatus
+} = packagesSlice.actions;
 export default packagesSlice.reducer;

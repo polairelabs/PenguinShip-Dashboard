@@ -111,6 +111,10 @@ export const addressesSlice = createSlice({
   }
 });
 
-export const { clearFetchDataStatus, clearCreateStatus, clearUpdateStatus, clearDeleteStatus } =
-  addressesSlice.actions;
+export const {
+  clearFetchDataStatus,
+  clearCreateStatus,
+  clearUpdateStatus,
+  clearDeleteStatus
+} = addressesSlice.actions;
 export default addressesSlice.reducer;

@@ -94,7 +94,7 @@ const PlacesAutoCompleteComboBox = ({
         country: addressDetailsObj.country,
         zip: addressDetailsObj.postal_code,
         state: addressDetailsObj.administrative_area_level_1,
-        street2: addressDetails.street2 ?? "",
+        street2: addressDetails.street2 ?? ""
       };
 
       setAddressDetails(newAddressDetails);
@@ -103,7 +103,7 @@ const PlacesAutoCompleteComboBox = ({
 
   const handleStreet1Value = (value) => {
     return (!value ? street1Value : value) || null;
-  }
+  };
 
   return (
     <Autocomplete

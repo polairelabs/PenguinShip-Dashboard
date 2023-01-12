@@ -11,7 +11,11 @@ import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { clearDeleteStatus, deleteAddress, fetchAddresses } from "src/store/apps/addresses";
+import {
+  clearDeleteStatus,
+  deleteAddress,
+  fetchAddresses
+} from "src/store/apps/addresses";
 
 import { AppDispatch, RootState } from "src/store";
 import { Address } from "src/types/apps/navashipInterfaces";
@@ -21,7 +25,6 @@ import TableHeader from "../../../views/packages/list/TableHeader";
 import { Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
 
-
 interface CellType {
   row: Address;
 }
@@ -29,7 +32,9 @@ interface CellType {
 const AddressesList = () => {
   const store = useSelector((state: RootState) => state.addresses);
   const [open, setOpen] = useState<boolean>(false);
-  const [addressToEdit, setAddressToEdit] = useState<Address | undefined>(undefined);
+  const [addressToEdit, setAddressToEdit] = useState<Address | undefined>(
+    undefined
+  );
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();

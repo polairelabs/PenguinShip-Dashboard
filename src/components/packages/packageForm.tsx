@@ -12,7 +12,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { InputAdornment, Typography } from "@mui/material";
-import { addPackage, clearCreateStatus, clearUpdateStatus, updatePackage } from "../../store/apps/packages";
+import {
+  addPackage,
+  clearCreateStatus,
+  clearUpdateStatus,
+  updatePackage
+} from "../../store/apps/packages";
 import { toast } from "react-hot-toast";
 import { Package } from "../../types/apps/navashipInterfaces";
 
@@ -31,7 +36,11 @@ interface PackageFormProps {
   packageToEdit?: Package;
 }
 
-const PackageForm = ({ handleDialogToggle, setCreatedPackage, packageToEdit }: PackageFormProps) => {
+const PackageForm = ({
+  handleDialogToggle,
+  setCreatedPackage,
+  packageToEdit
+}: PackageFormProps) => {
   const [packageDetails, setPackageDetails] = useState<PackageDetails>({
     name: "",
     weight: "",
@@ -124,7 +133,9 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage, packageToEdit }: P
     if (!packageToEdit) {
       dispatch(addPackage({ ...packageDetailsToSend }));
     } else {
-      dispatch(updatePackage({ id: packageToEdit.id, ...packageDetailsToSend }));
+      dispatch(
+        updatePackage({ id: packageToEdit.id, ...packageDetailsToSend })
+      );
     }
     handleDialogToggle();
   };

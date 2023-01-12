@@ -1,6 +1,12 @@
 import Box from "@mui/material/Box";
 
-import { Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography
+} from "@mui/material";
 import { Close } from "mdi-material-ui";
 import PackageForm from "./packageForm";
 import { Package } from "../../types/apps/navashipInterfaces";
@@ -12,7 +18,12 @@ interface PackageModalProps {
   packageToEdit?: Package; // if value is defined, this means that the modal will be used to edit entry
 }
 
-const PackageModal = ({ open, handleDialogToggle, setCreatedPackage, packageToEdit }: PackageModalProps) => {
+const PackageModal = ({
+  open,
+  handleDialogToggle,
+  setCreatedPackage,
+  packageToEdit
+}: PackageModalProps) => {
   return (
     <Box>
       <Dialog

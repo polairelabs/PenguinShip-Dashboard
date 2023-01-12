@@ -10,7 +10,11 @@ import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { clearDeleteStatus, deletePackage, fetchPackages } from "src/store/apps/packages";
+import {
+  clearDeleteStatus,
+  deletePackage,
+  fetchPackages
+} from "src/store/apps/packages";
 
 import { AppDispatch, RootState } from "src/store";
 import { Package } from "src/types/apps/navashipInterfaces";
@@ -28,7 +32,9 @@ const PackagesList = () => {
   const store = useSelector((state: RootState) => state.packages);
   const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
-  const [packageToEdit, setPackageToEdit] = useState<Package | undefined>(undefined);
+  const [packageToEdit, setPackageToEdit] = useState<Package | undefined>(
+    undefined
+  );
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();

@@ -82,10 +82,10 @@ export const removeChildren = (
       if (index > -1) openGroup.splice(index, 1);
 
       // @ts-ignore
-      if (child.children)
-        { // @ts-ignore
-          removeChildren(child.children, openGroup, currentActiveGroup);
-        }
+      if (child.children) {
+        // @ts-ignore
+        removeChildren(child.children, openGroup, currentActiveGroup);
+      }
     }
   });
 };

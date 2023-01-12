@@ -15,7 +15,10 @@ import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { toast } from "react-hot-toast";
 import { Address, Package } from "../../types/apps/navashipInterfaces";
-import { clearCreateStatus, clearUpdateStatus } from "../../store/apps/addresses";
+import {
+  clearCreateStatus,
+  clearUpdateStatus
+} from "../../store/apps/addresses";
 
 // See: https://www.uxmatters.com/mt/archives/2008/06/international-address-fields-in-web-forms.php
 export type AddressDetails = {
@@ -33,7 +36,11 @@ interface AddressFormProps {
   addressToEdit?: Address;
 }
 
-const AddressForm = ({ handleDialogToggle, setCreatedAddress, addressToEdit }) => {
+const AddressForm = ({
+  handleDialogToggle,
+  setCreatedAddress,
+  addressToEdit
+}) => {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>({
     street1: "",
     street2: "",

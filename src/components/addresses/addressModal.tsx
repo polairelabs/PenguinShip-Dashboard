@@ -1,6 +1,12 @@
 import Box from "@mui/material/Box";
 
-import { Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography
+} from "@mui/material";
 import { Close } from "mdi-material-ui";
 import AddressForm from "./addressForm";
 import { Address } from "../../types/apps/navashipInterfaces";
@@ -12,7 +18,12 @@ interface AddressModalProps {
   addressToEdit?: Address; // if value is defined, this means that the modal will be used to edit entry
 }
 
-const AddressModal = ({ open, handleDialogToggle, setCreatedAddress, addressToEdit }: AddressModalProps) => {
+const AddressModal = ({
+  open,
+  handleDialogToggle,
+  setCreatedAddress,
+  addressToEdit
+}: AddressModalProps) => {
   return (
     <Box>
       <Dialog
