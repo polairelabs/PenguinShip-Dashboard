@@ -1,18 +1,18 @@
 import Box from "@mui/material/Box";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Typography
-} from "@mui/material";
+import { Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
 import { Close } from "mdi-material-ui";
 import PackageForm from "./packageForm";
+import { Package } from "../../types/apps/navashipInterfaces";
 
-// setCreatedPackage will track if a new package was created
-// Create interface here, with optional param for updateEntity, if exists we want to update it and not create one entity
-const PackageModal = ({ open, handleDialogToggle, setCreatedPackage }) => {
+interface PackageModalProps {
+  open: boolean;
+  handleDialogToggle: () => void;
+  setCreatedPackage?: (value: boolean) => void; // setCreatedPackage will track if a new package was created in shipmentWizard
+  packageToEdit?: Package; // if value is defined, this means that the modal will be used to edit entry
+}
+
+const PackageModal = ({ open, handleDialogToggle, setCreatedPackage, packageToEdit }: PackageModalProps) => {
   return (
     <Box>
       <Dialog
@@ -25,10 +25,10 @@ const PackageModal = ({ open, handleDialogToggle, setCreatedPackage }) => {
       >
         <DialogTitle sx={{ pt: 12, ml: { xs: "1rem", sm: "2.2rem" } }}>
           <Typography variant="h4" component="span" sx={{ mb: 2 }}>
-            Create Parcel
+            {!packageToEdit ? "Create Parcel" : "Edit Parcel"}
           </Typography>
           <Typography variant="body2">
-            This is a form used to save a parcel for future use.
+            {!packageToEdit ? "Create a new parcel" : "Edit existing parcel"}
           </Typography>
           <IconButton
             size="small"
@@ -50,6 +50,7 @@ const PackageModal = ({ open, handleDialogToggle, setCreatedPackage }) => {
           <PackageForm
             handleDialogToggle={handleDialogToggle}
             setCreatedPackage={setCreatedPackage}
+            packageToEdit={packageToEdit}
           />
         </DialogContent>
       </Dialog>

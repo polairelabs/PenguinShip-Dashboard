@@ -92,6 +92,7 @@ const RowOptions = ({ id }: { id: number | string }) => {
 const PackagesList = () => {
   const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
+  const [packageToEdit, setPackageToEdit] = useState<Package | undefined>(undefined);
 
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.packages);
@@ -202,7 +203,7 @@ const PackagesList = () => {
               }}
             >
               <Tooltip title="Edit">
-                <IconButton onClick={() => handleUpdate(row.id)}>
+                <IconButton onClick={() => handleUpdate(row)}>
                   <PencilOutline />
                 </IconButton>
               </Tooltip>
@@ -238,10 +239,12 @@ const PackagesList = () => {
 
   const handleDialogToggle = () => {
     setOpen(!open);
+    setPackageToEdit(undefined);
   };
 
-  const handleUpdate = (id) => {
-
+  const handleUpdate = (parcel: Package) => {
+    setPackageToEdit(parcel);
+    setOpen(!open);
   };
 
   const handleDelete = (id) => {
@@ -259,7 +262,7 @@ const PackagesList = () => {
           <PackageModal
             open={open}
             handleDialogToggle={handleDialogToggle}
-            setCreatedPackage={undefined}
+            packageToEdit={packageToEdit}
           />
 
           <DataGrid

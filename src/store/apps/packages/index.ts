@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import BaseApi from "../../../api/api";
-import { shipmentsSlice } from "../shipments";
+import { Status } from "../../index";
 
 interface Redux {
   getState: any;
@@ -28,6 +28,18 @@ export const addPackage = createAsyncThunk(
   }
 );
 
+export const updatePackage = createAsyncThunk(
+  "packages/updatePackage",
+  async (
+    data: { [key: string]: number | string },
+    { getState, dispatch }: Redux
+  ) => {
+    const response = await BaseApi.put(`/packages/${data.id}`, data);
+    dispatch(fetchPackages());
+    return response;
+  }
+);
+
 export const deletePackage = createAsyncThunk(
   "packages/deletePackage",
   async (id: number | string, { getState, dispatch }: Redux) => {
@@ -44,29 +56,50 @@ export const packagesSlice = createSlice({
     total: 1,
     params: {},
     allData: [],
-    status: "IDLE",
-    deleteStatus: "",
+    fetchDataStatus: "" as Status,
+    createStatus: "" as Status,
+    updateStatus: "" as Status,
+    deleteStatus: "" as Status,
     lastInsertedPackage: {}
   },
   reducers: {
+    clearFetchDataStatus: (state) => {
+      state.fetchDataStatus = "";
+    },
+    clearCreateStatus: (state) => {
+      state.createStatus = "";
+    },
+    clearUpdateStatus: (state) => {
+      state.updateStatus = "";
+    },
     clearDeleteStatus: (state) => {
       state.deleteStatus = "";
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPackages.pending, (state) => {
-        state.status = "LOADING";
+        state.fetchDataStatus = "LOADING";
       })
       .addCase(fetchPackages.fulfilled, (state, action) => {
         state.data = action.payload;
-        state.status = "SUCCESS";
+        state.fetchDataStatus = "SUCCESS";
       })
       .addCase(fetchPackages.rejected, (state) => {
-        state.status = "FAILED";
+        state.fetchDataStatus = "ERROR";
       })
       .addCase(addPackage.fulfilled, (state, action) => {
         state.lastInsertedPackage = action.payload;
+        state.createStatus = "SUCCESS"
+      })
+      .addCase(addPackage.rejected, (state, action) => {
+        state.createStatus = "ERROR"
+      })
+      .addCase(updatePackage.fulfilled, (state, action) => {
+        state.updateStatus = "SUCCESS";
+      })
+      .addCase(updatePackage.rejected, (state, action) => {
+        state.updateStatus = "ERROR";
       })
       .addCase(deletePackage.fulfilled, (state, action) => {
         state.deleteStatus = "SUCCESS";
@@ -77,6 +110,6 @@ export const packagesSlice = createSlice({
   }
 });
 
-export const { clearDeleteStatus } =
+export const { clearFetchDataStatus, clearCreateStatus, clearUpdateStatus, clearDeleteStatus } =
   packagesSlice.actions;
 export default packagesSlice.reducer;

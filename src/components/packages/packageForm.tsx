@@ -1,19 +1,26 @@
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CardContent from "@mui/material/CardContent";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store";
-import { useForm, Controller } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { InputAdornment, Typography } from "@mui/material";
-import { addPackage } from "../../store/apps/packages";
+import {
+  addPackage,
+  clearCreateStatus,
+  clearDeleteStatus,
+  clearUpdateStatus,
+  updatePackage
+} from "../../store/apps/packages";
 import { toast } from "react-hot-toast";
+import { Package } from "../../types/apps/navashipInterfaces";
 
 export type PackageDetails = {
   name: string;
@@ -24,7 +31,13 @@ export type PackageDetails = {
   monetaryValue: string;
 };
 
-const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
+interface PackageFormProps {
+  handleDialogToggle: () => void;
+  setCreatedPackage?: (value: boolean) => void;
+  packageToEdit?: Package;
+}
+
+const PackageForm = ({ handleDialogToggle, setCreatedPackage, packageToEdit }: PackageFormProps) => {
   const [packageDetails, setPackageDetails] = useState<PackageDetails>({
     name: "",
     weight: "",
@@ -33,6 +46,8 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
     height: "",
     monetaryValue: ""
   });
+
+  const store = useSelector((state: RootState) => state.packages);
 
   const defaultValues: PackageDetails = {
     name: "",
@@ -64,7 +79,7 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
     {
       name: yup.string().required(),
       weight: numberValidation().required(),
-      monetaryValue: numberValidation().required(),
+      monetaryValue: numberValidation().required("Value is required"),
       length: numberValidation()
         .ensure()
         .when(["width", "height"], {
@@ -112,15 +127,11 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
     const packageDetailsToSend = JSON.parse(JSON.stringify(data));
     packageDetailsToSend.value = packageDetailsToSend.monetaryValue;
     delete packageDetailsToSend.monetaryValue;
-    dispatch(addPackage({ ...packageDetailsToSend }));
-    toast.success("Package was successfully added", {
-      position: "top-center"
-    });
-
-    if (setCreatedPackage) {
-      setCreatedPackage(true);
+    if (!packageToEdit) {
+      dispatch(addPackage({ ...packageDetailsToSend }));
+    } else {
+      dispatch(updatePackage({ id: packageToEdit.id, ...packageDetailsToSend }));
     }
-
     handleDialogToggle();
   };
 
@@ -134,6 +145,55 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
     const newAddressDetails = { ...packageDetails, ...newAddressDetailValue };
     setPackageDetails(newAddressDetails);
   };
+
+  useEffect(() => {
+    if (packageToEdit !== undefined) {
+      setPackageDetails({
+        height: packageToEdit.height,
+        length: packageToEdit.length,
+        name: packageToEdit.name,
+        weight: packageToEdit.weight,
+        width: packageToEdit.width,
+        monetaryValue: packageToEdit.value
+      });
+    }
+  }, [packageToEdit]);
+
+  // Add toast message
+  useEffect(() => {
+    if (store.createStatus === "SUCCESS") {
+      toast.success("Package was successfully created", {
+        position: "top-center"
+      });
+
+      if (setCreatedPackage) {
+        setCreatedPackage(true);
+      }
+    } else if (store.createStatus === "ERROR") {
+      toast.error("Error creating package", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearCreateStatus());
+  }, [store.createStatus]);
+
+  // Edit toast message
+  useEffect(() => {
+    if (store.updateStatus === "SUCCESS") {
+      toast.success("Package was successfully updated", {
+        position: "top-center"
+      });
+
+      if (setCreatedPackage) {
+        setCreatedPackage(true);
+      }
+    } else if (store.updateStatus === "ERROR") {
+      toast.error("Error updating package", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearUpdateStatus());
+  }, [store.updateStatus]);
 
   return (
     <Card>
@@ -336,7 +396,7 @@ const PackageForm = ({ handleDialogToggle, setCreatedPackage }) => {
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  Create Parcel
+                  {!packageToEdit ? "Create Parcel" : "Edit Parcel"}
                 </Button>
               </Box>
             </Grid>

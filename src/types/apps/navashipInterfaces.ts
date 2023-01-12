@@ -1,11 +1,12 @@
+// Api response interfaces and whatever else
 export interface Package {
   id: number;
   name: string;
-  weight: number;
-  value: number;
-  length: number;
-  width: number;
-  height: number;
+  weight: string;
+  value: string;
+  length: string;
+  width: string;
+  height: string;
 }
 
 export interface Address {

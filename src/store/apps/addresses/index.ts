@@ -40,7 +40,7 @@ export const addressesSlice = createSlice({
     total: 1,
     params: {},
     allData: [],
-    status: "IDLE",
+    fetchDataStatus: "IDLE",
     lastInsertedAddress: {}
   },
   reducers: {},
