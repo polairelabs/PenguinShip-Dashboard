@@ -7,6 +7,7 @@ import {
   Rate,
   Shipment
 } from "../../../types/apps/navashipInterfaces";
+import { Status } from "../../index";
 
 interface Redux {
   getState: any;
@@ -47,12 +48,12 @@ export const fetchShipments = createAsyncThunk(
 export const shipmentsSlice = createSlice({
   name: "shipments",
   initialState: {
-    // createdShipment is to retrieve the array of rates of th shipment + its easypost id
+    // createdShipment is used to retrieve the rates of the shipment (+ its easypost id)
     createdShipment: {} as CreatedShipment,
     createdShipmentRates: [] as Rate[],
     allShipments: [] as Shipment[],
-    createShipmentStatus: "",
-    buyShipmentRateStatus: ""
+    createShipmentStatus: "" as Status,
+    buyShipmentRateStatus: "" as Status
   },
   reducers: {
     clearCreateShipmentStatus: (state) => {
@@ -69,21 +70,21 @@ export const shipmentsSlice = createSlice({
         state.createdShipmentRates = action.payload?.rates?.sort(
           (r1: Rate, r2: Rate) => r1?.rate - r2.rate
         );
-        state.createShipmentStatus = "CREATED";
+        state.createShipmentStatus = "SUCCESS";
       })
       .addCase(createShipment.rejected, (state, action) => {
         state.createdShipment.id = "";
         state.createdShipmentRates = [];
-        state.createShipmentStatus = "FAILED";
+        state.createShipmentStatus = "ERROR";
       })
       .addCase(buyShipmentRate.fulfilled, (state, action) => {
-        state.buyShipmentRateStatus = "CREATED";
+        state.buyShipmentRateStatus = "SUCCESS";
       })
       .addCase(buyShipmentRate.rejected, (state, action) => {
-        state.buyShipmentRateStatus = "FAILED";
+        state.buyShipmentRateStatus = "ERROR";
       })
       .addCase(fetchShipments.fulfilled, (state, action) => {
-        state.allShipments = action.payload;
+        state.allShipments = action.payload.data;
       });
   }
 });

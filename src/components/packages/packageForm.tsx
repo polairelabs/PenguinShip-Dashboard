@@ -397,7 +397,7 @@ const PackageForm = ({
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  {!packageToEdit ? "Create Parcel" : "Edit Parcel"}
+                  {!packageToEdit ? "Create Parcel" : "Update"}
                 </Button>
               </Box>
             </Grid>

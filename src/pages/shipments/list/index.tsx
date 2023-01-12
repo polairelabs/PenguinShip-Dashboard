@@ -19,13 +19,12 @@ import { deletePackage } from "src/store/apps/packages";
 
 import { AppDispatch, RootState } from "src/store";
 import { Person, Shipment } from "src/types/apps/navashipInterfaces";
-
-import TableHeader from "src/views/packages/list/TableHeader";
 import { fetchShipments } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
-import { Link } from "@mui/material";
+import { Link, Tooltip } from "@mui/material";
 import { capitalizeFirstLettersOnly } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
+import { CurrencyUsd } from "mdi-material-ui";
 
 interface CellType {
   row: Shipment;
@@ -110,160 +109,24 @@ const dateToHumanReadableFormat = (date: Date) => {
   return dateObj.toDateString() + ", " + dateObj.toLocaleTimeString();
 };
 
-const columns = [
-  {
-    minWidth: 160,
-    field: "carrier",
-    headerName: "Carrier",
-    cellClassName: "cool",
-    renderCell: ({ row }: CellType) => {
-      if (row?.rate?.carrier) {
-        return (
-          <Box
-            component="img"
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: 200,
-              height: 25,
-              padding: 0
-            }}
-            alt={row?.rate?.carrier}
-            src={getCarrierImageSrc(row)}
-          ></Box>
-        );
-      }
-    }
-  },
-  {
-    minWidth: 240,
-    field: "service",
-    headerName: "Service",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography
-            noWrap
-            variant="body2"
-            sx={{ color: "text.primary", fontWeight: 600, mb: 0.5 }}
-          >
-            {row?.rate?.service.toUpperCase()}
-          </Typography>
-          <Link
-            href={row?.postageLabelUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="body2"
-          >
-            {row?.trackingCode}
-          </Link>
-        </Box>
-      );
-    }
-  },
-  {
-    minWidth: 150,
-    field: "status",
-    headerName: "Status",
-    renderCell: ({ row }: CellType) => {
-      // status can either come from easypost or navaship api (if easypost status is unknown use the navaship status)
-      const status =
-        row?.navashipShipmentStatus !== "DRAFT"
-          ? row?.easypostShipmentStatus === "unknown"
-            ? row?.navashipShipmentStatus
-            : row?.easypostShipmentStatus
-          : row?.navashipShipmentStatus;
-      console.log("status", status);
-      const statusColors = {
-        purchased: "primary",
-        delivered: "success",
-        draft: "info",
-        unknown: "info"
-      };
-      const statusColor = statusColors[status?.toLowerCase()];
-
-      return (
-        <CustomChip
-          size="small"
-          skin="light"
-          color={statusColor}
-          label={status}
-          sx={{ "& .MuiChip-label": { textTransform: "capitalize" } }}
-        />
-      );
-    }
-  },
-  {
-    minWidth: 250,
-    field: "recipient",
-    headerName: "Recipient",
-    renderCell: ({ row }: CellType) => {
-      const recipientInfo = getRecipientInfo(row);
-      const recipient = recipientInfo.name ?? recipientInfo.company;
-      const recipientAddress = getRecipientAddress(row);
-
-      return (
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography
-            noWrap
-            variant="body2"
-            sx={{ color: "text.primary", fontWeight: 600 }}
-          >
-            {recipient ? capitalizeFirstLettersOnly(recipient) : ""}{" "}
-            {recipientAddress
-              ? capitalizeFirstLettersOnly(recipientAddress.city)
-              : ""}
-          </Typography>
-          <Typography
-            noWrap
-            variant="body2"
-            sx={{ color: "text.primary", fontWeight: "light" }}
-          >
-            {recipientAddress ? recipientAddress.state : ""},{" "}
-            {recipientAddress ? recipientAddress.zip : ""},{" "}
-            {recipientAddress ? recipientAddress.country : ""}
-          </Typography>
-        </Box>
-      );
-    }
-  },
-  {
-    flex: 1,
-    minWidth: 150,
-    field: "date",
-    headerName: "Date",
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Box sx={{ display: "flex" }}>
-          <Typography
-            noWrap
-            variant="body2"
-            sx={{ color: "text.primary", fontWeight: 600 }}
-          >
-            {dateToHumanReadableFormat(row?.createdAt)}
-          </Typography>
-        </Box>
-      );
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    sortable: false,
-    field: "actions",
-    headerName: "Actions",
-    renderCell: ({ row }: CellType) => <RowOptions id={row.id} />
-  }
-];
-
 const ShipmentsList = () => {
   const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState("");
+  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
+
+  const store = useSelector((state: RootState) => state.shipments);
 
   const dispatch = useDispatch<AppDispatch>();
-  const store = useSelector((state: RootState) => state.shipments);
+
+  const onMouseEnterRow = (event) => {
+    const id = Number(event.currentTarget.getAttribute("data-id"));
+    setHoveredRow(id);
+  };
+
+  const onMouseLeaveRow = (event) => {
+    setHoveredRow(null);
+  };
 
   useEffect(() => {
     dispatch(fetchShipments());
@@ -290,6 +153,179 @@ const ShipmentsList = () => {
     // }
   };
 
+  const columns = [
+    {
+      minWidth: 160,
+      field: "carrier",
+      headerName: "Carrier",
+      cellClassName: "cool",
+      renderCell: ({ row }: CellType) => {
+        if (row?.rate?.carrier) {
+          return (
+            <Box
+              component="img"
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: 200,
+                height: 25,
+                padding: 0
+              }}
+              alt={row?.rate?.carrier}
+              src={getCarrierImageSrc(row)}
+            />
+          );
+        }
+      }
+    },
+    {
+      minWidth: 240,
+      field: "service",
+      headerName: "Service",
+      renderCell: ({ row }: CellType) => {
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography
+              noWrap
+              variant="body2"
+              sx={{ color: "text.primary", fontWeight: 600, mb: 0.5 }}
+            >
+              {row?.rate?.service.toUpperCase()}
+            </Typography>
+            <Link
+              href={row?.postageLabelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="body2"
+            >
+              {row?.trackingCode}
+            </Link>
+          </Box>
+        );
+      }
+    },
+    {
+      minWidth: 150,
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }: CellType) => {
+        // status can either come from easypost or navaship api (if easypost status is unknown use the navaship status)
+        const status =
+          row?.navashipShipmentStatus !== "DRAFT"
+            ? row?.easypostShipmentStatus === "unknown"
+            ? row?.navashipShipmentStatus
+            : row?.easypostShipmentStatus
+            : row?.navashipShipmentStatus;
+        const statusColors = {
+          purchased: "primary",
+          delivered: "success",
+          draft: "info",
+          unknown: "info"
+        };
+        const statusColor = statusColors[status?.toLowerCase()];
+
+        return (
+          <CustomChip
+            size="small"
+            skin="light"
+            color={statusColor}
+            label={status}
+            sx={{ "& .MuiChip-label": { textTransform: "capitalize" } }}
+          />
+        );
+      }
+    },
+    {
+      minWidth: 250,
+      field: "recipient",
+      headerName: "Recipient",
+      renderCell: ({ row }: CellType) => {
+        const recipientInfo = getRecipientInfo(row);
+        const recipient = recipientInfo.name ?? recipientInfo.company;
+        const recipientAddress = getRecipientAddress(row);
+
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography
+              noWrap
+              variant="body2"
+              sx={{ color: "text.primary", fontWeight: 600 }}
+            >
+              {recipient ? capitalizeFirstLettersOnly(recipient) : ""}{" "}
+              {recipientAddress
+                ? capitalizeFirstLettersOnly(recipientAddress.city)
+                : ""}
+            </Typography>
+            <Typography
+              noWrap
+              variant="body2"
+              sx={{ color: "text.primary", fontWeight: "light" }}
+            >
+              {recipientAddress ? recipientAddress.state : ""},{" "}
+              {recipientAddress ? recipientAddress.zip : ""},{" "}
+              {recipientAddress ? recipientAddress.country : ""}
+            </Typography>
+          </Box>
+        );
+      }
+    },
+    {
+      flex: 1,
+      minWidth: 150,
+      field: "date",
+      headerName: "Date",
+      renderCell: ({ row }: CellType) => {
+        return (
+          <Box sx={{ display: "flex" }}>
+            <Typography
+              noWrap
+              variant="body2"
+              sx={{ color: "text.primary", fontWeight: 600 }}
+            >
+              {dateToHumanReadableFormat(row?.createdAt)}
+            </Typography>
+          </Box>
+        );
+      }
+    },
+    {
+      field: "actions",
+      headerName: "",
+      width: 120,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: ({ row }: CellType) => {
+        if (hoveredRow === row.id) {
+          return (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Tooltip title="Buy rate">
+                <IconButton onClick={() => {
+                }}>
+                  <CurrencyUsd />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton onClick={() => {
+                }}>
+                  <DeleteOutline />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          );
+        } else return null;
+      }
+    }
+  ];
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -310,7 +346,17 @@ const ShipmentsList = () => {
                 clearSearch: () => handleSearch(""),
                 onChange: (event) => handleSearch(event.target.value),
                 searchTxtPlaceHolder: "Search labels..."
+              },
+              row: {
+                onMouseEnter: onMouseEnterRow,
+                onMouseLeave: onMouseLeaveRow
               }
+            }}
+            sx={{
+              "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-child(2) .MuiDataGrid-columnSeparator":
+                {
+                  display: "none"
+                }
             }}
           />
         </Card>

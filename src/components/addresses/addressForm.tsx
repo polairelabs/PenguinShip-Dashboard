@@ -308,7 +308,7 @@ const AddressForm = ({
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  {!addressToEdit ? "Create address" : "Edit address"}
+                  {!addressToEdit ? "Create address" : "Update"}
                 </Button>
               </Box>
             </Grid>

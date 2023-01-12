@@ -252,13 +252,13 @@ const CreateShipmentWizard = (props) => {
 
   useEffect(() => {
     // Handle next page from shipment to rates (Once shipment object in the store changes)
-    if (shipmentStore.createShipmentStatus === "CREATED") {
+    if (shipmentStore.createShipmentStatus === "SUCCESS") {
       toast.success("Shipment was successfully created", {
         position: "top-center"
       });
 
       setActiveStep(activeStep + 1);
-    } else if (shipmentStore.createShipmentStatus === "FAILED") {
+    } else if (shipmentStore.createShipmentStatus === "ERROR") {
       toast.error("Error creating shipment", {
         position: "top-center"
       });
@@ -269,7 +269,7 @@ const CreateShipmentWizard = (props) => {
 
   useEffect(() => {
     // Handle page once rate is bought
-    if (shipmentStore.buyShipmentRateStatus === "CREATED") {
+    if (shipmentStore.buyShipmentRateStatus === "SUCCESS") {
       toast.success("Label was successfully created", {
         position: "top-center"
       });
@@ -280,7 +280,7 @@ const CreateShipmentWizard = (props) => {
       setSelectedPackage(null);
       setSelectedRate(null);
       setActiveStep(0);
-    } else if (shipmentStore.buyShipmentRateStatus === "FAILED") {
+    } else if (shipmentStore.buyShipmentRateStatus === "ERROR") {
       toast.error("Error buying label", {
         position: "top-center"
       });
