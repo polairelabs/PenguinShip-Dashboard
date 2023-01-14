@@ -123,6 +123,7 @@ const PlacesAutoCompleteComboBox = ({
           label="Enter an address"
           variant="outlined"
           onChange={handleOnChange}
+          placeholder="Search..."
           error={error}
         />
       )}

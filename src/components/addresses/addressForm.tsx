@@ -32,15 +32,13 @@ export type AddressDetails = {
 
 interface AddressFormProps {
   handleDialogToggle: () => void;
-  setCreatedPackage?: (value: boolean) => void;
   addressToEdit?: Address;
 }
 
 const AddressForm = ({
   handleDialogToggle,
-  setCreatedAddress,
   addressToEdit
-}) => {
+}: AddressFormProps) => {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>({
     street1: "",
     street2: "",
@@ -124,10 +122,6 @@ const AddressForm = ({
       toast.success("Address was successfully created", {
         position: "top-center"
       });
-
-      if (setCreatedAddress) {
-        setCreatedAddress(true);
-      }
     } else if (store.createStatus === "ERROR") {
       toast.error("Error creating address", {
         position: "top-center"
@@ -308,7 +302,7 @@ const AddressForm = ({
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  {!addressToEdit ? "Create address" : "Update"}
+                  {!addressToEdit ? "Create" : "Update"}
                 </Button>
               </Box>
             </Grid>

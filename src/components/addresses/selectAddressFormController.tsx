@@ -71,7 +71,7 @@ const SelectAddressFormController = ({
 
   return (
     <Box sx={{ height: "34vh" }}>
-      <Grid item xs={12} sm={12} mb={8}>
+      <Grid item xs={12} sm={12} mb={7}>
         <FormControl fullWidth>
           <Controller
             name={fieldName}

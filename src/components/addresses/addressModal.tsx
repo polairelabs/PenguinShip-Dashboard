@@ -60,7 +60,6 @@ const AddressModal = ({
         >
           <AddressForm
             handleDialogToggle={handleDialogToggle}
-            setCreatedAddress={setCreatedAddress}
             addressToEdit={addressToEdit}
           />
         </DialogContent>

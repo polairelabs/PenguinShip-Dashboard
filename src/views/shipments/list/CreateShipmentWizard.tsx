@@ -39,6 +39,8 @@ import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 import { fetchPackages } from "../../../store/apps/packages";
 import { Box } from "@mui/material";
+import styled from "@emotion/styled";
+import { useTheme } from "@mui/material/styles";
 
 const steps = [
   {
@@ -125,6 +127,7 @@ const packageSchema = additionalInfoSchema.shape({
 const CreateShipmentWizard = (props) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const dispatch = useDispatch<AppDispatch>();
+  const theme = useTheme();
 
   const shipmentStore = useSelector((state: RootState) => state.shipments);
 
@@ -171,25 +174,6 @@ const CreateShipmentWizard = (props) => {
   const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
   const [openPackageModal, setOpenPackageModal] = useState<boolean>(false);
 
-  // Used in modals to select last created entry once a new entry is created
-  const [createdAddress, setCreatedAddress] = useState<boolean>(false);
-  const [createdPackage, setCreatedPackage] = useState<boolean>(false);
-
-  // const [width, setWidth] = useState<number>(window.innerWidth);
-  //
-  // function handleWindowSizeChange() {
-  //   setWidth(window.innerWidth);
-  // }
-  //
-  // useEffect(() => {
-  //   window.addEventListener("resize", handleWindowSizeChange);
-  //   return () => {
-  //     window.removeEventListener("resize", handleWindowSizeChange);
-  //   };
-  // }, []);
-  //
-  // const isMobile = width <= 605;
-
   const handleAddressModalToggle = () => {
     setOpenAddressModal(!openAddressModal);
   };
@@ -231,23 +215,17 @@ const CreateShipmentWizard = (props) => {
   // If new address was created in Address Modal
   useEffect(() => {
     // Populate address with the last inserted
-    if (createdAddress) {
-      if (activeStep === SOURCE_ADDRESS_SELECT_INDEX) {
-        setSourceAddress(lastInsertedAddress);
-      } else if (activeStep === DELIVERY_ADDRESS_SELECT_INDEX) {
-        setDeliveryAddress(lastInsertedAddress);
-      }
-      setCreatedAddress(false);
+    if (activeStep === SOURCE_ADDRESS_SELECT_INDEX) {
+      setSourceAddress(lastInsertedAddress);
+    } else if (activeStep === DELIVERY_ADDRESS_SELECT_INDEX) {
+      setDeliveryAddress(lastInsertedAddress);
     }
   }, [lastInsertedAddress]);
 
   // If new package was created in Package Modal
   useEffect(() => {
     // Populate package with the last inserted
-    if (createdPackage) {
-      setSelectedPackage(lastInsertedPackage);
-      setCreatedPackage(false);
-    }
+    setSelectedPackage(lastInsertedPackage);
   }, [lastInsertedPackage]);
 
   useEffect(() => {
@@ -513,6 +491,20 @@ const CreateShipmentWizard = (props) => {
     // use effect handle toaster message and reset
   };
 
+  // Style to be applied on the grid that contains the vertical divider between the two columns
+  const GridDividerStyle = styled(Grid)(() => ({
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    }
+  }));
+
+  // Style to be applied on the second grid column on the left
+  const SecondColumnGridStyle = styled(Grid)(() => ({
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "5rem",
+    }
+  }));
+
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -539,17 +531,16 @@ const CreateShipmentWizard = (props) => {
                   handleAddressModalToggle={handleAddressModalToggle}
                 />
               </Grid>
-              <Grid
+              <GridDividerStyle
                 item
                 container
                 sm={1}
-                direction="column"
                 justifyContent="center"
                 alignItems="center"
               >
-                <Divider orientation="vertical" />
-              </Grid>
-              <Grid item xs={12} sm={5} direction="column">
+                <Divider orientation="vertical"/>
+              </GridDividerStyle>
+              <SecondColumnGridStyle item xs={12} sm={5} direction="column">
                 <Grid item>
                   <Box>
                     <Box>
@@ -582,7 +573,7 @@ const CreateShipmentWizard = (props) => {
                   parcel={selectedPackage}
                   rate={selectedRate}
                 />
-              </Grid>
+              </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}
@@ -627,7 +618,7 @@ const CreateShipmentWizard = (props) => {
                   handleAddressModalToggle={handleAddressModalToggle}
                 />
               </Grid>
-              <Grid
+              <GridDividerStyle
                 item
                 container
                 sm={1}
@@ -636,8 +627,8 @@ const CreateShipmentWizard = (props) => {
                 alignItems="center"
               >
                 <Divider orientation="vertical" />
-              </Grid>
-              <Grid item xs={12} sm={5} direction="column">
+              </GridDividerStyle>
+              <SecondColumnGridStyle item xs={12} sm={5} direction="column">
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
@@ -670,7 +661,7 @@ const CreateShipmentWizard = (props) => {
                   parcel={selectedPackage}
                   rate={selectedRate}
                 />
-              </Grid>
+              </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}
@@ -711,7 +702,7 @@ const CreateShipmentWizard = (props) => {
                   handlePackageModalToggle={handlePackageModalToggle}
                 />
               </Grid>
-              <Grid
+              <GridDividerStyle
                 item
                 container
                 sm={1}
@@ -720,8 +711,8 @@ const CreateShipmentWizard = (props) => {
                 alignItems="center"
               >
                 <Divider orientation="vertical" />
-              </Grid>
-              <Grid item xs={12} sm={5} direction="column">
+              </GridDividerStyle>
+              <SecondColumnGridStyle item xs={12} sm={5} direction="column">
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
@@ -754,7 +745,7 @@ const CreateShipmentWizard = (props) => {
                   parcel={selectedPackage}
                   rate={selectedRate}
                 />
-              </Grid>
+              </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}
@@ -801,7 +792,7 @@ const CreateShipmentWizard = (props) => {
                   />
                 </Box>
               </Grid>
-              <Grid
+              <GridDividerStyle
                 item
                 container
                 sm={1}
@@ -810,7 +801,7 @@ const CreateShipmentWizard = (props) => {
                 alignItems="center"
               >
                 <Divider orientation="vertical" />
-              </Grid>
+              </GridDividerStyle>
               <Grid item xs={12} sm={5} direction="column">
                 <ShippingLabel
                   sourceAddress={sourceAddress}
@@ -899,12 +890,10 @@ const CreateShipmentWizard = (props) => {
       <AddressModal
         open={openAddressModal}
         handleDialogToggle={handleAddressModalToggle}
-        setCreatedAddress={setCreatedAddress}
       />
       <PackageModal
         open={openPackageModal}
         handleDialogToggle={handlePackageModalToggle}
-        setCreatedPackage={setCreatedPackage}
       />
     </Card>
   );

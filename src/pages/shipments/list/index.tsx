@@ -211,11 +211,12 @@ const ShipmentsList = () => {
       headerName: "Status",
       renderCell: ({ row }: CellType) => {
         // status can either come from easypost or navaship api (if easypost status is unknown use the navaship status)
+        // Status in easypost is unknown until it is scanned by the carrier
         const status =
           row?.navashipShipmentStatus !== "DRAFT"
             ? row?.easypostShipmentStatus === "unknown"
-            ? row?.navashipShipmentStatus
-            : row?.easypostShipmentStatus
+              ? row?.navashipShipmentStatus
+              : row?.easypostShipmentStatus
             : row?.navashipShipmentStatus;
         const statusColors = {
           purchased: "primary",
@@ -262,9 +263,9 @@ const ShipmentsList = () => {
               variant="body2"
               sx={{ color: "text.primary", fontWeight: "light" }}
             >
-              {recipientAddress ? recipientAddress.state : ""},{" "}
-              {recipientAddress ? recipientAddress.zip : ""},{" "}
-              {recipientAddress ? recipientAddress.country : ""}
+              {recipientAddress ? `${recipientAddress.state},` : ""}{" "}
+              {recipientAddress ? `${recipientAddress.zip},` : ""}{" "}
+              {recipientAddress ? `${recipientAddress.country},` : ""}
             </Typography>
           </Box>
         );
@@ -308,14 +309,12 @@ const ShipmentsList = () => {
               }}
             >
               <Tooltip title="Buy rate">
-                <IconButton onClick={() => {
-                }}>
+                <IconButton onClick={() => {}}>
                   <CurrencyUsd />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete">
-                <IconButton onClick={() => {
-                }}>
+                <IconButton onClick={() => {}}>
                   <DeleteOutline />
                 </IconButton>
               </Tooltip>

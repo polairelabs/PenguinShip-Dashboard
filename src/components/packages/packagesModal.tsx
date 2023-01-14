@@ -14,14 +14,12 @@ import { Package } from "../../types/apps/navashipInterfaces";
 interface PackageModalProps {
   open: boolean;
   handleDialogToggle: () => void;
-  setCreatedPackage?: (value: boolean) => void; // setCreatedPackage will track if a new package was created in shipmentWizard
   packageToEdit?: Package; // if value is defined, this means that the modal will be used to edit entry
 }
 
 const PackageModal = ({
   open,
   handleDialogToggle,
-  setCreatedPackage,
   packageToEdit
 }: PackageModalProps) => {
   return (
@@ -60,7 +58,6 @@ const PackageModal = ({
         >
           <PackageForm
             handleDialogToggle={handleDialogToggle}
-            setCreatedPackage={setCreatedPackage}
             packageToEdit={packageToEdit}
           />
         </DialogContent>

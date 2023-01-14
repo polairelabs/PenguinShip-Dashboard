@@ -32,13 +32,11 @@ export type PackageDetails = {
 
 interface PackageFormProps {
   handleDialogToggle: () => void;
-  setCreatedPackage?: (value: boolean) => void;
   packageToEdit?: Package;
 }
 
 const PackageForm = ({
   handleDialogToggle,
-  setCreatedPackage,
   packageToEdit
 }: PackageFormProps) => {
   const [packageDetails, setPackageDetails] = useState<PackageDetails>({
@@ -170,10 +168,6 @@ const PackageForm = ({
       toast.success("Package was successfully created", {
         position: "top-center"
       });
-
-      if (setCreatedPackage) {
-        setCreatedPackage(true);
-      }
     } else if (store.createStatus === "ERROR") {
       toast.error("Error creating package", {
         position: "top-center"
@@ -397,7 +391,7 @@ const PackageForm = ({
                 }}
               >
                 <Button type="submit" variant="contained" size="large">
-                  {!packageToEdit ? "Create Parcel" : "Update"}
+                  {!packageToEdit ? "Create" : "Update"}
                 </Button>
               </Box>
             </Grid>
