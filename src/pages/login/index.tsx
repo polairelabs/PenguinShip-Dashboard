@@ -22,9 +22,8 @@ import MuiFormControlLabel, {
   FormControlLabelProps
 } from "@mui/material/FormControlLabel";
 
-// ** Icons Imports
-import EyeOutline from "mdi-material-ui/EyeOutline";
-import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
+// ** Icon Imports
+import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import * as yup from "yup";
@@ -339,7 +338,7 @@ const LoginPage = () => {
                             onMouseDown={(e) => e.preventDefault()}
                             onClick={() => setShowPassword(!showPassword)}
                           >
-                            {showPassword ? <EyeOutline /> : <EyeOffOutline />}
+                            <Icon icon={showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} fontSize={20} />
                           </IconButton>
                         </InputAdornment>
                       }
@@ -362,9 +361,7 @@ const LoginPage = () => {
                 }}
               >
                 <FormControlLabel control={<Checkbox />} label="Remember Me" />
-                <Link passHref href="/forgot-password">
-                  <LinkStyled>Forgot Password?</LinkStyled>
-                </Link>
+                <LinkStyled href='/forgot-password'>Forgot Password?</LinkStyled>
               </Box>
               <Button
                 fullWidth
@@ -387,9 +384,7 @@ const LoginPage = () => {
                   New on our platform?
                 </Typography>
                 <Typography variant="body2">
-                  <Link passHref href="/register">
-                    <LinkStyled>Create an account</LinkStyled>
-                  </Link>
+                    <LinkStyled href="/register" >Create an account</LinkStyled>
                 </Typography>
               </Box>
             </form>
