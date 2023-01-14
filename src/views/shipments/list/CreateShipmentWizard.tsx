@@ -501,7 +501,7 @@ const CreateShipmentWizard = (props) => {
   // Style to be applied on the second grid column on the left
   const SecondColumnGridStyle = styled(Grid)(() => ({
     [theme.breakpoints.down("sm")]: {
-      marginTop: "5rem",
+      marginTop: "11.5rem",
     }
   }));
 
@@ -528,7 +528,6 @@ const CreateShipmentWizard = (props) => {
                   }
                   control={sourceAddressControl}
                   errors={sourceAddressErrors}
-                  handleAddressModalToggle={handleAddressModalToggle}
                 />
               </Grid>
               <GridDividerStyle
@@ -615,7 +614,6 @@ const CreateShipmentWizard = (props) => {
                   }
                   control={deliveryAddressControl}
                   errors={deliveryAddressErrors}
-                  handleAddressModalToggle={handleAddressModalToggle}
                 />
               </Grid>
               <GridDividerStyle
@@ -699,7 +697,6 @@ const CreateShipmentWizard = (props) => {
                   handleSelectedPackageChange={handleSelectedPackageChange}
                   control={packageControl}
                   errors={packageErrors}
-                  handlePackageModalToggle={handlePackageModalToggle}
                 />
               </Grid>
               <GridDividerStyle

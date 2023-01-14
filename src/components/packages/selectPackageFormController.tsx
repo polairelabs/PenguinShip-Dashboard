@@ -4,8 +4,6 @@ import { Controller } from "react-hook-form";
 import {
   Autocomplete,
   Box,
-  FormControlLabel,
-  Switch,
   Typography
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
@@ -20,7 +18,6 @@ interface PackageSelectProps {
   handleSelectedPackageChange: (parcel: Package | null) => void;
   control: any;
   errors: any;
-  handlePackageModalToggle: () => void;
 }
 
 const SelectPackageFormController = ({
@@ -29,7 +26,6 @@ const SelectPackageFormController = ({
   handleSelectedPackageChange,
   control,
   errors,
-  handlePackageModalToggle
 }: PackageSelectProps) => {
   const [showInsuranceValueField, setShowInsuranceValueField] =
     useState<boolean>(false);

@@ -22,7 +22,6 @@ interface AddressSelectProps {
   ) => void;
   control: any;
   errors: any;
-  handleAddressModalToggle: () => void;
 }
 
 const SelectAddressFormController = ({
@@ -33,7 +32,6 @@ const SelectAddressFormController = ({
   handleAddressAdditionalInformationChange,
   control,
   errors,
-  handleAddressModalToggle
 }: AddressSelectProps) => {
   const fieldName = addressType.toString();
   const labelName =
