@@ -82,7 +82,7 @@ export const packagesSlice = createSlice({
         state.fetchDataStatus = "LOADING";
       })
       .addCase(fetchPackages.fulfilled, (state, action) => {
-        state.data = action.payload;
+        state.data = action.payload.data;
         state.fetchDataStatus = "SUCCESS";
       })
       .addCase(fetchPackages.rejected, (state) => {
