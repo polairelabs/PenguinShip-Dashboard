@@ -29,16 +29,21 @@ const StepPersonalDetails = ({ formData, handleChange, handleNext, handlePrev }:
 
       <Grid container spacing={5}>
         <Grid item xs={12} sm={6}>
-          <TextField fullWidth placeholder='john' label='First Name' />
+          <TextField name='firstName' value={formData.firstName}
+                     onChange={handleChange} fullWidth placeholder='john' label='First Name' />
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <TextField fullWidth label='Last Name' placeholder='Doe' />
+          <TextField name='lastName' value={formData.lastName}
+                     onChange={handleChange} fullWidth label='Last Name' placeholder='Doe' />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
+            name='phoneNumber'
             label='Mobile'
+            value={formData.phoneNumber}
+            onChange={handleChange}
             placeholder='202 555 0111'
             InputProps={{
               startAdornment: <InputAdornment position='start'>US (+1)</InputAdornment>
@@ -48,7 +53,8 @@ const StepPersonalDetails = ({ formData, handleChange, handleNext, handlePrev }:
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel id='state-select'>State</InputLabel>
-            <Select labelId='state-select' label='State' defaultValue='New York'>
+            <Select value={formData.state}
+                    onChange={handleChange} name='state' labelId='state-select' label='State' defaultValue='New York'>
               <MenuItem value='New York'>New York</MenuItem>
               <MenuItem value='California'>California</MenuItem>
               <MenuItem value='Florida'>Florida</MenuItem>
@@ -59,11 +65,13 @@ const StepPersonalDetails = ({ formData, handleChange, handleNext, handlePrev }:
         </Grid>
         <Grid item xs={12}>
           <FormControl fullWidth>
-            <TextField label='Address' placeholder='7777, Mendez Plains, Florida' />
+            <TextField name="address" value={formData.address}
+                       onChange={handleChange} label='Address' placeholder='7777, Mendez Plains, Florida' />
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <TextField fullWidth label='City' placeholder='Miami' />
+          <TextField name="city" value={formData.city}
+                     onChange={handleChange} fullWidth label='City' placeholder='Miami' />
         </Grid>
 
         <Grid item xs={12}>

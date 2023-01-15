@@ -21,7 +21,9 @@ import { dispatch } from "react-hot-toast/dist/core/store";
 import { createAccount, fetchMemberships } from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AddressDetails } from "../../../../components/addresses/addressForm";
-import { RootState } from "../../../../store";
+import { AppDispatch, RootState } from "../../../../store";
+import { fetchShipments } from "../../../../store/apps/shipments";
+import { AccountData } from "../../../../types/apps/navashipInterfaces";
 
 const steps = [
   {
@@ -46,22 +48,29 @@ const phoneRegExp =
 const RegisterMultiSteps = () => {
   // ** States
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [formData, setFormData] = useState();
-  const [memberships, setMemberships] = useState([]);
-  const dispatch = useDispatch();
+  const [formData, setFormData] = useState<AccountData>({
+    firstName: "",
+    lastName: "",
+    state: "",
+    address: "",
+    city: "",
+    phone: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    membershipId: 0,
+  });
   const store = useSelector((state: RootState) => state.auth);
-
-  useEffect(() => {
-    dispatch(fetchMemberships()).then((response) => setMemberships(response));
-  }, [dispatch])
+  const dispatch = useDispatch<AppDispatch>();
 
   // Handle Stepper
   const handleNext = () => {
-    if (activeStep === 3) {
-      dispatch(createAccount(formData));
+    if (activeStep === 2) {
+      dispatch(createAccount({...formData}));
     }
     setActiveStep(activeStep + 1)
   }
+
   const handlePrev = () => {
     if (activeStep !== 0) {
       setActiveStep(activeStep - 1)
@@ -82,7 +91,7 @@ const RegisterMultiSteps = () => {
       case 1:
         return <StepPersonalInfo handleChange={handleChange} formData={formData} handleNext={handleNext} handlePrev={handlePrev} />
       case 2:
-        return <StepBillingDetails handleChange={handleChange} formData={formData} handlePrev={handlePrev} />
+        return <StepBillingDetails handleChange={handleChange} formData={formData} handlePrev={handlePrev} handleNext={handleNext} />
 
       default:
         return null

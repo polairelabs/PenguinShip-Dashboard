@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useEffect } from "react";
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -28,6 +28,9 @@ import { formatCVC, formatExpirationDate, formatCreditCardNumber } from 'src/@co
 
 // ** Styles Import
 import 'react-credit-cards/es/styles-compiled.css'
+import { fetchMemberships } from "../../../../store/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../store";
 
 const data: CustomRadioIconsData[] = [
   {
@@ -97,7 +100,7 @@ const data: CustomRadioIconsData[] = [
   }
 ]
 
-const StepBillingDetails = ({ formData, handleChange, handlePrev }: { formData: any, handleChange: (event: ChangeEvent<HTMLInputElement>) => void, handlePrev: () => void }) => {
+const StepBillingDetails = ({ formData, handleChange, handlePrev, handleNext }: { formData: any, handleChange: (event: ChangeEvent<HTMLInputElement>) => void, handlePrev: () => void, handleNext: () => void }) => {
   const initialSelected: string = data.filter(item => item.isSelected)[data.filter(item => item.isSelected).length - 1]
     .value
 
@@ -107,6 +110,12 @@ const StepBillingDetails = ({ formData, handleChange, handlePrev }: { formData: 
   const [expiry, setExpiry] = useState<string>('')
   const [cardNumber, setCardNumber] = useState<string>('')
   const [selectedRadio, setSelectedRadio] = useState<string>(initialSelected)
+  const store = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchMemberships());
+  }, [dispatch]);
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     if (target.name === 'cardNumber') {
@@ -218,7 +227,7 @@ const StepBillingDetails = ({ formData, handleChange, handlePrev }: { formData: 
             >
               Previous
             </Button>
-            <Button color='success' variant='contained' onClick={() => alert('Submitted..!!')}>
+            <Button color='success' variant='contained' onClick={handleNext}>
               Submit
             </Button>
           </Box>

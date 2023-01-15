@@ -52,14 +52,19 @@ const StepAccountDetails = ({ formData, handleChange, handleNext }: { formData: 
       <Grid container spacing={5}>
         <Grid item xs={12}>
           <FormControl fullWidth>
-            <TextField type='email' label='Email' placeholder='john.doe@email.com' />
+            <TextField value={formData.email}
+                       onChange={handleChange} name="email"
+                       type='email' label='Email' placeholder='john.doe@email.com' />
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel htmlFor='input-password'>Password</InputLabel>
             <OutlinedInput
+              name="password"
               label='Password'
+              value={formData.password}
+              onChange={handleChange}
               id='input-password'
               type={values.showPassword ? 'text' : 'password'}
               endAdornment={
@@ -79,6 +84,9 @@ const StepAccountDetails = ({ formData, handleChange, handleNext }: { formData: 
               label='Confirm Password'
               id='input-confirm-password'
               type={values.showConfirmPassword ? 'text' : 'password'}
+              value={formData.confirmPassword}
+              name="confirmPassword"
+              onChange={handleChange}
               endAdornment={
                 <InputAdornment position='end'>
                   <IconButton

@@ -70,3 +70,23 @@ export interface Person {
   phone: string;
   email: string;
 }
+
+export interface Membership {
+  id: number;
+  name: string;
+  description: string;
+  stripePriceId: string;
+}
+
+export interface AccountData {
+  firstName: string;
+  lastName: string;
+  state: string;
+  address: string;
+  city: string;
+  phone: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  membershipId: number;
+}

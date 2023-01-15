@@ -3,12 +3,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import packages from "src/store/apps/packages";
 import addresses from "src/store/apps/addresses";
 import shipments from "src/store/apps/shipments";
+import auth from "src/store/auth";
 
 export const store = configureStore({
   reducer: {
     packages,
     addresses,
-    shipments
+    shipments,
+    auth
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

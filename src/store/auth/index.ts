@@ -1,7 +1,8 @@
 import { Dispatch } from "redux";
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import BaseApi from "../../api/api";
-import { RegisterParams } from "../../context/types";
+import { Membership} from "../../types/apps/navashipInterfaces";
+import { Status } from "../index";
 
 interface Redux {
   getState: any;
@@ -24,7 +25,34 @@ export const createAccount = createAsyncThunk(
 
 export const fetchMemberships = createAsyncThunk(
   "auth/fetchMemberships",
-  async (p) => {
+  async () => {
     return await BaseApi.get("/memberships");
   }
 );
+
+export const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    memberships: [] as Membership[],
+    accountCreationStatus: "" as Status
+  },
+  reducers: {
+    clearAccountCreationStatus: (state) => {
+      state.accountCreationStatus = "";
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createAccount.rejected, (state, action) => {
+        state.accountCreationStatus = "ERROR";
+      })
+      .addCase(createAccount.fulfilled, (state, action) => {
+        state.accountCreationStatus = "SUCCESS";
+      })
+
+  }
+});
+
+export const { clearAccountCreationStatus } =
+  authSlice.actions;
+export default authSlice.reducer;
