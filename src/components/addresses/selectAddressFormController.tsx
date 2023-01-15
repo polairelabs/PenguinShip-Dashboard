@@ -38,23 +38,12 @@ const SelectAddressFormController = ({
     fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
 
   const handleAddressValueChange = (event, newValue) => {
-    let selectedAddress: Address | null = null;
-    errors[fieldName] = "";
-
-    if (newValue) {
-      selectedAddress = findAddress(newValue.id);
-    }
-
+    let selectedAddress = newValue as Address | null;
     handleAddressChange(selectedAddress);
+    errors[fieldName] = "";
   };
 
-  const findAddress = (addressId: number) => {
-    return selectableAddresses.find(
-      (address: Address) => address.id == addressId
-    ) as Address;
-  };
-
-  const addressOptionLabel = (address: Address | null) => {
+  const addressOptionLabel = (address: Address) => {
     return (
       address?.street1 +
       (address?.street2 ? " , " + address?.street2 : "") +

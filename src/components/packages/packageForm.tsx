@@ -237,10 +237,10 @@ const PackageForm = ({
                         error={Boolean(errors.monetaryValue)}
                         InputProps={{
                           startAdornment: (
-                            <InputAdornment position="start">$</InputAdornment>
+                            <InputAdornment position="start">US$</InputAdornment>
                           )
                         }}
-                        helperText="Value is expressed in USD"
+                        helperText="Value of the item"
                       />
                     )}
                   />

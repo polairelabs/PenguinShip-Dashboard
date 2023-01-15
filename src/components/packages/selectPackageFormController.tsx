@@ -3,14 +3,13 @@ import FormControl from "@mui/material/FormControl";
 import { Controller } from "react-hook-form";
 import {
   Autocomplete,
-  Box,
+  Box, FormControlLabel, InputAdornment, Switch,
   Typography
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Address, Package } from "../../types/apps/navashipInterfaces";
-import Button from "@mui/material/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface PackageSelectProps {
   currentParcel: Package | null | undefined;
@@ -27,24 +26,15 @@ const SelectPackageFormController = ({
   control,
   errors,
 }: PackageSelectProps) => {
-  const [showInsuranceValueField, setShowInsuranceValueField] =
-    useState<boolean>(false);
+  const [showInsuranceValueField, setShowInsuranceValueField] = useState<boolean>(false);
 
   const handlePackageChange = (event, newValue) => {
-    let selectedPackage: Package | null = null;
-    errors.parcel = "";
-
-    if (newValue) {
-      selectedPackage = findPackage(newValue.id);
+    if (!newValue) {
+      setShowInsuranceValueField(false);
     }
-
+    let selectedPackage = newValue as Package | null;
     handleSelectedPackageChange(selectedPackage);
-  };
-
-  const findPackage = (packageId: number) => {
-    return selectablePackages.find(
-      (parcel: Package) => parcel.id == packageId
-    ) as Package;
+    errors.parcel = "";
   };
 
   const parcelOptionLabel = (parcel: Package) => {
@@ -60,7 +50,7 @@ const SelectPackageFormController = ({
       <Grid item xs={12} sm={12} mb={8}>
         <FormControl fullWidth>
           <Controller
-            name="first-name"
+            name="parcel-name"
             control={control}
             rules={{ required: true }}
             render={({ field: { value, onChange } }) => (
@@ -90,25 +80,34 @@ const SelectPackageFormController = ({
           </FormHelperText>
         )}
       </Grid>
-      <Grid container spacing={2} my={1}>
-        <Grid item xs={12} mb={4}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} mb={2}>
           <Typography variant="body2">Additional add-ons</Typography>
         </Grid>
-        {/*<Grid container spacing={2} my={1} sx={{ ml: 2 }}>*/}
-        {/*  <FormControlLabel*/}
-        {/*    label="Insure Parcel"*/}
-        {/*    sx={{ mt: 2 }}*/}
-        {/*    control={<Switch onChange={insureParcelSwitch} />}*/}
-        {/*  />*/}
-        {/*  <TextField*/}
-        {/*    disabled*/}
-        {/*    sx={{ width: 80 }}*/}
-        {/*    value={currentParcel?.value ? "$" + currentParcel?.value : ""}*/}
-        {/*    label="Value"*/}
-        {/*    InputLabelProps={{ shrink: true }}*/}
-        {/*    hidden={showInsuranceValueField}*/}
-        {/*  />*/}
-        {/*</Grid>*/}
+        <Grid container spacing={2} my={1} sx={{ ml: 2, p: 1 }}>
+          <FormControlLabel
+            disabled={!currentParcel}
+            label="Insure Parcel"
+            sx={{ mt: 2 }}
+            control={<Switch onChange={insureParcelSwitch} />}
+          />
+          {showInsuranceValueField && (
+            <TextField
+              variant="standard"
+              disabled={!currentParcel}
+              sx={{ width: 100 }}
+              value={currentParcel?.value ? currentParcel?.value : ""}
+              label="Value"
+              InputLabelProps={{ shrink: true }}
+              hidden={showInsuranceValueField}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">US$</InputAdornment>
+                )
+              }}
+            />
+          )}
+        </Grid>
       </Grid>
     </Box>
   );
