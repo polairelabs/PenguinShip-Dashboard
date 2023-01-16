@@ -1,5 +1,5 @@
 // ** React Imports
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 // ** MUI Imports
@@ -61,20 +61,21 @@ const RegisterMultiSteps = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    membershipId: 0,
+    membershipProductLink: "",
   });
   const store = useSelector((state: RootState) => state.auth);
   const [successOpen, setSuccessOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
+  const [selectedMembershipId, setSelectedMembershipId] = useState("");
 
   // Handle Stepper
-  const handleNext = async () => {
-    if (activeStep === 2) {
+  const handleNext = async (selectedMembershipId?: string) => {
+    if (activeStep === 2 && selectedMembershipId) {
       dispatch(createAccount({...formData}))
         .then(() => {
-          BaseApi.createCheckoutSession("price_1MQbzWDra7bwCGnFdXnoiJv3")
+          BaseApi.createCheckoutSession(selectedMembershipId)
             .then((data) => {
               router.push(data.checkout_url);
             });
@@ -122,7 +123,7 @@ const RegisterMultiSteps = () => {
       case 1:
         return <StepPersonalInfo handleChange={handleChange} formData={formData} handleNext={handleNext} handlePrev={handlePrev} />
       case 2:
-        return <StepBillingDetails handleChange={handleChange} formData={formData} handlePrev={handlePrev} handleNext={handleNext} />
+        return <StepBillingDetails handleChange={handleChange} formData={formData} handlePrev={handlePrev} handleNext={handleNext} membershipId={setSelectedMembershipId} />
 
       default:
         return null

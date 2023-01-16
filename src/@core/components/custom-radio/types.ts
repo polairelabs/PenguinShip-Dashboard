@@ -46,7 +46,7 @@ export type CustomRadioIconsData = {
 export type CustomRadioIconsProps = {
   name: string
   icon?: string
-  selected: string
+  selected: string|undefined
   color?: ThemeColor
   gridProps: GridProps
   data: CustomRadioIconsData

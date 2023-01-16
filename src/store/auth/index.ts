@@ -26,7 +26,7 @@ export const createAccount = createAsyncThunk(
 export const fetchMemberships = createAsyncThunk(
   "auth/fetchMemberships",
   async () => {
-    return await BaseApi.get("/memberships");
+    return await BaseApi.get("/subscriptions/memberships");
   }
 );
 
@@ -49,7 +49,9 @@ export const authSlice = createSlice({
       .addCase(createAccount.fulfilled, (state, action) => {
         state.accountCreationStatus = "SUCCESS";
       })
-
+      .addCase(fetchMemberships.fulfilled, (state, action) => {
+        state.memberships = action.payload;
+      });
   }
 });
 

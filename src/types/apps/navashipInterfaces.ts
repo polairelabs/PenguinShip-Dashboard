@@ -72,10 +72,11 @@ export interface Person {
 }
 
 export interface Membership {
-  id: number;
   name: string;
   description: string;
   stripePriceId: string;
+  currency: string;
+  unitAmount: number;
 }
 
 export interface AccountData {
@@ -88,5 +89,5 @@ export interface AccountData {
   email: string;
   password: string;
   confirmPassword: string;
-  membershipId: number;
+  membershipProductLink: string;
 }
