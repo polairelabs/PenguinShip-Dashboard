@@ -43,15 +43,13 @@ const StepBillingDetails = ({
                               handleNext,
                               membershipId
                             }: Props) => {
-
   // ** State
-  const [cardNumber, setCardNumber] = useState<string>("");
   const [selectedRadio, setSelectedRadio] = useState<string>();
   const dispatch = useDispatch<AppDispatch>();
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMembershipId, setSelectedMembershipId] = useState("");
-
+// TODO : NEED TO MAKE MEMBERSHIPID MANDATORY AND RETURN AN ERROR IF IT ISNT PASSED
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);

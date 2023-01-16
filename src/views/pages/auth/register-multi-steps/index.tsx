@@ -73,6 +73,8 @@ const RegisterMultiSteps = () => {
   // Handle Stepper
   const handleNext = async (selectedMembershipId?: string) => {
     if (activeStep === 2 && selectedMembershipId) {
+      // TODO: If registration doesn't work we need to handle
+      // the error and not go to checkout
       dispatch(createAccount({...formData}))
         .then(() => {
           BaseApi.createCheckoutSession(selectedMembershipId)
