@@ -84,7 +84,7 @@ export interface AccountData {
   state: string;
   address: string;
   city: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
   password: string;
   confirmPassword: string;

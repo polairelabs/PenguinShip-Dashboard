@@ -157,66 +157,7 @@ const StepBillingDetails = ({ formData, handleChange, handlePrev, handleNext }: 
           />
         ))}
 
-        <Grid item xs={12} sx={{ pt: theme => `${theme.spacing(11.5)} !important` }}>
-          <Typography variant='h5'>Payment Information</Typography>
-          <Typography sx={{ color: 'text.secondary' }}>Enter your card information</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <FormControl fullWidth>
-            <TextField
-              fullWidth
-              name='cardNumber'
-              value={cardNumber}
-              autoComplete='off'
-              label='Card Number'
-              onChange={handleInputChange}
-              placeholder='0000 0000 0000 0000'
-            />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            name='name'
-            value={name}
-            autoComplete='off'
-            label='Name on Card'
-            placeholder='John Doe'
-            onChange={e => setName(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <TextField
-            fullWidth
-            name='expiry'
-            label='Expiry'
-            value={expiry}
-            placeholder='MM/YY'
-            onChange={handleInputChange}
-            inputProps={{ maxLength: '5' }}
-          />
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <TextField
-            fullWidth
-            name='cvc'
-            label='CVC'
-            value={cvc}
-            autoComplete='off'
-            onChange={handleInputChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position='start' sx={{ '& svg': { cursor: 'pointer' } }}>
-                  <Tooltip title='Card Verification Value'>
-                    <Box sx={{ display: 'flex' }}>
-                      <Icon icon='mdi:help-circle-outline' fontSize={20} />
-                    </Box>
-                  </Tooltip>
-                </InputAdornment>
-              )
-            }}
-          />
-        </Grid>
+
         <Grid item xs={12}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button

@@ -16,7 +16,7 @@ export const createAccount = createAsyncThunk(
     { getState, dispatch, rejectWithValue }
   ) => {
     try {
-      return await BaseApi.post("/register", data);
+      return await BaseApi.post("/create-checkout-session", data);
     } catch (error) {
       return rejectWithValue(error);
     }

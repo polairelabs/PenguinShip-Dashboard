@@ -1,5 +1,6 @@
 // ** React Imports
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 // ** MUI Imports
 import Step from '@mui/material/Step'
@@ -24,6 +25,8 @@ import { AddressDetails } from "../../../../components/addresses/addressForm";
 import { AppDispatch, RootState } from "../../../../store";
 import { fetchShipments } from "../../../../store/apps/shipments";
 import { AccountData } from "../../../../types/apps/navashipInterfaces";
+import BaseApi from "../../../../api/api";
+import { Link } from "@mui/material";
 
 const steps = [
   {
@@ -54,22 +57,50 @@ const RegisterMultiSteps = () => {
     state: "",
     address: "",
     city: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
     membershipId: 0,
   });
   const store = useSelector((state: RootState) => state.auth);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [canceledOpen, setCanceledOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   // Handle Stepper
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeStep === 2) {
-      dispatch(createAccount({...formData}));
+      dispatch(createAccount({...formData}))
+        .then(() => {
+          BaseApi.createCheckoutSession("price_1MQbzWDra7bwCGnFdXnoiJv3")
+            .then((data) => {
+              router.push(data.checkout_url);
+            });
+        });
     }
     setActiveStep(activeStep + 1)
   }
+
+  useEffect(() => {
+    const { query } = router;
+    if (query.success === 'true') {
+      // Show success message
+      setSuccessOpen(true);
+    } else if (query.canceled === 'true') {
+      // Show canceled message
+      setCanceledOpen(true);
+    }
+  }, [router.query])
+
+  const handleSuccessClose = () => {
+    setSuccessOpen(false);
+  };
+
+  const handleCanceledClose = () => {
+    setCanceledOpen(false);
+  };
 
   const handlePrev = () => {
     if (activeStep !== 0) {
@@ -101,13 +132,23 @@ const RegisterMultiSteps = () => {
   const renderContent = () => {
     return getStepContent(activeStep)
   }
-
   return (
     <>
-      <StepperWrapper sx={{ mb: 10 }}>
-        <Stepper activeStep={activeStep}>
-          {steps.map((step, index) => {
-            return (
+      {successOpen && (
+        <div>
+          Payment completed successfully! <Link href="/login">Go to login</Link>
+        </div>
+      )}
+      {canceledOpen && (
+        <div>
+          Payment cancelled. <Link href="/register">Click here if you would like to register again.</Link>
+        </div>
+      )}
+      {!successOpen && !canceledOpen && (
+        <>
+          <StepperWrapper sx={{ mb: 10 }}>
+          <Stepper activeStep={activeStep}>
+            {steps.map((step, index) => (
               <Step key={index}>
                 <StepLabel StepIconComponent={StepperCustomDot}>
                   <div className='step-label'>
@@ -119,13 +160,17 @@ const RegisterMultiSteps = () => {
                   </div>
                 </StepLabel>
               </Step>
-            )
-          })}
-        </Stepper>
-      </StepperWrapper>
-      {renderContent()}
-    </>
-  )
-}
+            ))}
+          </Stepper>
+        </StepperWrapper>
 
+      {renderContent()}
+          <div>
+            Already have an account ? <Link href="/login">Go to login</Link>
+          </div>
+        </>
+      )}
+    </>
+  );
+}
 export default RegisterMultiSteps
