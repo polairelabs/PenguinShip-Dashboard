@@ -14,14 +14,14 @@ import { Address } from "../../types/apps/navashipInterfaces";
 interface AddressModalProps {
   open: boolean;
   handleDialogToggle: () => void;
-  setCreatedAddress?: (value: boolean) => void; // // setCreatedAddress will track if a new address was created in shipmentWizard
   addressToEdit?: Address; // if value is defined, this means that the modal will be used to edit entry
+  fromShipmentWizard?: boolean; // Indicates if the instance of the current modal was opened from shipmentWizard
 }
 
 const AddressModal = ({
   open,
   handleDialogToggle,
-  setCreatedAddress,
+  fromShipmentWizard,
   addressToEdit
 }: AddressModalProps) => {
   return (
@@ -61,6 +61,7 @@ const AddressModal = ({
           <AddressForm
             handleDialogToggle={handleDialogToggle}
             addressToEdit={addressToEdit}
+            fromShipmentWizard={fromShipmentWizard}
           />
         </DialogContent>
       </Dialog>

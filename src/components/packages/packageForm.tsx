@@ -15,7 +15,7 @@ import { InputAdornment, Typography } from "@mui/material";
 import {
   addPackage,
   clearCreateStatus,
-  clearUpdateStatus,
+  clearUpdateStatus, setShouldPopulateLastInsertedPackage,
   updatePackage
 } from "../../store/apps/packages";
 import { toast } from "react-hot-toast";
@@ -33,11 +33,13 @@ export type PackageDetails = {
 interface PackageFormProps {
   handleDialogToggle: () => void;
   packageToEdit?: Package;
+  fromShipmentWizard?: boolean;
 }
 
 const PackageForm = ({
   handleDialogToggle,
-  packageToEdit
+  packageToEdit,
+  fromShipmentWizard
 }: PackageFormProps) => {
   const [packageDetails, setPackageDetails] = useState<PackageDetails>({
     name: "",
@@ -124,11 +126,12 @@ const PackageForm = ({
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleData = (data: PackageDetails) => {
+  const handleData = async (data: PackageDetails) => {
     const packageDetailsToSend = JSON.parse(JSON.stringify(data));
     packageDetailsToSend.value = packageDetailsToSend.monetaryValue;
     delete packageDetailsToSend.monetaryValue;
     if (!packageToEdit) {
+      await dispatch(setShouldPopulateLastInsertedPackage(fromShipmentWizard));
       dispatch(addPackage({ ...packageDetailsToSend }));
     } else {
       dispatch(

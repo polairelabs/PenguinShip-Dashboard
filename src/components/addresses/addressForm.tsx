@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CardContent from "@mui/material/CardContent";
 import AddressAutoCompleteField from "../fields/addressAutoCompleteField";
-import { addAddress, updateAddress } from "../../store/apps/addresses";
+import { addAddress, setShouldPopulateLastInsertedAddress, updateAddress } from "../../store/apps/addresses";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { useForm, Controller } from "react-hook-form";
@@ -33,11 +33,13 @@ export type AddressDetails = {
 interface AddressFormProps {
   handleDialogToggle: () => void;
   addressToEdit?: Address;
+  fromShipmentWizard?: boolean;
 }
 
 const AddressForm = ({
   handleDialogToggle,
-  addressToEdit
+  addressToEdit,
+  fromShipmentWizard
 }: AddressFormProps) => {
   const [addressDetails, setAddressDetails] = useState<AddressDetails>({
     street1: "",
@@ -88,8 +90,9 @@ const AddressForm = ({
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleData = (data: AddressDetails) => {
+  const handleData = async (data: AddressDetails) => {
     if (!addressToEdit) {
+      await dispatch(setShouldPopulateLastInsertedAddress(fromShipmentWizard));
       dispatch(addAddress({ ...data }));
     } else {
       dispatch(updateAddress({ id: addressToEdit.id, ...data }));

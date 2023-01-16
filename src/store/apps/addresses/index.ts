@@ -10,8 +10,8 @@ interface Redux {
 
 export const fetchAddresses = createAsyncThunk(
   "addresses/fetchData",
-  async (p) => {
-    return await BaseApi.get("/addresses");
+  async (params?: { [key: string]: number | string }) => {
+    return await BaseApi.get("/addresses", params);
   }
 );
 
@@ -59,7 +59,8 @@ export const addressesSlice = createSlice({
     createStatus: "" as Status,
     updateStatus: "" as Status,
     deleteStatus: "" as Status,
-    lastInsertedAddress: {}
+    lastInsertedAddress: {},
+    shouldPopulateLastInsertedAddress: false,
   },
   reducers: {
     clearFetchDataStatus: (state) => {
@@ -73,7 +74,11 @@ export const addressesSlice = createSlice({
     },
     clearDeleteStatus: (state) => {
       state.deleteStatus = "";
-    }
+    },
+    setShouldPopulateLastInsertedAddress: (state, action) => {
+      // To be set to true when we are in the createShipmentWizard component
+      state.shouldPopulateLastInsertedAddress = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -81,8 +86,6 @@ export const addressesSlice = createSlice({
         state.fetchDataStatus = "LOADING";
       })
       .addCase(fetchAddresses.fulfilled, (state, action) => {
-        // Add an index to all addresses
-        // action.payload.map((address, index) => (address.index = index));
         state.data = action.payload.data;
         state.fetchDataStatus = "SUCCESS";
       })
@@ -90,7 +93,9 @@ export const addressesSlice = createSlice({
         state.fetchDataStatus = "ERROR";
       })
       .addCase(addAddress.fulfilled, (state, action) => {
-        state.lastInsertedAddress = action.payload;
+        if (state.shouldPopulateLastInsertedAddress) {
+          state.lastInsertedAddress = action.payload;
+        }
         state.createStatus = "SUCCESS";
       })
       .addCase(addAddress.rejected, (state, action) => {
@@ -115,6 +120,7 @@ export const {
   clearFetchDataStatus,
   clearCreateStatus,
   clearUpdateStatus,
-  clearDeleteStatus
+  clearDeleteStatus,
+  setShouldPopulateLastInsertedAddress,
 } = addressesSlice.actions;
 export default addressesSlice.reducer;

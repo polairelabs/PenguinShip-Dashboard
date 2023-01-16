@@ -35,7 +35,7 @@ const RateSelect = ({
   };
 
   return (
-    <Box sx={{ height: "30vh", overflowY: "auto" }}>
+    <Box sx={{ height: "36vh", overflowY: "auto" }}>
       <Grid item>
         <Grid item sm={6}>
           {showRateError && (
@@ -50,7 +50,6 @@ const RateSelect = ({
         <Box>
           {rates?.map((rate) => (
             <BoxWrapper
-              height={"10vh"}
               onClick={() => setSelectedRate(rate)}
               sx={
                 rate.id === selectedRate?.id

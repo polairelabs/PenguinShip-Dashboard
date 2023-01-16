@@ -11,8 +11,8 @@ interface Redux {
 
 export const fetchPackages = createAsyncThunk(
   "packages/fetchPackages",
-  async (p) => {
-    return await BaseApi.get("/packages");
+  async (params?: { [key: string]: number | string }) => {
+    return await BaseApi.get("/packages", params);
   }
 );
 
@@ -60,7 +60,8 @@ export const packagesSlice = createSlice({
     createStatus: "" as Status,
     updateStatus: "" as Status,
     deleteStatus: "" as Status,
-    lastInsertedPackage: {}
+    lastInsertedPackage: {},
+    shouldPopulateLastInsertedPackage: false,
   },
   reducers: {
     clearFetchDataStatus: (state) => {
@@ -74,7 +75,11 @@ export const packagesSlice = createSlice({
     },
     clearDeleteStatus: (state) => {
       state.deleteStatus = "";
-    }
+    },
+    setShouldPopulateLastInsertedPackage: (state, action) => {
+      // To be set to true when we are in the createShipmentWizard component
+      state.shouldPopulateLastInsertedPackage = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -89,7 +94,9 @@ export const packagesSlice = createSlice({
         state.fetchDataStatus = "ERROR";
       })
       .addCase(addPackage.fulfilled, (state, action) => {
-        state.lastInsertedPackage = action.payload;
+        if (state.shouldPopulateLastInsertedPackage) {
+          state.lastInsertedPackage = action.payload;
+        }
         state.createStatus = "SUCCESS";
       })
       .addCase(addPackage.rejected, (state, action) => {
@@ -114,6 +121,7 @@ export const {
   clearFetchDataStatus,
   clearCreateStatus,
   clearUpdateStatus,
-  clearDeleteStatus
+  clearDeleteStatus,
+  setShouldPopulateLastInsertedPackage,
 } = packagesSlice.actions;
 export default packagesSlice.reducer;

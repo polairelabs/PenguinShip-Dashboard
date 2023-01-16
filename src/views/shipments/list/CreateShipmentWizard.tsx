@@ -124,8 +124,9 @@ const packageSchema = additionalInfoSchema.shape({
   parcel: yup.string().required("Parcel is required")
 });
 
-const CreateShipmentWizard = (props) => {
+const CreateShipmentWizard = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
+
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
 
@@ -187,8 +188,8 @@ const CreateShipmentWizard = (props) => {
   const PARCEL_SELECT_INDEX = 2;
 
   useEffect(() => {
-    dispatch(fetchAddresses());
-    dispatch(fetchPackages());
+    dispatch(fetchAddresses({order: "desc"}));
+    dispatch(fetchPackages({order: "desc"}));
   }, [dispatch]);
 
   // Once addresses in store change
@@ -780,7 +781,7 @@ const CreateShipmentWizard = (props) => {
                 >
                   {steps[activeStep].description}
                 </Typography>
-                <Box height={"34vh"}>
+                <Box height={"40vh"}>
                   <RateSelect
                     rates={rates}
                     selectedRate={selectedRate}
@@ -887,10 +888,12 @@ const CreateShipmentWizard = (props) => {
       <AddressModal
         open={openAddressModal}
         handleDialogToggle={handleAddressModalToggle}
+        fromShipmentWizard={true}
       />
       <PackageModal
         open={openPackageModal}
         handleDialogToggle={handlePackageModalToggle}
+        fromShipmentWizard={true}
       />
     </Card>
   );

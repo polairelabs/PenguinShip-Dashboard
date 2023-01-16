@@ -15,12 +15,14 @@ interface PackageModalProps {
   open: boolean;
   handleDialogToggle: () => void;
   packageToEdit?: Package; // if value is defined, this means that the modal will be used to edit entry
+  fromShipmentWizard?: boolean;
 }
 
 const PackageModal = ({
   open,
   handleDialogToggle,
-  packageToEdit
+  packageToEdit,
+  fromShipmentWizard
 }: PackageModalProps) => {
   return (
     <Box>
@@ -59,6 +61,7 @@ const PackageModal = ({
           <PackageForm
             handleDialogToggle={handleDialogToggle}
             packageToEdit={packageToEdit}
+            fromShipmentWizard={fromShipmentWizard}
           />
         </DialogContent>
       </Dialog>

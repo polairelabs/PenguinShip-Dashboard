@@ -77,7 +77,7 @@ const SelectAddressFormController = ({
                     value={value}
                     label={labelName}
                     variant="standard"
-                    placeholder={"Search or select an address"}
+                    placeholder={"Search by street address..."}
                   />
                 )}
               />
