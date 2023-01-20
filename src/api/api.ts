@@ -90,6 +90,15 @@ export const BaseApi = {
     }
   },
 
+  async createCheckoutSession(priceId: string) {
+    try {
+      const response = await http.post("/subscriptions/create-checkout-session/?price="+priceId);
+      return Promise.resolve(response.data);
+    } catch (error) {
+      return Promise.reject(handleError(error));
+    }
+  },
+
   async put(url: string, body: object) {
     try {
       const response = await http.put(url, body);

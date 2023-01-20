@@ -10,6 +10,7 @@ export type RegisterParams = {
   firstName: string;
   lastName: string;
   password: string;
+
 };
 
 export type UserDataType = {
