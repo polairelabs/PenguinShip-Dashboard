@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import {
   buyShipmentRate,
-  clearBuyShipmentRateStatus,
+  clearBuyShipmentRateStatus, clearCreateShipmentError,
   clearCreateShipmentStatus,
   createShipment
 } from "../../../store/apps/shipments";
@@ -188,8 +188,8 @@ const CreateShipmentWizard = () => {
   const PARCEL_SELECT_INDEX = 2;
 
   useEffect(() => {
-    dispatch(fetchAddresses({order: "desc"}));
-    dispatch(fetchPackages({order: "desc"}));
+    dispatch(fetchAddresses({ order: "desc" }));
+    dispatch(fetchPackages({ order: "desc" }));
   }, [dispatch]);
 
   // Once addresses in store change
@@ -238,9 +238,10 @@ const CreateShipmentWizard = () => {
 
       setActiveStep(activeStep + 1);
     } else if (shipmentStore.createShipmentStatus === "ERROR") {
-      toast.error("Error creating shipment", {
+      toast.error(`${shipmentStore.createShipmentError ?? "Error creating shipment"}`, {
         position: "top-center"
       });
+      dispatch(clearCreateShipmentError());
     }
 
     dispatch(clearCreateShipmentStatus());
@@ -252,8 +253,6 @@ const CreateShipmentWizard = () => {
       toast.success("Label was successfully created", {
         position: "top-center"
       });
-      putBackSourceAddress();
-      putBackDeliveryAddress();
       setSourceAddress(null);
       setDeliveryAddress(null);
       setSelectedPackage(null);
@@ -266,6 +265,10 @@ const CreateShipmentWizard = () => {
     }
     dispatch(clearBuyShipmentRateStatus());
   }, [shipmentStore.buyShipmentRateStatus]);
+
+  const scrollToTheTop = () => {
+    window.scrollTo(0, 0);
+  };
 
   const asAddressValues = (address: Address | null) => {
     return {
@@ -292,39 +295,15 @@ const CreateShipmentWizard = () => {
     }
   };
 
-  const putBackSourceAddress = () => {
-    if (sourceAddress?.street1) {
-      selectableAddresses.splice(sourceAddress.index ?? 0, 0, sourceAddress);
-      setSelectableAddresses(selectableAddresses);
-    }
-  };
-
-  const putBackDeliveryAddress = () => {
-    if (deliveryAddress?.street1) {
-      selectableAddresses.splice(
-        deliveryAddress.index ?? 0,
-        0,
-        deliveryAddress
-      );
-      setSelectableAddresses(selectableAddresses);
-    }
-  };
-
   const handleSourceAddressChange = (newSourceAddress: Address | null) => {
     if (newSourceAddress) {
-      putBackSourceAddress();
       clearSourceAddress(); // Clear if source address already selected
       setSourceAddress({
         ...sourceAddress,
         ...asAddressValues(newSourceAddress)
       });
-      const newSelectableAddresses = selectableAddresses.filter(
-        (address) => address.id !== newSourceAddress?.id
-      );
-      setSelectableAddresses(newSelectableAddresses);
     } else {
       // newSourceAddress is undefined - Clear sourceAddress when user hits "clear" on the auto complete
-      putBackSourceAddress();
       clearSourceAddress();
     }
   };
@@ -333,18 +312,12 @@ const CreateShipmentWizard = () => {
     newDeliveryAddress: Address | null
   ) => {
     if (newDeliveryAddress) {
-      putBackDeliveryAddress();
       clearDeliveryAddress(); // Clear if delivery address already selected
       setDeliveryAddress({
         ...deliveryAddress,
         ...asAddressValues(newDeliveryAddress)
       });
-      const newSelectableAddresses = selectableAddresses.filter(
-        (address) => address.id !== newDeliveryAddress?.id
-      );
-      setSelectableAddresses(newSelectableAddresses);
     } else {
-      putBackDeliveryAddress();
       clearDeliveryAddress();
     }
   };
@@ -433,6 +406,7 @@ const CreateShipmentWizard = () => {
   const { handleSubmit: handleRateSubmit } = useForm();
 
   const handleBack = () => {
+    scrollToTheTop();
     const prevActiveStep = activeStep - 1;
     setActiveStep(prevActiveStep);
     if (prevActiveStep === PARCEL_SELECT_INDEX) {
@@ -443,6 +417,7 @@ const CreateShipmentWizard = () => {
   };
 
   const onSubmitAddress = () => {
+    scrollToTheTop();
     setActiveStep(activeStep + 1);
   };
 
@@ -495,14 +470,14 @@ const CreateShipmentWizard = () => {
   // Style to be applied on the grid that contains the vertical divider between the two columns
   const GridDividerStyle = styled(Grid)(() => ({
     [theme.breakpoints.down("sm")]: {
-      display: "none",
+      display: "none"
     }
   }));
 
   // Style to be applied on the second grid column on the left
   const SecondColumnGridStyle = styled(Grid)(() => ({
     [theme.breakpoints.down("sm")]: {
-      marginTop: "11.5rem",
+      marginTop: "5.2rem"
     }
   }));
 
@@ -512,7 +487,7 @@ const CreateShipmentWizard = () => {
         return (
           <form key={0} onSubmit={handleSourceAddressSubmit(onSubmitAddress)}>
             <Grid container>
-              <Grid item xs={12} sm={6} direction="column">
+              <Grid item xs={12} sm={6}>
                 <Typography
                   variant="body2"
                   sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
@@ -538,9 +513,9 @@ const CreateShipmentWizard = () => {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Divider orientation="vertical"/>
+                <Divider orientation="vertical" />
               </GridDividerStyle>
-              <SecondColumnGridStyle item xs={12} sm={5} direction="column">
+              <SecondColumnGridStyle item xs={12} sm={5}>
                 <Grid item>
                   <Box>
                     <Box>
@@ -598,7 +573,7 @@ const CreateShipmentWizard = () => {
         return (
           <form key={0} onSubmit={handleDeliveryAddressSubmit(onSubmitAddress)}>
             <Grid container>
-              <Grid item xs={12} sm={6} direction="column">
+              <Grid item xs={12} sm={6}>
                 <Typography
                   variant="body2"
                   sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
@@ -621,13 +596,12 @@ const CreateShipmentWizard = () => {
                 item
                 container
                 sm={1}
-                direction="column"
                 justifyContent="center"
                 alignItems="center"
               >
                 <Divider orientation="vertical" />
               </GridDividerStyle>
-              <SecondColumnGridStyle item xs={12} sm={5} direction="column">
+              <SecondColumnGridStyle item xs={12} sm={5}>
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
@@ -685,7 +659,7 @@ const CreateShipmentWizard = () => {
         return (
           <form key={1} onSubmit={handlePackageSubmit(onSubmitCreateShipment)}>
             <Grid container>
-              <Grid item xs={12} sm={6} direction="column">
+              <Grid item xs={12} sm={6}>
                 <Typography
                   variant="body2"
                   sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
@@ -704,13 +678,12 @@ const CreateShipmentWizard = () => {
                 item
                 container
                 sm={1}
-                direction="column"
                 justifyContent="center"
                 alignItems="center"
               >
                 <Divider orientation="vertical" />
               </GridDividerStyle>
-              <SecondColumnGridStyle item xs={12} sm={5} direction="column">
+              <SecondColumnGridStyle item xs={12} sm={5}>
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
@@ -774,7 +747,7 @@ const CreateShipmentWizard = () => {
         return (
           <form key={2} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
             <Grid container>
-              <Grid item xs={12} sm={6} direction="column">
+              <Grid item xs={12} sm={6}>
                 <Typography
                   variant="body2"
                   sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
@@ -794,13 +767,12 @@ const CreateShipmentWizard = () => {
                 item
                 container
                 sm={1}
-                direction="column"
                 justifyContent="center"
                 alignItems="center"
               >
                 <Divider orientation="vertical" />
               </GridDividerStyle>
-              <Grid item xs={12} sm={5} direction="column">
+              <Grid item xs={12} sm={5}>
                 <ShippingLabel
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}

@@ -61,7 +61,7 @@ export const packagesSlice = createSlice({
     updateStatus: "" as Status,
     deleteStatus: "" as Status,
     lastInsertedPackage: {},
-    shouldPopulateLastInsertedPackage: false,
+    shouldPopulateLastInsertedPackage: false
   },
   reducers: {
     clearFetchDataStatus: (state) => {
@@ -79,7 +79,7 @@ export const packagesSlice = createSlice({
     setShouldPopulateLastInsertedPackage: (state, action) => {
       // To be set to true when we are in the createShipmentWizard component
       state.shouldPopulateLastInsertedPackage = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -122,6 +122,6 @@ export const {
   clearCreateStatus,
   clearUpdateStatus,
   clearDeleteStatus,
-  setShouldPopulateLastInsertedPackage,
+  setShouldPopulateLastInsertedPackage
 } = packagesSlice.actions;
 export default packagesSlice.reducer;

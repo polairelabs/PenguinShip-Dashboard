@@ -73,18 +73,18 @@ const PackagesList = () => {
     },
     {
       flex: 0.2,
-      field: "value",
-      headerName: "Value ($)",
-      renderCell: ({ row }: CellType) => {
-        return <Typography noWrap>{row.value}</Typography>;
-      }
-    },
-    {
-      flex: 0.2,
       field: "weight",
       headerName: "Weight (oz)",
       renderCell: ({ row }: CellType) => {
         return <Typography noWrap>{row.weight}</Typography>;
+      }
+    },
+    {
+      flex: 0.2,
+      field: "value",
+      headerName: "Value ($)",
+      renderCell: ({ row }: CellType) => {
+        return <Typography noWrap>{row.value}</Typography>;
       }
     },
     {
@@ -220,7 +220,7 @@ const PackagesList = () => {
               }
             }}
             sx={{
-              "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-child(2) .MuiDataGrid-columnSeparator":
+              "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-of-type(2) .MuiDataGrid-columnSeparator":
                 {
                   display: "none"
                 }

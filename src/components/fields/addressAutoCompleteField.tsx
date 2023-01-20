@@ -1,6 +1,6 @@
 import { useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { TextField, Box, Autocomplete } from "@mui/material";
 import PlaceResult = google.maps.places.PlaceResult;
 import { AddressDetails } from "../addresses/addressForm"; // TODO move this elsewhere
@@ -18,22 +18,38 @@ export default function AddressAutoCompleteField({
   setAddressDetails,
   handleAddressValueChange,
   error,
-  street1Value // When we edit an address, this will be defined
+  addressToEdit // When we edit an address, this object will be defined
 }) {
+  const [value, setValue] = useState<string>("");
+  // To detect if street1 has changed
+  const [valueHasChanged, setValueHasChanged] = useState<boolean>(false);
+
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
     libraries: places
   });
 
-  if (loadError) {
+  const street = () => {
+    return !valueHasChanged ? addressToEdit?.street1 : value;
+  };
+
+  if (loadError || addressToEdit) {
     // If the google api won't work for some reason, load the field without any auto complete feature
+    // Or if the addressToEdit is defined (we are in an editing modal)
     return (
       <TextField
         fullWidth
         name="street1"
-        label="Enter an addresses"
-        onChange={handleAddressValueChange}
+        label="Enter an address"
+        onChange={e => {
+          if (!valueHasChanged) {
+            setValueHasChanged(true);
+          }
+          setValue(e.target.value);
+          handleAddressValueChange(e);
+        }}
         error={error}
+        value={street()}
       />
     );
   }
@@ -46,7 +62,7 @@ export default function AddressAutoCompleteField({
       setAddressDetails={setAddressDetails}
       handleAddressValueChange={handleAddressValueChange}
       error={error}
-      street1Value={street1Value}
+      street1Value={addressToEdit?.street1}
     />
   );
 }
@@ -66,12 +82,10 @@ const PlacesAutoCompleteComboBox = ({
     clearSuggestions
   } = usePlacesAutocomplete();
 
-  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    handleAddressValueChange(e);
-  };
-
-  const handleSelect = async (option) => {
+  const populateAddressFields = async (option) => {
+    if (!option) {
+      return;
+    }
     setValue(option.structured_formatting.main_text, false);
     clearSuggestions();
 
@@ -87,9 +101,19 @@ const PlacesAutoCompleteComboBox = ({
         }))
       );
 
+      const streetNumber = addressDetailsObj?.street_number;
+      const route = addressDetailsObj?.route;
+
+      let street1;
+      if (!streetNumber && !route) {
+        street1 = addressDetailsObj?.neighborhood;
+      } else {
+        // add space
+        street1 = `${streetNumber} ${route}`;
+      }
+
       const newAddressDetails: AddressDetails = {
-        street1:
-          addressDetailsObj.street_number + " " + addressDetailsObj.route,
+        street1,
         city: addressDetailsObj.locality,
         country: addressDetailsObj.country,
         zip: addressDetailsObj.postal_code,
@@ -101,7 +125,12 @@ const PlacesAutoCompleteComboBox = ({
     }
   };
 
-  const handleStreet1Value = (value) => {
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+    handleAddressValueChange(e);
+  };
+
+  const street1 = (value) => {
     return (!value ? street1Value : value) || null;
   };
 
@@ -111,7 +140,8 @@ const PlacesAutoCompleteComboBox = ({
       id="places-combo-box-autocomplete"
       disabled={!ready}
       options={data}
-      value={handleStreet1Value(value)}
+      onChange={(e, option) => populateAddressFields(option)}
+      value={street1(value)}
       getOptionLabel={(option) =>
         typeof option === "string" ? option : option.description
       }
@@ -125,6 +155,7 @@ const PlacesAutoCompleteComboBox = ({
           onChange={handleOnChange}
           placeholder="Search..."
           error={error}
+          helperText="Location data provided by Google"
         />
       )}
       renderOption={(props, option) => (
@@ -132,7 +163,7 @@ const PlacesAutoCompleteComboBox = ({
           component="li"
           {...props}
           key={option.place_id}
-          onClick={() => handleSelect(option)}
+          onClick={() => populateAddressFields(option)}
         >
           {option.description}
         </Box>

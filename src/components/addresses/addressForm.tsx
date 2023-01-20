@@ -6,7 +6,11 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import CardContent from "@mui/material/CardContent";
 import AddressAutoCompleteField from "../fields/addressAutoCompleteField";
-import { addAddress, setShouldPopulateLastInsertedAddress, updateAddress } from "../../store/apps/addresses";
+import {
+  addAddress,
+  setShouldPopulateLastInsertedAddress,
+  updateAddress
+} from "../../store/apps/addresses";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { useForm, Controller } from "react-hook-form";
@@ -72,7 +76,7 @@ const AddressForm = ({
     city: yup.string().required(),
     country: yup.string().required(),
     state: yup.string().required(),
-    zip: yup.string().required()
+    zip: yup.string().required().max(8, "Must be less than or equal to 8 characters"),
   });
 
   const {
@@ -97,8 +101,6 @@ const AddressForm = ({
     } else {
       dispatch(updateAddress({ id: addressToEdit.id, ...data }));
     }
-
-    handleDialogToggle();
   };
 
   const handleAddressValueChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -125,6 +127,7 @@ const AddressForm = ({
       toast.success("Address was successfully created", {
         position: "top-center"
       });
+      handleDialogToggle();
     } else if (store.createStatus === "ERROR") {
       toast.error("Error creating address", {
         position: "top-center"
@@ -139,6 +142,7 @@ const AddressForm = ({
       toast.success("Address was successfully updated", {
         position: "top-center"
       });
+      handleDialogToggle();
     } else if (store.updateStatus === "ERROR") {
       toast.error("Error updating address", {
         position: "top-center"
@@ -163,7 +167,7 @@ const AddressForm = ({
                     setAddressDetails={setAddressDetails}
                     handleAddressValueChange={handleAddressValueChange}
                     error={Boolean(errors.street1)}
-                    street1Value={addressToEdit?.street1}
+                    addressToEdit={addressToEdit}
                   />
                 )}
               />

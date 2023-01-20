@@ -15,7 +15,8 @@ import { InputAdornment, Typography } from "@mui/material";
 import {
   addPackage,
   clearCreateStatus,
-  clearUpdateStatus, setShouldPopulateLastInsertedPackage,
+  clearUpdateStatus,
+  setShouldPopulateLastInsertedPackage,
   updatePackage
 } from "../../store/apps/packages";
 import { toast } from "react-hot-toast";
@@ -82,7 +83,7 @@ const PackageForm = ({
     {
       name: yup.string().required(),
       weight: numberValidation().required(),
-      monetaryValue: numberValidation().required("Value is required"),
+      monetaryValue: numberValidation(),
       length: numberValidation()
         .ensure()
         .when(["width", "height"], {
@@ -138,7 +139,6 @@ const PackageForm = ({
         updatePackage({ id: packageToEdit.id, ...packageDetailsToSend })
       );
     }
-    handleDialogToggle();
   };
 
   const handlePackageValueChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -171,6 +171,7 @@ const PackageForm = ({
       toast.success("Package was successfully created", {
         position: "top-center"
       });
+      handleDialogToggle();
     } else if (store.createStatus === "ERROR") {
       toast.error("Error creating package", {
         position: "top-center"
@@ -185,6 +186,7 @@ const PackageForm = ({
       toast.success("Package was successfully updated", {
         position: "top-center"
       });
+      handleDialogToggle();
     } else if (store.updateStatus === "ERROR") {
       toast.error("Error updating package", {
         position: "top-center"
@@ -240,7 +242,9 @@ const PackageForm = ({
                         error={Boolean(errors.monetaryValue)}
                         InputProps={{
                           startAdornment: (
-                            <InputAdornment position="start">US$</InputAdornment>
+                            <InputAdornment position="start">
+                              US$
+                            </InputAdornment>
                           )
                         }}
                         helperText="Value of the item"

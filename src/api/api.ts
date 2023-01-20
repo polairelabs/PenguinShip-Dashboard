@@ -1,9 +1,9 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-interface ApiError {
-  statusCode: number;
+export interface ApiError {
+  statusCode: number | undefined;
   messages: string[];
 }
 
@@ -24,7 +24,7 @@ const http = axios.create({
 
 export const httpRequest = http;
 
-http.interceptors.request.use(
+httpRequest.interceptors.request.use(
   async (config) => {
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
@@ -42,20 +42,21 @@ function instanceOfApiErrorResponse(error: any): error is ApiErrorResponse {
   return "status_code" in error && "status" in error && "message" in error;
 }
 
-// TODO fix or remove this
 function handleError(error: unknown): ApiError {
-  // if (axios.isAxiosError(error) && error.response) {
-  //   // @ts-ignore
-  //   const messages = error?.response?.data?.validation_errors
-  //     ? error.response.data.validation_errors.map(
-  //         (item) => `${item.field} ${item.message}`
-  //       )
-  //     : [error.response.data.message];
-  //   return {
-  //     statusCode: error?.response?.status,
-  //     messages
-  //   };
-  // }
+  if (axios.isAxiosError(error)) {
+    // Check if validation error exists
+    // const messages = error?.response?.data?.validation_errors
+    //   ? error.response.data.validation_errors.map(
+    //       (item) => `${item.field} ${item.message}`
+    //     )
+    //   : [error.response.data.message];
+    const axiosError = error as AxiosError;
+    const axiosResponse = axiosError.response as AxiosResponse;
+    return {
+      statusCode: axiosError.response?.status,
+      messages: [axiosResponse.data.message]
+    };
+  }
   const { data: errorResponse } = (error as any).response;
   if (instanceOfApiErrorResponse(errorResponse)) {
     return {

@@ -1,11 +1,15 @@
 import Grid from "@mui/material/Grid";
 import FormControl from "@mui/material/FormControl";
 import { Controller } from "react-hook-form";
-import { Autocomplete, Box, Typography } from "@mui/material";
+import { Autocomplete, autocompleteClasses, Box, Popper, Typography, useMediaQuery } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Address } from "../../types/apps/navashipInterfaces";
-import { ChangeEvent } from "react";
+import {
+  ChangeEvent
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
 
 export enum AddressType {
   SOURCE = "source",
@@ -24,6 +28,108 @@ interface AddressSelectProps {
   errors: any;
 }
 
+// react-window
+// const LIST_BOX_PADDING = 8;
+//
+// function renderRow(props: ListChildComponentProps) {
+//   const { data, index, style } = props;
+//   const dataSet = data[index];
+//   const inlineStyle = {
+//     ...style,
+//     top: (style.top as number) + LIST_BOX_PADDING,
+//     // padding: 8,
+//   };
+//
+//   return (
+//     <Typography component="li" noWrap style={inlineStyle}>
+//       {dataSet.key}
+//     </Typography>
+//   );
+// }
+//
+// const OuterElementContext = createContext({});
+//
+// const OuterElementType = forwardRef<HTMLDivElement>((props, ref) => {
+//   const outerProps = useContext(OuterElementContext);
+//   return <div ref={ref} {...props} {...outerProps} />;
+// });
+// function useResetCache(data: any) {
+//   // Direct reference to the dom element
+//   const ref = useRef<VariableSizeList>(null);
+//   useEffect(() => {
+//     if (ref.current != null) {
+//       ref.current.resetAfterIndex(0, true);
+//     }
+//   }, [data]);
+//   return ref;
+// }
+// Adapter for react-window
+// const ListboxComponent = forwardRef<
+//   HTMLDivElement,
+//   HTMLAttributes<HTMLElement>
+//   >(function ListboxComponent(props, ref) {
+//   const { children, ...other } = props;
+//   const itemData: ReactChild[] = [];
+//   (children as ReactChild[]).forEach(
+//     (item: ReactChild & { children?: ReactChild[] }) => {
+//       itemData.push(item);
+//       itemData.push(...(item.children || []));
+//     },
+//   );
+//
+//   const theme = useTheme();
+//   const smUp = useMediaQuery(theme.breakpoints.up('sm'), {
+//     noSsr: true,
+//   });
+//   const itemCount = itemData.length;
+//   const itemSize = smUp ? 36 : 48;
+//   // const itemSize = 36;
+//
+//   const getChildSize = () => {
+//     return itemSize;
+//   };
+//   //
+//   const getHeight = () => {
+//     console.log("itemCount", itemCount);
+//     if (itemCount > 1) {
+//       return 8 * itemSize;
+//     }
+//     return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
+//   };
+//
+//   const gridRef = useResetCache(itemCount);
+//
+//   return (
+//     <div ref={ref}>
+//       <OuterElementContext.Provider value={other}>
+//         <VariableSizeList
+//           itemData={itemData}
+//           // height={getHeight() + 2 * LIST_BOX_PADDING}
+//           height={getHeight() * 2 * LIST_BOX_PADDING}
+//           width="100%"
+//           ref={gridRef}
+//           outerElementType={OuterElementType}
+//           innerElementType="ul"
+//           itemSize={() => getChildSize()}
+//           overscanCount={5}
+//           itemCount={itemCount}
+//         >
+//           {renderRow}
+//         </VariableSizeList>
+//       </OuterElementContext.Provider>
+//     </div>
+//   );
+// });
+// const StyledPopper = styled(Popper)({
+//   [`& .${autocompleteClasses.listbox}`]: {
+//     boxSizing: 'border-box',
+//     '& ul': {
+//       padding: 0,
+//       margin: 0,
+//     },
+//   },
+// });
+
 const SelectAddressFormController = ({
   addressType,
   currentAddress,
@@ -31,11 +137,15 @@ const SelectAddressFormController = ({
   handleAddressChange,
   handleAddressAdditionalInformationChange,
   control,
-  errors,
+  errors
 }: AddressSelectProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const searchResults = useSelector(
+    (state: RootState) => state.addresses.searchResults
+  );
+
   const fieldName = addressType.toString();
-  const labelName =
-    fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
+  const labelName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
 
   const handleAddressValueChange = (event, newValue) => {
     let selectedAddress = newValue as Address | null;
@@ -68,6 +178,9 @@ const SelectAddressFormController = ({
               <Autocomplete
                 options={selectableAddresses}
                 value={currentAddress?.street1 ? currentAddress : null}
+                noOptionsText="No addresses found"
+                // PopperComponent={StyledPopper}
+                // ListboxComponent={ListboxComponent}
                 getOptionLabel={(address) => addressOptionLabel(address)}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={handleAddressValueChange}
@@ -77,7 +190,7 @@ const SelectAddressFormController = ({
                     value={value}
                     label={labelName}
                     variant="standard"
-                    placeholder={"Search by street address..."}
+                    placeholder={"Search by address..."}
                   />
                 )}
               />

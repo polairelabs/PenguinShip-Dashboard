@@ -206,7 +206,7 @@ const AddressesList = () => {
               }
             }}
             sx={{
-              "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-child(2) .MuiDataGrid-columnSeparator":
+              "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-of-type(2) .MuiDataGrid-columnSeparator":
                 {
                   display: "none"
                 }

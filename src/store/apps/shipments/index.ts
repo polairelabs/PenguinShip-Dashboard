@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import BaseApi from "../../../api/api";
+import BaseApi, { ApiError } from "../../../api/api";
 import {
   CreatedShipment,
   Rate,
@@ -23,7 +23,8 @@ export const createShipment = createAsyncThunk(
     try {
       return await BaseApi.post("/shipments", data);
     } catch (error) {
-      return rejectWithValue(error);
+      let apiError = error as ApiError;
+      return rejectWithValue(apiError.messages?.[0] ?? "Server error");
     }
   }
 );
@@ -32,9 +33,14 @@ export const buyShipmentRate = createAsyncThunk(
   "shipments/setShipmentRate",
   async (
     data: { [key: string]: number | string | undefined },
-    { getState, dispatch }: Redux
+    { getState, dispatch , rejectWithValue}
   ) => {
-    return await BaseApi.post("/shipments/buy", data);
+    try {
+      return await BaseApi.post("/shipments/buy", data);
+    } catch (error) {
+      let apiError = error as ApiError;
+      return rejectWithValue(apiError.messages?.[0] ?? "Server error");
+    }
   }
 );
 
@@ -53,7 +59,8 @@ export const shipmentsSlice = createSlice({
     createdShipmentRates: [] as Rate[],
     allShipments: [] as Shipment[],
     createShipmentStatus: "" as Status,
-    buyShipmentRateStatus: "" as Status
+    buyShipmentRateStatus: "" as Status,
+    createShipmentError: "",
   },
   reducers: {
     clearCreateShipmentStatus: (state) => {
@@ -61,6 +68,9 @@ export const shipmentsSlice = createSlice({
     },
     clearBuyShipmentRateStatus: (state) => {
       state.buyShipmentRateStatus = "";
+    },
+    clearCreateShipmentError: (state) => {
+      state.createShipmentError = "";
     }
   },
   extraReducers: (builder) => {
@@ -76,6 +86,7 @@ export const shipmentsSlice = createSlice({
         state.createdShipment.id = "";
         state.createdShipmentRates = [];
         state.createShipmentStatus = "ERROR";
+        state.createShipmentError = action.payload as string;
       })
       .addCase(buyShipmentRate.fulfilled, (state, action) => {
         state.buyShipmentRateStatus = "SUCCESS";
@@ -89,6 +100,6 @@ export const shipmentsSlice = createSlice({
   }
 });
 
-export const { clearCreateShipmentStatus, clearBuyShipmentRateStatus } =
+export const { clearCreateShipmentStatus, clearBuyShipmentRateStatus, clearCreateShipmentError } =
   shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

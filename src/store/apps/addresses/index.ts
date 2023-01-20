@@ -9,9 +9,16 @@ interface Redux {
 }
 
 export const fetchAddresses = createAsyncThunk(
-  "addresses/fetchData",
+  "addresses/fetchAddresses",
   async (params?: { [key: string]: number | string }) => {
     return await BaseApi.get("/addresses", params);
+  }
+);
+
+export const searchAddresses = createAsyncThunk(
+  "addresses/searchAddresses",
+  async (params?: { [key: string]: number | string }) => {
+    return await BaseApi.get("/addresses/search", params);
   }
 );
 
@@ -55,12 +62,13 @@ export const addressesSlice = createSlice({
     total: 1,
     params: {},
     allData: [],
+    searchResults: [],
     fetchDataStatus: "" as Status,
     createStatus: "" as Status,
     updateStatus: "" as Status,
     deleteStatus: "" as Status,
     lastInsertedAddress: {},
-    shouldPopulateLastInsertedAddress: false,
+    shouldPopulateLastInsertedAddress: false
   },
   reducers: {
     clearFetchDataStatus: (state) => {
@@ -78,7 +86,7 @@ export const addressesSlice = createSlice({
     setShouldPopulateLastInsertedAddress: (state, action) => {
       // To be set to true when we are in the createShipmentWizard component
       state.shouldPopulateLastInsertedAddress = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -112,6 +120,9 @@ export const addressesSlice = createSlice({
       })
       .addCase(deleteAddress.rejected, (state, action) => {
         state.deleteStatus = "ERROR";
+      })
+      .addCase(searchAddresses.fulfilled, (state, action) => {
+        state.searchResults = action.payload;
       });
   }
 });
@@ -121,6 +132,6 @@ export const {
   clearCreateStatus,
   clearUpdateStatus,
   clearDeleteStatus,
-  setShouldPopulateLastInsertedAddress,
+  setShouldPopulateLastInsertedAddress
 } = addressesSlice.actions;
 export default addressesSlice.reducer;

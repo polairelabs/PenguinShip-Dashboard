@@ -11,21 +11,21 @@ interface ShippingLabelProps {
 }
 
 const ShippingLabel = ({
-                         sourceAddress,
-                         deliveryAddress,
-                         parcel,
-                         rate
-                       }: ShippingLabelProps) => {
+  sourceAddress,
+  deliveryAddress,
+  parcel,
+  rate
+}: ShippingLabelProps) => {
   const addressLabel = (address: Address) => {
     return address?.street1
       ? address?.street1 +
-      (address?.street2 ? " , " + address?.street2 : "") +
-      ", " +
-      address?.zip +
-      ", " +
-      address?.city +
-      ", " +
-      address?.country
+          (address?.street2 ? " , " + address?.street2 : "") +
+          ", " +
+          address?.zip +
+          ", " +
+          address?.city +
+          ", " +
+          address?.country
       : "";
   };
 
@@ -39,14 +39,16 @@ const ShippingLabel = ({
   const deliveryDays = (rate: Rate) => {
     return rate?.deliveryDays
       ? `Delivery in ${rate.deliveryDays} ${
-        rate.deliveryDays > 1 ? "days" : "day"
-      }`
+          rate.deliveryDays > 1 ? "days" : "day"
+        }`
       : "";
   };
 
   const packageDimensions = (parcel: Package) => {
-    return parcel?.length ? `${parcel?.length}" x ${parcel?.width}" x ${parcel?.height}` : "";
-  }
+    return parcel?.length
+      ? `${parcel?.length}" x ${parcel?.width}" x ${parcel?.height}`
+      : "";
+  };
 
   return (
     <Box sx={{ height: "26vh", overflowY: "auto" }} mb={4}>
@@ -100,9 +102,7 @@ const ShippingLabel = ({
             </Box>
           </Typography>
           {parcel?.length && (
-            <Typography variant="body2">
-              {packageDimensions(parcel)}
-            </Typography>
+            <Typography variant="body2">{packageDimensions(parcel)}</Typography>
           )}
           {parcel?.weight && (
             <Typography variant="body2">{parcel?.weight} oz</Typography>
