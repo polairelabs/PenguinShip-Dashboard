@@ -22,7 +22,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import {
   buyShipmentRate,
-  clearBuyShipmentRateStatus, clearCreateShipmentError,
+  clearBuyShipmentRateStatus,
+  clearCreateShipmentError,
   clearCreateShipmentStatus,
   createShipment
 } from "../../../store/apps/shipments";
@@ -238,9 +239,12 @@ const CreateShipmentWizard = () => {
 
       setActiveStep(activeStep + 1);
     } else if (shipmentStore.createShipmentStatus === "ERROR") {
-      toast.error(`${shipmentStore.createShipmentError ?? "Error creating shipment"}`, {
-        position: "top-center"
-      });
+      toast.error(
+        `${shipmentStore.createShipmentError ?? "Error creating shipment"}`,
+        {
+          position: "top-center"
+        }
+      );
       dispatch(clearCreateShipmentError());
     }
 
@@ -250,7 +254,7 @@ const CreateShipmentWizard = () => {
   useEffect(() => {
     // Handle page once rate is bought
     if (shipmentStore.buyShipmentRateStatus === "SUCCESS") {
-      toast.success("Label was successfully created", {
+      toast.success("Label was successfully bought", {
         position: "top-center"
       });
       setSourceAddress(null);

@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import BaseApi from "../../api/api";
-import { Membership} from "../../types/apps/navashipInterfaces";
+import { Membership } from "../../types/apps/navashipInterfaces";
 import { Status } from "../index";
 
 interface Redux {
@@ -55,6 +55,5 @@ export const authSlice = createSlice({
   }
 });
 
-export const { clearAccountCreationStatus } =
-  authSlice.actions;
+export const { clearAccountCreationStatus } = authSlice.actions;
 export default authSlice.reducer;
