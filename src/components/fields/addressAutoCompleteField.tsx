@@ -35,13 +35,13 @@ export default function AddressAutoCompleteField({
 
   if (loadError || addressToEdit) {
     // If the google api won't work for some reason, load the field without any auto complete feature
-    // Or if the addressToEdit is defined (we are in an editing modal)
+    // Or if the addressToEdit is defined (we are in an editing modal) and in edit mode, the auto complete search is disabled
     return (
       <TextField
         fullWidth
         name="street1"
         label="Enter an address"
-        onChange={e => {
+        onChange={(e) => {
           if (!valueHasChanged) {
             setValueHasChanged(true);
           }

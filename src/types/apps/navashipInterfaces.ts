@@ -90,4 +90,5 @@ export interface AccountData {
   password: string;
   confirmPassword: string;
   membershipProductLink: string;
+  stripePriceId: string;
 }
