@@ -18,7 +18,11 @@ import Icon from "src/@core/components/icon";
 import CustomRadioIcons from "src/@core/components/custom-radio/icons";
 
 // ** Util Import
-import { formatCVC, formatExpirationDate, formatCreditCardNumber } from "src/@core/utils/format";
+import {
+  formatCVC,
+  formatExpirationDate,
+  formatCreditCardNumber
+} from "src/@core/utils/format";
 
 // ** Styles Import
 import "react-credit-cards/es/styles-compiled.css";
@@ -26,7 +30,6 @@ import { fetchMemberships } from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store";
 import { Membership } from "../../../../types/apps/navashipInterfaces";
-
 
 interface Props {
   formData: any;
@@ -37,19 +40,19 @@ interface Props {
 }
 
 const StepBillingDetails = ({
-                              formData,
-                              handleChange,
-                              handlePrev,
-                              handleNext,
-                              membershipId
-                            }: Props) => {
+  formData,
+  handleChange,
+  handlePrev,
+  handleNext,
+  membershipId
+}: Props) => {
   // ** State
   const [selectedRadio, setSelectedRadio] = useState<string>();
   const dispatch = useDispatch<AppDispatch>();
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMembershipId, setSelectedMembershipId] = useState("");
-// TODO : NEED TO MAKE MEMBERSHIPID MANDATORY AND RETURN AN ERROR IF IT ISNT PASSED
+  // TODO : NEED TO MAKE MEMBERSHIPID MANDATORY AND RETURN AN ERROR IF IT ISNT PASSED
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -65,16 +68,34 @@ const StepBillingDetails = ({
       value: membership.stripePriceId,
       title: <Typography variant="h5">{membership.name}</Typography>,
       content: (
-        <Box sx={{ my: "auto", display: "flex", alignItems: "center", flexDirection: "column" }}>
-          <Typography sx={{ textAlign: "center", color: "text.secondary" }}>{membership.description}</Typography>
+        <Box
+          sx={{
+            my: "auto",
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column"
+          }}
+        >
+          <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
+            {membership.description}
+          </Typography>
           <Box sx={{ mt: 2, display: "flex" }}>
-            <Typography component="sup" sx={{ mt: 1.5, color: "primary.main", alignSelf: "flex-start" }}>
+            <Typography
+              component="sup"
+              sx={{ mt: 1.5, color: "primary.main", alignSelf: "flex-start" }}
+            >
               $
             </Typography>
-            <Typography component="span" sx={{ fontSize: "2rem", color: "primary.main" }}>
+            <Typography
+              component="span"
+              sx={{ fontSize: "2rem", color: "primary.main" }}
+            >
               {membership.unitAmount / 100}
             </Typography>
-            <Typography component="sub" sx={{ mb: 1.5, alignSelf: "flex-end", color: "text.disabled" }}>
+            <Typography
+              component="sub"
+              sx={{ mb: 1.5, alignSelf: "flex-end", color: "text.disabled" }}
+            >
               /month
             </Typography>
           </Box>
@@ -97,16 +118,24 @@ const StepBillingDetails = ({
 
   const submit = () => {
     handleNext(selectedMembershipId);
-  }
+  };
 
   if (loading) {
     return (
       <>
         <Box sx={{ mb: 4 }}>
           <Typography variant="h5">Select Plan</Typography>
-          <Typography sx={{ color: "text.secondary" }}>Select plan as per your requirement</Typography>
+          <Typography sx={{ color: "text.secondary" }}>
+            Select plan as per your requirement
+          </Typography>
         </Box>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
           <CircularProgress />
         </div>
         <Grid container spacing={5}>
@@ -134,7 +163,9 @@ const StepBillingDetails = ({
     <>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5">Select Plan</Typography>
-        <Typography sx={{ color: "text.secondary" }}>Select plan as per your requirement</Typography>
+        <Typography sx={{ color: "text.secondary" }}>
+          Select plan as per your requirement
+        </Typography>
       </Box>
 
       <Grid container spacing={5}>
@@ -148,7 +179,6 @@ const StepBillingDetails = ({
             handleChange={handleRadioChange}
           />
         ))}
-
 
         <Grid item xs={12}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>

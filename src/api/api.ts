@@ -90,9 +90,14 @@ export const BaseApi = {
     }
   },
 
-  async createCheckoutSession(priceId: string) {
+  async createCheckoutSession(priceId: string, stripeCustomerId: string) {
     try {
-      const response = await http.post("/subscriptions/create-checkout-session/?price="+priceId);
+      const response = await http.post(
+        "/subscriptions/create-checkout-session/?price=" +
+          priceId +
+          "&customerId=" +
+          stripeCustomerId
+      );
       return Promise.resolve(response.data);
     } catch (error) {
       return Promise.reject(handleError(error));

@@ -1,15 +1,15 @@
 import Grid from "@mui/material/Grid";
 import FormControl from "@mui/material/FormControl";
 import { Controller } from "react-hook-form";
-import { Autocomplete, autocompleteClasses, Box, Popper, Typography, useMediaQuery } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Typography,
+} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Address } from "../../types/apps/navashipInterfaces";
-import {
-  ChangeEvent
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store";
+import { ChangeEvent } from "react";
 
 export enum AddressType {
   SOURCE = "source",
@@ -139,13 +139,9 @@ const SelectAddressFormController = ({
   control,
   errors
 }: AddressSelectProps) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const searchResults = useSelector(
-    (state: RootState) => state.addresses.searchResults
-  );
-
   const fieldName = addressType.toString();
-  const labelName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
+  const labelName =
+    fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + " Address";
 
   const handleAddressValueChange = (event, newValue) => {
     let selectedAddress = newValue as Address | null;

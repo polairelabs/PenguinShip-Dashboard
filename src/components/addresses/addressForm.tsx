@@ -76,7 +76,10 @@ const AddressForm = ({
     city: yup.string().required(),
     country: yup.string().required(),
     state: yup.string().required(),
-    zip: yup.string().required().max(8, "Must be less than or equal to 8 characters"),
+    zip: yup
+      .string()
+      .required()
+      .max(8, "Must be less than or equal to 8 characters")
   });
 
   const {

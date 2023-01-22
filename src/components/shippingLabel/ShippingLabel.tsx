@@ -70,7 +70,7 @@ const ShippingLabel = ({
             sourceAddress?.company ||
             sourceAddress?.phone ||
             sourceAddress?.email) && (
-            <Typography variant="body2">
+            <Typography variant="body2" fontStyle="italic">
               {displayAdditionalPersonInfo(sourceAddress)}
             </Typography>
           )}
@@ -88,7 +88,7 @@ const ShippingLabel = ({
             deliveryAddress?.company ||
             deliveryAddress?.phone ||
             deliveryAddress?.email) && (
-            <Typography variant="body2">
+            <Typography variant="body2" fontStyle="italic">
               {displayAdditionalPersonInfo(deliveryAddress)}
             </Typography>
           )}

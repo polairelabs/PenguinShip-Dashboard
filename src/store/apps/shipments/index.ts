@@ -33,7 +33,7 @@ export const buyShipmentRate = createAsyncThunk(
   "shipments/setShipmentRate",
   async (
     data: { [key: string]: number | string | undefined },
-    { getState, dispatch , rejectWithValue}
+    { getState, dispatch, rejectWithValue }
   ) => {
     try {
       return await BaseApi.post("/shipments/buy", data);
@@ -60,7 +60,7 @@ export const shipmentsSlice = createSlice({
     allShipments: [] as Shipment[],
     createShipmentStatus: "" as Status,
     buyShipmentRateStatus: "" as Status,
-    createShipmentError: "",
+    createShipmentError: ""
   },
   reducers: {
     clearCreateShipmentStatus: (state) => {
@@ -100,6 +100,9 @@ export const shipmentsSlice = createSlice({
   }
 });
 
-export const { clearCreateShipmentStatus, clearBuyShipmentRateStatus, clearCreateShipmentError } =
-  shipmentsSlice.actions;
+export const {
+  clearCreateShipmentStatus,
+  clearBuyShipmentRateStatus,
+  clearCreateShipmentError
+} = shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

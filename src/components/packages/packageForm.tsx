@@ -83,7 +83,7 @@ const PackageForm = ({
     {
       name: yup.string().required(),
       weight: numberValidation().required(),
-      monetaryValue: numberValidation(),
+      monetaryValue: numberValidation().nullable(),
       length: numberValidation()
         .ensure()
         .when(["width", "height"], {
