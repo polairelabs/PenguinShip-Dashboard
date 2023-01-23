@@ -25,8 +25,6 @@ import { Link, Tooltip } from "@mui/material";
 import { capitalizeFirstLettersOnly } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
 import { CurrencyUsd } from "mdi-material-ui";
-import { fetchAddresses } from "../../../store/apps/addresses";
-import { escapeRegExp } from "@mui/x-data-grid/utils/utils";
 
 interface CellType {
   row: Shipment;
@@ -131,7 +129,7 @@ const ShipmentsList = () => {
   };
 
   useEffect(() => {
-    // Called on mount as well
+    // Called when first mounted as well
     dispatch(fetchShipments({ offset: currentPage, size: rowCount }));
   }, [currentPage, rowCount]);
 
@@ -335,7 +333,7 @@ const ShipmentsList = () => {
             disableSelectionOnClick
             pagination
             paginationMode="server"
-            rowsPerPageOptions={[2, 50, 100]}
+            rowsPerPageOptions={[20, 50, 100]}
             rowCount={store.total}
             onPageSizeChange={(count) => setRowCount(count)}
             onPageChange={(newPage) => setCurrentPage(newPage + 1)}

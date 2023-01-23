@@ -16,14 +16,20 @@ export const fetchPackages = createAsyncThunk(
   }
 );
 
-export const addPackage = createAsyncThunk(
+export const createPackage = createAsyncThunk(
   "packages/addPackage",
   async (
     data: { [key: string]: number | string },
     { getState, dispatch }: Redux
   ) => {
     const response = await BaseApi.post("/packages", data);
-    dispatch(fetchPackages());
+    const state = getState();
+    const params = {
+      offset: state.addresses.offset,
+      size: state.addresses.size,
+      order: "desc"
+    };
+    dispatch(fetchPackages(params));
     return response;
   }
 );
@@ -35,7 +41,13 @@ export const updatePackage = createAsyncThunk(
     { getState, dispatch }: Redux
   ) => {
     const response = await BaseApi.put(`/packages/${data.id}`, data);
-    dispatch(fetchPackages());
+    const state = getState();
+    const params = {
+      offset: state.addresses.offset,
+      size: state.addresses.size,
+      order: "desc"
+    };
+    dispatch(fetchPackages(params));
     return response;
   }
 );
@@ -44,7 +56,13 @@ export const deletePackage = createAsyncThunk(
   "packages/deletePackage",
   async (id: number | string, { getState, dispatch }: Redux) => {
     const response = await BaseApi.delete(`/packages/${id}`);
-    dispatch(fetchPackages());
+    const state = getState();
+    const params = {
+      offset: state.addresses.offset,
+      size: state.addresses.size,
+      order: "desc"
+    };
+    dispatch(fetchPackages(params));
     return response;
   }
 );
@@ -59,7 +77,10 @@ export const packagesSlice = createSlice({
     updateStatus: "" as Status,
     deleteStatus: "" as Status,
     lastInsertedPackage: {},
-    shouldPopulateLastInsertedPackage: false
+    shouldPopulateLastInsertedPackage: false,
+    // Offset and size to be used for pagination in all fetchAll calls inside the store
+    offset: 1,
+    size: 100
   },
   reducers: {
     clearFetchDataStatus: (state) => {
@@ -77,6 +98,12 @@ export const packagesSlice = createSlice({
     setShouldPopulateLastInsertedPackage: (state, action) => {
       // To be set to true when we are in the createShipmentWizard component
       state.shouldPopulateLastInsertedPackage = action.payload;
+    },
+    setOffset: (state, action) => {
+      state.offset = action.payload;
+    },
+    setSize: (state, action) => {
+      state.size = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -92,13 +119,13 @@ export const packagesSlice = createSlice({
       .addCase(fetchPackages.rejected, (state) => {
         state.fetchDataStatus = "ERROR";
       })
-      .addCase(addPackage.fulfilled, (state, action) => {
+      .addCase(createPackage.fulfilled, (state, action) => {
         if (state.shouldPopulateLastInsertedPackage) {
           state.lastInsertedPackage = action.payload;
         }
         state.createStatus = "SUCCESS";
       })
-      .addCase(addPackage.rejected, (state, action) => {
+      .addCase(createPackage.rejected, (state, action) => {
         state.createStatus = "ERROR";
       })
       .addCase(updatePackage.fulfilled, (state, action) => {
@@ -121,6 +148,8 @@ export const {
   clearCreateStatus,
   clearUpdateStatus,
   clearDeleteStatus,
-  setShouldPopulateLastInsertedPackage
+  setShouldPopulateLastInsertedPackage,
+  setOffset,
+  setSize
 } = packagesSlice.actions;
 export default packagesSlice.reducer;

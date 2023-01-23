@@ -1,13 +1,15 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { Alert } from "@mui/material";
 
 interface TableHeaderProps {
   toggle: () => void;
   toggleLabel: string;
+  informationAlertMessage?: string;
 }
 
 const TableHeader = (props: TableHeaderProps) => {
-  const { toggle, toggleLabel } = props;
+  const { toggle, toggleLabel, informationAlertMessage } = props;
 
   return (
     <Box
@@ -20,6 +22,11 @@ const TableHeader = (props: TableHeaderProps) => {
         justifyContent: "space-between"
       }}
     >
+      {informationAlertMessage && (
+        <Alert sx={{ mb: 2 }} severity="info">
+          {informationAlertMessage}
+        </Alert>
+      )}
       <Box
         sx={{
           display: "flex",

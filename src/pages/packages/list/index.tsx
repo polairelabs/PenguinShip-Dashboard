@@ -23,6 +23,7 @@ import TableHeader from "src/views/table/TableHeader";
 import PackageModal from "../../../components/packages/packagesModal";
 import { Box, Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
+import { setOffset, setSize } from "../../../store/apps/addresses";
 
 interface CellType {
   row: Package;
@@ -177,8 +178,12 @@ const PackagesList = () => {
   ];
 
   useEffect(() => {
-    // Called on mount as well
-    dispatch(fetchPackages({ offset: currentPage, size: rowCount }));
+    // Called when first mounted as well
+    dispatch(
+      fetchPackages({ offset: currentPage, size: rowCount, order: "desc" })
+    );
+    dispatch(setOffset(currentPage));
+    dispatch(setSize(rowCount));
   }, [currentPage, rowCount]);
 
   // Delete toast
@@ -202,13 +207,12 @@ const PackagesList = () => {
           <TableHeader
             toggle={handleDialogToggle}
             toggleLabel="Create parcel"
+            informationAlertMessage="Hover over a row to reveal the edit and delete options"
           />
           <PackageModal
             open={open}
             handleDialogToggle={handleDialogToggle}
             packageToEdit={packageToEdit}
-            currentPage={currentPage}
-            rowCount={rowCount}
           />
           <DataGrid
             autoHeight
@@ -217,7 +221,7 @@ const PackagesList = () => {
             disableSelectionOnClick
             pagination
             paginationMode="server"
-            rowsPerPageOptions={[2, 50, 100]}
+            rowsPerPageOptions={[20, 50, 100]}
             rowCount={totalCount}
             onPageSizeChange={(count) => setRowCount(count)}
             onPageChange={(newPage) => setCurrentPage(newPage + 1)}

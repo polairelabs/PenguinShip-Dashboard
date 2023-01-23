@@ -195,7 +195,7 @@ const SelectAddressFormController = ({
           </FormHelperText>
         )}
       </Grid>
-      <Grid container spacing={2}>
+      <Grid container spacing={2.5}>
         <Grid item xs={12} mb={2}>
           <Typography variant="body2">
             {fieldName === "source" ? "Sender" : "Receiver"} Information
@@ -213,6 +213,7 @@ const SelectAddressFormController = ({
                 onChange={handleAddressAdditionalInformationChange}
                 label="Name"
                 error={Boolean(errors.name)}
+                autoComplete="off"
               />
             )}
           />
@@ -234,6 +235,7 @@ const SelectAddressFormController = ({
                 onChange={handleAddressAdditionalInformationChange}
                 label="Company"
                 error={Boolean(errors.company)}
+                autoComplete="off"
               />
             )}
           />
@@ -255,6 +257,7 @@ const SelectAddressFormController = ({
                 onChange={handleAddressAdditionalInformationChange}
                 label="Phone"
                 error={Boolean(errors.phone)}
+                autoComplete="off"
               />
             )}
           />
@@ -276,6 +279,7 @@ const SelectAddressFormController = ({
                 onChange={handleAddressAdditionalInformationChange}
                 label="Email"
                 error={Boolean(errors.email)}
+                autoComplete="off"
               />
             )}
           />

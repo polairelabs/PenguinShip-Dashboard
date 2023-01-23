@@ -189,6 +189,12 @@ const CreateShipmentWizard = () => {
   const PARCEL_SELECT_INDEX = 2;
 
   useEffect(() => {
+    // Reset
+    console.log("Reseting!!");
+    setSourceAddress(null);
+    setDeliveryAddress(null);
+    setSelectedPackage(null);
+    setSelectedRate(null);
     dispatch(fetchAddresses({ order: "desc" }));
     dispatch(fetchPackages({ order: "desc" }));
   }, [dispatch]);

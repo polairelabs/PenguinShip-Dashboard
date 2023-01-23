@@ -12,7 +12,7 @@ import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { InputAdornment, Typography } from "@mui/material";
 import {
-  addPackage,
+  createPackage,
   clearCreateStatus,
   clearUpdateStatus,
   setShouldPopulateLastInsertedPackage,
@@ -132,7 +132,7 @@ const PackageForm = ({
     delete packageDetailsToSend.monetaryValue;
     if (!packageToEdit) {
       await dispatch(setShouldPopulateLastInsertedPackage(fromShipmentWizard));
-      dispatch(addPackage({ ...packageDetailsToSend }));
+      dispatch(createPackage({ ...packageDetailsToSend }));
     } else {
       dispatch(
         updatePackage({ id: packageToEdit.id, ...packageDetailsToSend })

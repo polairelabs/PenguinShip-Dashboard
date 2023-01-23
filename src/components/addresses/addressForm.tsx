@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import AddressAutoCompleteField from "../fields/addressAutoCompleteField";
 import {
-  addAddress,
+  createAddress,
   clearCreateStatus,
   clearUpdateStatus,
   setShouldPopulateLastInsertedAddress,
@@ -106,7 +106,7 @@ const AddressForm = ({
   const handleData = async (data: AddressDetails) => {
     if (!addressToEdit) {
       await dispatch(setShouldPopulateLastInsertedAddress(fromShipmentWizard));
-      dispatch(addAddress({ ...data, residential: residential }));
+      dispatch(createAddress({ ...data, residential: residential }));
     } else {
       dispatch(
         updateAddress({

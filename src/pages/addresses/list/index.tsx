@@ -14,7 +14,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   clearDeleteStatus,
   deleteAddress,
-  fetchAddresses
+  fetchAddresses,
+  setOffset,
+  setShouldPopulateLastInsertedAddress,
+  setSize
 } from "src/store/apps/addresses";
 
 import { AppDispatch, RootState } from "src/store";
@@ -22,7 +25,7 @@ import { Address } from "src/types/apps/navashipInterfaces";
 
 import AddressModal from "src/components/addresses/addressModal";
 import TableHeader from "../../../views/table/TableHeader";
-import { Tooltip } from "@mui/material";
+import { Alert, Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
 import CustomChip from "../../../@core/components/mui/chip";
 
@@ -185,8 +188,12 @@ const AddressesList = () => {
   ];
 
   useEffect(() => {
-    // Called on mount as well
-    dispatch(fetchAddresses({ offset: currentPage, size: rowCount }));
+    // Called when first mounted as well
+    dispatch(
+      fetchAddresses({ offset: currentPage, size: rowCount, order: "desc" })
+    );
+    dispatch(setOffset(currentPage));
+    dispatch(setSize(rowCount));
   }, [currentPage, rowCount]);
 
   // Delete toast
@@ -210,6 +217,7 @@ const AddressesList = () => {
           <TableHeader
             toggle={handleDialogToggle}
             toggleLabel="Create address"
+            informationAlertMessage="Hover over a row to reveal the edit and delete options"
           />
           <AddressModal
             open={open}

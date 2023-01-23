@@ -1,7 +1,23 @@
-import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Address, Package, Rate } from "../../types/apps/navashipInterfaces";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableCellBaseProps,
+  TableContainer,
+  TableRow
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const MUITableCell = styled(TableCell)<TableCellBaseProps>(({ theme }) => ({
+  borderBottom: 0,
+  paddingLeft: "0 !important",
+  paddingRight: "0 !important",
+  paddingTop: `${theme.spacing(1)} !important`,
+  paddingBottom: `${theme.spacing(1)} !important`
+}));
 
 interface ShippingLabelProps {
   sourceAddress: Address | null | undefined;
@@ -36,17 +52,23 @@ const ShippingLabel = ({
     return infos.map((value, index) => value + (infos[index + 1] ? ", " : ""));
   };
 
+  const packageDimensions = (parcel: Package) => {
+    return parcel?.length
+      ? `${parcel?.length}" x ${parcel?.width}" x ${parcel?.height}`
+      : "";
+  };
+
+  const displayPackageInfo = (parcel: Package) => {
+    const dimensions = parcel?.length ? ` / ${packageDimensions(parcel)}` : "";
+    const value = parcel?.value ? ` / $${parcel.value}` : "";
+    return `${parcel.weight} oz ${dimensions} ${value}`;
+  };
+
   const deliveryDays = (rate: Rate) => {
     return rate?.deliveryDays
       ? `Delivery in ${rate.deliveryDays} ${
           rate.deliveryDays > 1 ? "days" : "day"
         }`
-      : "";
-  };
-
-  const packageDimensions = (parcel: Package) => {
-    return parcel?.length
-      ? `${parcel?.length}" x ${parcel?.width}" x ${parcel?.height}`
       : "";
   };
 
@@ -58,72 +80,96 @@ const ShippingLabel = ({
       >
         Shipping Label (preview)
       </Typography>
-      {sourceAddress?.street1 && (
-        <Grid item sx={{ mb: 3 }}>
-          <Typography variant="body2" component="div">
-            <Box fontWeight="bold" display="inline">
-              From:
-            </Box>{" "}
-            {addressLabel(sourceAddress)}
-          </Typography>
-          {(sourceAddress?.name ||
-            sourceAddress?.company ||
-            sourceAddress?.phone ||
-            sourceAddress?.email) && (
-            <Typography variant="body2" fontStyle="italic">
-              {displayAdditionalPersonInfo(sourceAddress)}
-            </Typography>
-          )}
-        </Grid>
-      )}
-      {deliveryAddress?.street1 && (
-        <Grid item sx={{ mb: 3 }}>
-          <Typography variant="body2" component="div">
-            <Box fontWeight="bold" display="inline">
-              Ship to:
-            </Box>{" "}
-            {addressLabel(deliveryAddress)}
-          </Typography>
-          {(deliveryAddress?.name ||
-            deliveryAddress?.company ||
-            deliveryAddress?.phone ||
-            deliveryAddress?.email) && (
-            <Typography variant="body2" fontStyle="italic">
-              {displayAdditionalPersonInfo(deliveryAddress)}
-            </Typography>
-          )}
-        </Grid>
-      )}
-      {parcel?.name && (
-        <Grid item sx={{ mb: 3 }}>
-          <Typography variant="body2" component="div">
-            <Box fontWeight="bold" display="inline">
-              Parcel information:
-            </Box>
-          </Typography>
-          {parcel?.length && (
-            <Typography variant="body2">{packageDimensions(parcel)}</Typography>
-          )}
-          {parcel?.weight && (
-            <Typography variant="body2">{parcel?.weight} oz</Typography>
-          )}
-          {parcel?.value && (
-            <Typography variant="body2">${parcel?.value}</Typography>
-          )}
-        </Grid>
-      )}
 
-      {rate && (
-        <Grid item>
-          <Typography variant="body2">
-            <Box fontWeight="bold" display="inline">
-              Shipping service:
-            </Box>{" "}
-            {rate?.carrier} {rate?.service} - {rate?.rate} {rate?.currency}
-          </Typography>
-          <Typography variant="body2">{deliveryDays(rate)}</Typography>
-        </Grid>
-      )}
+      <TableContainer>
+        <Table>
+          <TableBody>
+            {sourceAddress?.street1 && (
+              <TableRow>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="bold">
+                    From:
+                  </Typography>
+                </MUITableCell>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="480">
+                    {addressLabel(sourceAddress)}
+                  </Typography>
+                </MUITableCell>
+              </TableRow>
+            )}
+            <TableRow>
+              <MUITableCell></MUITableCell>
+              {(sourceAddress?.name ||
+                sourceAddress?.company ||
+                sourceAddress?.phone ||
+                sourceAddress?.email) && (
+                <MUITableCell>
+                  <Typography variant="body2" fontStyle="italic">
+                    {displayAdditionalPersonInfo(sourceAddress)}
+                  </Typography>
+                </MUITableCell>
+              )}
+            </TableRow>
+            {deliveryAddress?.street1 && (
+              <TableRow>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="bold">
+                    To:
+                  </Typography>
+                </MUITableCell>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="480">
+                    {addressLabel(deliveryAddress)}
+                  </Typography>
+                </MUITableCell>
+              </TableRow>
+            )}
+            <TableRow>
+              <MUITableCell></MUITableCell>
+              {(deliveryAddress?.name ||
+                deliveryAddress?.company ||
+                deliveryAddress?.phone ||
+                deliveryAddress?.email) && (
+                <MUITableCell>
+                  <Typography variant="body2" fontStyle="italic">
+                    {displayAdditionalPersonInfo(deliveryAddress)}
+                  </Typography>
+                </MUITableCell>
+              )}
+            </TableRow>
+            {parcel?.name && (
+              <TableRow>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="bold">
+                    Parcel:
+                  </Typography>
+                </MUITableCell>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="480">
+                    {displayPackageInfo(parcel)}
+                  </Typography>
+                </MUITableCell>
+              </TableRow>
+            )}
+            {rate && (
+              <TableRow>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="bold">
+                    Rate:
+                  </Typography>
+                </MUITableCell>
+                <MUITableCell>
+                  <Typography variant="body2" fontWeight="480">
+                    {rate?.carrier} {rate?.service} - {rate?.rate}{" "}
+                    {rate?.currency}
+                  </Typography>
+                </MUITableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 };

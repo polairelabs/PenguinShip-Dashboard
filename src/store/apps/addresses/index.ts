@@ -15,21 +15,20 @@ export const fetchAddresses = createAsyncThunk(
   }
 );
 
-export const searchAddresses = createAsyncThunk(
-  "addresses/searchAddresses",
-  async (params?: { [key: string]: number | string }) => {
-    return await BaseApi.get("/addresses/search", params);
-  }
-);
-
-export const addAddress = createAsyncThunk(
+export const createAddress = createAsyncThunk(
   "addresses/addAddress",
   async (
     data: { [key: string]: number | string | boolean },
     { getState, dispatch }: Redux
   ) => {
     const response = await BaseApi.post("/addresses", data);
-    dispatch(fetchAddresses());
+    const state = getState();
+    const params = {
+      offset: state.addresses.offset,
+      size: state.addresses.size,
+      order: "desc"
+    };
+    dispatch(fetchAddresses(params));
     return response;
   }
 );
@@ -41,7 +40,13 @@ export const updateAddress = createAsyncThunk(
     { getState, dispatch }: Redux
   ) => {
     const response = await BaseApi.put(`/addresses/${data.id}`, data);
-    dispatch(fetchAddresses());
+    const state = getState();
+    const params = {
+      offset: state.addresses.offset,
+      size: state.addresses.size,
+      order: "desc"
+    };
+    dispatch(fetchAddresses(params));
     return response;
   }
 );
@@ -50,7 +55,13 @@ export const deleteAddress = createAsyncThunk(
   "addresses/deleteAddress",
   async (id: number | string, { getState, dispatch }: Redux) => {
     const response = await BaseApi.delete(`/addresses/${id}`);
-    dispatch(fetchAddresses());
+    const state = getState();
+    const params = {
+      offset: state.addresses.offset,
+      size: state.addresses.size,
+      order: "desc"
+    };
+    dispatch(fetchAddresses(params));
     return response;
   }
 );
@@ -68,7 +79,10 @@ export const addressesSlice = createSlice({
     updateStatus: "" as Status,
     deleteStatus: "" as Status,
     lastInsertedAddress: {},
-    shouldPopulateLastInsertedAddress: false
+    shouldPopulateLastInsertedAddress: false,
+    // Offset and size to be used for pagination in all fetchAll calls inside the store
+    offset: 1,
+    size: 100
   },
   reducers: {
     clearFetchDataStatus: (state) => {
@@ -86,6 +100,12 @@ export const addressesSlice = createSlice({
     setShouldPopulateLastInsertedAddress: (state, action) => {
       // To be set to true when we are in the createShipmentWizard component
       state.shouldPopulateLastInsertedAddress = action.payload;
+    },
+    setOffset: (state, action) => {
+      state.offset = action.payload;
+    },
+    setSize: (state, action) => {
+      state.size = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -101,13 +121,13 @@ export const addressesSlice = createSlice({
       .addCase(fetchAddresses.rejected, (state) => {
         state.fetchDataStatus = "ERROR";
       })
-      .addCase(addAddress.fulfilled, (state, action) => {
+      .addCase(createAddress.fulfilled, (state, action) => {
         if (state.shouldPopulateLastInsertedAddress) {
           state.lastInsertedAddress = action.payload;
         }
         state.createStatus = "SUCCESS";
       })
-      .addCase(addAddress.rejected, (state, action) => {
+      .addCase(createAddress.rejected, (state, action) => {
         state.createStatus = "ERROR";
       })
       .addCase(updateAddress.fulfilled, (state, action) => {
@@ -121,9 +141,6 @@ export const addressesSlice = createSlice({
       })
       .addCase(deleteAddress.rejected, (state, action) => {
         state.deleteStatus = "ERROR";
-      })
-      .addCase(searchAddresses.fulfilled, (state, action) => {
-        state.searchResults = action.payload;
       });
   }
 });
@@ -133,6 +150,8 @@ export const {
   clearCreateStatus,
   clearUpdateStatus,
   clearDeleteStatus,
-  setShouldPopulateLastInsertedAddress
+  setShouldPopulateLastInsertedAddress,
+  setOffset,
+  setSize
 } = addressesSlice.actions;
 export default addressesSlice.reducer;

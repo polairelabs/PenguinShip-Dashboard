@@ -9,6 +9,13 @@ import {
 } from "../../../types/apps/navashipInterfaces";
 import { Status } from "../../index";
 
+export const fetchShipments = createAsyncThunk(
+  "shipments/fetchShipments",
+  async (params?: { [key: string]: number | string }) => {
+    return await BaseApi.get("/shipments", params);
+  }
+);
+
 export const createShipment = createAsyncThunk(
   "shipments/createShipment",
   async (
@@ -39,13 +46,6 @@ export const buyShipmentRate = createAsyncThunk(
   }
 );
 
-export const fetchShipments = createAsyncThunk(
-  "shipments/fetchShipments",
-  async (params?: { [key: string]: number | string }) => {
-    return await BaseApi.get("/shipments", params);
-  }
-);
-
 export const shipmentsSlice = createSlice({
   name: "shipments",
   initialState: {
@@ -57,7 +57,10 @@ export const shipmentsSlice = createSlice({
     createShipmentStatus: "" as Status,
     buyShipmentRateStatus: "" as Status,
     createShipmentError: "",
-    buyShipmentError: ""
+    buyShipmentError: "",
+    // Offset and size to be used for pagination in all fetchAll calls inside the store
+    offset: 1,
+    size: 100
   },
   reducers: {
     clearCreateShipmentStatus: (state) => {
