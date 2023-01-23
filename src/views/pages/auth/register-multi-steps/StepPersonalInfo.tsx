@@ -1,4 +1,3 @@
-// ** MUI Components
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -10,7 +9,6 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import InputAdornment from "@mui/material/InputAdornment";
 
-// ** Icon Imports
 import Icon from "src/@core/components/icon";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";

@@ -21,9 +21,10 @@ import { AppDispatch, RootState } from "src/store";
 import { Address } from "src/types/apps/navashipInterfaces";
 
 import AddressModal from "src/components/addresses/addressModal";
-import TableHeader from "../../../views/packages/list/TableHeader";
+import TableHeader from "../../../views/table/TableHeader";
 import { Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
+import CustomChip from "../../../@core/components/mui/chip";
 
 interface CellType {
   row: Address;
@@ -36,6 +37,10 @@ const AddressesList = () => {
     undefined
   );
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowCount, setRowCount] = useState(100);
+
+  const totalCount = useSelector((state: RootState) => state.addresses.total);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -127,6 +132,24 @@ const AddressesList = () => {
       }
     },
     {
+      field: "type",
+      headerName: "Type",
+      renderCell: ({ row }: CellType) => {
+        const typeColor = row.residential ? "info" : "success";
+        const type = row.residential ? "Home" : "office";
+
+        return (
+          <CustomChip
+            size="small"
+            skin="light"
+            color={typeColor}
+            label={type}
+            sx={{ "& .MuiChip-label": { textTransform: "capitalize" } }}
+          />
+        );
+      }
+    },
+    {
       field: "actions",
       headerName: "",
       width: 120,
@@ -162,8 +185,9 @@ const AddressesList = () => {
   ];
 
   useEffect(() => {
-    dispatch(fetchAddresses());
-  }, [dispatch]);
+    // Called on mount as well
+    dispatch(fetchAddresses({ offset: currentPage, size: rowCount }));
+  }, [currentPage, rowCount]);
 
   // Delete toast
   useEffect(() => {
@@ -197,7 +221,12 @@ const AddressesList = () => {
             rows={store.data}
             columns={columns}
             disableSelectionOnClick
-            rowsPerPageOptions={[10, 25, 50]}
+            pagination
+            paginationMode="server"
+            rowsPerPageOptions={[20, 50, 100]}
+            rowCount={totalCount}
+            onPageSizeChange={(count) => setRowCount(count)}
+            onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
             componentsProps={{
               row: {

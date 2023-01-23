@@ -19,7 +19,7 @@ import {
 import { AppDispatch, RootState } from "src/store";
 import { Package } from "src/types/apps/navashipInterfaces";
 
-import TableHeader from "src/views/packages/list/TableHeader";
+import TableHeader from "src/views/table/TableHeader";
 import PackageModal from "../../../components/packages/packagesModal";
 import { Box, Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
@@ -30,12 +30,15 @@ interface CellType {
 
 const PackagesList = () => {
   const store = useSelector((state: RootState) => state.packages);
-  const [value, setValue] = useState<number>(10);
   const [open, setOpen] = useState<boolean>(false);
   const [packageToEdit, setPackageToEdit] = useState<Package | undefined>(
     undefined
   );
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowCount, setRowCount] = useState(100);
+
+  const totalCount = useSelector((state: RootState) => state.packages.total);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -174,8 +177,9 @@ const PackagesList = () => {
   ];
 
   useEffect(() => {
-    dispatch(fetchPackages());
-  }, [dispatch]);
+    // Called on mount as well
+    dispatch(fetchPackages({ offset: currentPage, size: rowCount }));
+  }, [currentPage, rowCount]);
 
   // Delete toast
   useEffect(() => {
@@ -203,15 +207,20 @@ const PackagesList = () => {
             open={open}
             handleDialogToggle={handleDialogToggle}
             packageToEdit={packageToEdit}
+            currentPage={currentPage}
+            rowCount={rowCount}
           />
           <DataGrid
             autoHeight
             rows={store.data}
             columns={columns}
-            pageSize={value}
             disableSelectionOnClick
-            rowsPerPageOptions={[10, 25, 50]}
-            onPageSizeChange={(newPageSize: number) => setValue(newPageSize)}
+            pagination
+            paginationMode="server"
+            rowsPerPageOptions={[2, 50, 100]}
+            rowCount={totalCount}
+            onPageSizeChange={(count) => setRowCount(count)}
+            onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
             componentsProps={{
               row: {

@@ -155,7 +155,6 @@ const PlacesAutoCompleteComboBox = ({
           onChange={handleOnChange}
           placeholder="Search..."
           error={error}
-          helperText="Location data provided by Google"
         />
       )}
       renderOption={(props, option) => (

@@ -19,6 +19,7 @@ import { AppDispatch, RootState } from "../../../../store";
 import { AccountData } from "../../../../types/apps/navashipInterfaces";
 import BaseApi from "../../../../api/api";
 import { Link } from "@mui/material";
+import VerificationModal from "../../../../components/verificationToken/verificationModal";
 
 const steps = [
   {
@@ -183,15 +184,20 @@ const RegisterMultiSteps = () => {
                       </div>
                     </div>
                   </StepLabel>
+                  <VerificationModal
+                    open={false}
+                    onClose={() => alert("cool")}
+                    onValidate={() => alert("validate")}
+                  />
                 </Step>
               ))}
             </Stepper>
           </StepperWrapper>
 
           {renderContent()}
-          <div>
+          <Typography variant="body2" sx={{ mr: 2, mt: 2 }}>
             Already have an account ? <Link href="/login">Go to login</Link>
-          </div>
+          </Typography>
         </>
       )}
     </>

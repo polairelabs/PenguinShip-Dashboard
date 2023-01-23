@@ -1,6 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -196,216 +195,216 @@ const PackageForm = ({
   }, [store.updateStatus]);
 
   return (
-    <Card>
-      <CardContent>
-        <form onSubmit={handleSubmit(handleData)}>
+    <form onSubmit={handleSubmit(handleData)}>
+      <Grid container spacing={5}>
+        <CardContent>
           <Grid container spacing={5}>
-            <CardContent>
-              <Grid container spacing={5}>
-                <Grid item xs={12}>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    1. Package Details
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="name"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        fullWidth
-                        name="name"
-                        value={packageDetails.name}
-                        onChange={handlePackageValueChange}
-                        label="Name"
-                        error={Boolean(errors.name)}
-                      />
-                    )}
-                  />
-                  {errors.name && (
-                    <FormHelperText sx={{ color: "error.main" }}>
-                      {errors.name.message}
-                    </FormHelperText>
-                  )}
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    name="monetaryValue"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        fullWidth
-                        name="monetaryValue"
-                        label="Value"
-                        onChange={handlePackageValueChange}
-                        value={packageDetails.monetaryValue}
-                        error={Boolean(errors.monetaryValue)}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              US$
-                            </InputAdornment>
-                          )
-                        }}
-                        helperText="Value of the item"
-                      />
-                    )}
-                  />
-                  {errors.monetaryValue && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="validation-schema-first-name"
-                    >
-                      {errors.monetaryValue.message}
-                    </FormHelperText>
-                  )}
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Controller
-                    name="weight"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        fullWidth
-                        name="weight"
-                        label="Weight"
-                        onChange={handlePackageValueChange}
-                        value={packageDetails.weight}
-                        error={Boolean(errors.weight)}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">oz</InputAdornment>
-                          )
-                        }}
-                      />
-                    )}
-                  />
-                  {errors.weight && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="validation-schema-first-name"
-                    >
-                      {errors.weight.message}
-                    </FormHelperText>
-                  )}
-                </Grid>
-              </Grid>
-            </CardContent>
-            <CardContent>
-              <Grid container spacing={5}>
-                <Grid item xs={12}>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    2. Package Dimensions
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} sm={4}>
-                  <Controller
-                    name="length"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        fullWidth
-                        name="length"
-                        label="Length"
-                        onChange={handlePackageValueChange}
-                        value={packageDetails.length}
-                        error={Boolean(errors.length)}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">in</InputAdornment>
-                          )
-                        }}
-                      />
-                    )}
-                  />
-                  {errors.length && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="validation-schema-first-name"
-                    >
-                      {errors.length.message}
-                    </FormHelperText>
-                  )}
-                </Grid>
-                <Grid item xs={6} sm={4}>
-                  <Controller
-                    name="width"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        fullWidth
-                        label="Width"
-                        name="width"
-                        onChange={handlePackageValueChange}
-                        value={packageDetails.width}
-                        error={Boolean(errors.width)}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">in</InputAdornment>
-                          )
-                        }}
-                      />
-                    )}
-                  />
-                  {errors.width && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="validation-schema-first-name"
-                    >
-                      {errors.width.message}
-                    </FormHelperText>
-                  )}
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Controller
-                    name="height"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        fullWidth
-                        name="height"
-                        label="Height"
-                        onChange={handlePackageValueChange}
-                        value={packageDetails.height}
-                        error={Boolean(errors.height)}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">in</InputAdornment>
-                          )
-                        }}
-                      />
-                    )}
-                  />
-                  {errors.height && (
-                    <FormHelperText
-                      sx={{ color: "error.main" }}
-                      id="validation-schema-first-name"
-                    >
-                      {errors.height.message}
-                    </FormHelperText>
-                  )}
-                </Grid>
-              </Grid>
-            </CardContent>
             <Grid item xs={12}>
-              <Box
-                sx={{
-                  gap: 5,
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  justifyContent: "flex-end"
-                }}
-              >
-                <Button type="submit" variant="contained" size="large">
-                  {!packageToEdit ? "Create" : "Update"}
-                </Button>
-              </Box>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                1. Package Details
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="name"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    name="name"
+                    value={packageDetails.name}
+                    onChange={handlePackageValueChange}
+                    label="Name"
+                    error={Boolean(errors.name)}
+                    autoComplete="off"
+                  />
+                )}
+              />
+              {errors.name && (
+                <FormHelperText sx={{ color: "error.main" }}>
+                  {errors.name.message}
+                </FormHelperText>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="weight"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    name="weight"
+                    label="Weight"
+                    onChange={handlePackageValueChange}
+                    value={packageDetails.weight}
+                    error={Boolean(errors.weight)}
+                    autoComplete="off"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">oz</InputAdornment>
+                      )
+                    }}
+                  />
+                )}
+              />
+              {errors.weight && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.weight.message}
+                </FormHelperText>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name="monetaryValue"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    name="monetaryValue"
+                    label="Value"
+                    onChange={handlePackageValueChange}
+                    value={packageDetails.monetaryValue}
+                    error={Boolean(errors.monetaryValue)}
+                    autoComplete="off"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">US$</InputAdornment>
+                      )
+                    }}
+                    helperText="Value of the item"
+                  />
+                )}
+              />
+              {errors.monetaryValue && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.monetaryValue.message}
+                </FormHelperText>
+              )}
             </Grid>
           </Grid>
-        </form>
-      </CardContent>
-    </Card>
+        </CardContent>
+        <CardContent>
+          <Grid container spacing={5}>
+            <Grid item xs={12}>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                2. Package Dimensions
+              </Typography>
+            </Grid>
+            <Grid item xs={6} sm={4}>
+              <Controller
+                name="length"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    name="length"
+                    label="Length"
+                    onChange={handlePackageValueChange}
+                    value={packageDetails.length}
+                    error={Boolean(errors.length)}
+                    autoComplete="off"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">in</InputAdornment>
+                      )
+                    }}
+                  />
+                )}
+              />
+              {errors.length && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.length.message}
+                </FormHelperText>
+              )}
+            </Grid>
+            <Grid item xs={6} sm={4}>
+              <Controller
+                name="width"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    label="Width"
+                    name="width"
+                    onChange={handlePackageValueChange}
+                    value={packageDetails.width}
+                    error={Boolean(errors.width)}
+                    autoComplete="off"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">in</InputAdornment>
+                      )
+                    }}
+                  />
+                )}
+              />
+              {errors.width && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.width.message}
+                </FormHelperText>
+              )}
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Controller
+                name="height"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    fullWidth
+                    name="height"
+                    label="Height"
+                    onChange={handlePackageValueChange}
+                    value={packageDetails.height}
+                    error={Boolean(errors.height)}
+                    autoComplete="off"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">in</InputAdornment>
+                      )
+                    }}
+                  />
+                )}
+              />
+              {errors.height && (
+                <FormHelperText
+                  sx={{ color: "error.main" }}
+                  id="validation-schema-first-name"
+                >
+                  {errors.height.message}
+                </FormHelperText>
+              )}
+            </Grid>
+          </Grid>
+        </CardContent>
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              gap: 5,
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "flex-end"
+            }}
+          >
+            <Button type="submit" variant="contained" size="large">
+              {!packageToEdit ? "Create" : "Update"}
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

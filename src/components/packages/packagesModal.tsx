@@ -14,7 +14,7 @@ import { Package } from "../../types/apps/navashipInterfaces";
 interface PackageModalProps {
   open: boolean;
   handleDialogToggle: () => void;
-  packageToEdit?: Package; // if value is defined, this means that the modal will be used to edit entry
+  packageToEdit?: Package; // If value is defined, this means that the modal will be used to edit entry
   fromShipmentWizard?: boolean;
 }
 
@@ -33,14 +33,19 @@ const PackageModal = ({
         maxWidth="md"
         onClose={handleDialogToggle}
         onBackdropClick={handleDialogToggle}
+        key={!packageToEdit ? "create-parcel" : "edit-parcel"}
       >
-        <DialogTitle sx={{ pt: 12, ml: { xs: "1rem", sm: "2.2rem" } }}>
-          <Typography variant="h4" component="span" sx={{ mb: 2 }}>
-            {!packageToEdit ? "Create Parcel" : "Edit Parcel"}
-          </Typography>
-          <Typography variant="body2">
-            {!packageToEdit ? "Create a new parcel" : "Edit existing parcel"}
-          </Typography>
+        <DialogTitle>
+          <Box sx={{ textAlign: "center", p: 6 }}>
+            <Typography variant="h5" sx={{ mb: 3 }}>
+              {!packageToEdit ? "Create New Parcel" : "Edit Parcel"}
+            </Typography>
+            <Typography variant="body2">
+              {!packageToEdit
+                ? "Create a parcel for future use"
+                : "Edit existing parcel"}
+            </Typography>
+          </Box>
           <IconButton
             size="small"
             onClick={handleDialogToggle}
@@ -51,10 +56,9 @@ const PackageModal = ({
         </DialogTitle>
         <DialogContent
           sx={{
-            pt: { xs: 4, sm: 8 },
-            pr: { xs: 4, sm: 8 },
-            pb: { xs: 4, sm: 8 },
-            pl: { xs: 4, sm: 8 },
+            pb: 8,
+            px: { xs: 8, sm: 15 },
+            pt: { xs: 8, sm: 12.5 },
             position: "relative"
           }}
         >

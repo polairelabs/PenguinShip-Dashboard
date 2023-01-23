@@ -14,7 +14,7 @@ import { Address } from "../../types/apps/navashipInterfaces";
 interface AddressModalProps {
   open: boolean;
   handleDialogToggle: () => void;
-  addressToEdit?: Address; // if value is defined, this means that the modal will be used to edit entry
+  addressToEdit?: Address; // If value is defined, this means that the modal will be used to edit entry
   fromShipmentWizard?: boolean; // Indicates if the instance of the current modal was opened from shipmentWizard
 }
 
@@ -33,14 +33,19 @@ const AddressModal = ({
         maxWidth="md"
         onClose={handleDialogToggle}
         onBackdropClick={handleDialogToggle}
+        key={!addressToEdit ? "create-address" : "edit-address"}
       >
-        <DialogTitle sx={{ pt: 12, ml: { xs: "1rem", sm: "2.2rem" } }}>
-          <Typography variant="h4" component="span" sx={{ mb: 2 }}>
-            {!addressToEdit ? "Create Address" : "Edit Address"}
-          </Typography>
-          <Typography variant="body2">
-            {!addressToEdit ? "Create a new address" : "Edit existing address"}
-          </Typography>
+        <DialogTitle>
+          <Box sx={{ textAlign: "center", p: 6 }}>
+            <Typography variant="h5" sx={{ mb: 3 }}>
+              {!addressToEdit ? "Create New Address" : "Edit Address"}
+            </Typography>
+            <Typography variant="body2">
+              {!addressToEdit
+                ? "Create an address for future use"
+                : "Edit existing address"}
+            </Typography>
+          </Box>
           <IconButton
             size="small"
             onClick={handleDialogToggle}
@@ -51,10 +56,9 @@ const AddressModal = ({
         </DialogTitle>
         <DialogContent
           sx={{
-            pt: { xs: 4, sm: 8 },
-            pr: { xs: 4, sm: 8 },
-            pb: { xs: 4, sm: 8 },
-            pl: { xs: 4, sm: 8 },
+            pb: 8,
+            px: { xs: 8, sm: 15 },
+            pt: { xs: 8, sm: 12.5 },
             position: "relative"
           }}
         >

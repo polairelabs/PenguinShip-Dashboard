@@ -9,11 +9,6 @@ import {
 } from "../../../types/apps/navashipInterfaces";
 import { Status } from "../../index";
 
-interface Redux {
-  getState: any;
-  dispatch: Dispatch<any>;
-}
-
 export const createShipment = createAsyncThunk(
   "shipments/createShipment",
   async (
@@ -46,8 +41,8 @@ export const buyShipmentRate = createAsyncThunk(
 
 export const fetchShipments = createAsyncThunk(
   "shipments/fetchShipments",
-  async () => {
-    return await BaseApi.get("/shipments");
+  async (params?: { [key: string]: number | string }) => {
+    return await BaseApi.get("/shipments", params);
   }
 );
 
@@ -58,9 +53,11 @@ export const shipmentsSlice = createSlice({
     createdShipment: {} as CreatedShipment,
     createdShipmentRates: [] as Rate[],
     allShipments: [] as Shipment[],
+    total: 0,
     createShipmentStatus: "" as Status,
     buyShipmentRateStatus: "" as Status,
-    createShipmentError: ""
+    createShipmentError: "",
+    buyShipmentError: ""
   },
   reducers: {
     clearCreateShipmentStatus: (state) => {
@@ -71,6 +68,9 @@ export const shipmentsSlice = createSlice({
     },
     clearCreateShipmentError: (state) => {
       state.createShipmentError = "";
+    },
+    clearBuyShipmentError: (state) => {
+      state.buyShipmentError = "";
     }
   },
   extraReducers: (builder) => {
@@ -93,9 +93,11 @@ export const shipmentsSlice = createSlice({
       })
       .addCase(buyShipmentRate.rejected, (state, action) => {
         state.buyShipmentRateStatus = "ERROR";
+        state.buyShipmentError = action.payload as string;
       })
       .addCase(fetchShipments.fulfilled, (state, action) => {
         state.allShipments = action.payload.data;
+        state.total = action.payload.totalCount;
       });
   }
 });
@@ -103,6 +105,7 @@ export const shipmentsSlice = createSlice({
 export const {
   clearCreateShipmentStatus,
   clearBuyShipmentRateStatus,
-  clearCreateShipmentError
+  clearCreateShipmentError,
+  clearBuyShipmentError
 } = shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

@@ -10,7 +10,6 @@ export interface Package {
 }
 
 export interface Address {
-  index?: number; // use to add/remove address from selectable address list
   id: number;
   street1: string;
   street2: string;
@@ -18,7 +17,7 @@ export interface Address {
   state: string;
   zip: string;
   country: string;
-  residential?: boolean;
+  residential: boolean;
   // Person address info
   name?: string;
   company?: string;

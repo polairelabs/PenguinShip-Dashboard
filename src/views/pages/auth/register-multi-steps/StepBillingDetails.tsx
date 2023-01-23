@@ -1,30 +1,17 @@
-// ** React Imports
 import { useState, ChangeEvent, useEffect } from "react";
 
-// ** MUI Components
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { CircularProgress } from "@mui/material";
 
-// ** Type Import
 import { CustomRadioIconsData } from "src/@core/components/custom-radio/types";
 
-// ** Icon Imports
 import Icon from "src/@core/components/icon";
 
-// ** Custom Components Imports
 import CustomRadioIcons from "src/@core/components/custom-radio/icons";
 
-// ** Util Import
-import {
-  formatCVC,
-  formatExpirationDate,
-  formatCreditCardNumber
-} from "src/@core/utils/format";
-
-// ** Styles Import
 import "react-credit-cards/es/styles-compiled.css";
 import { fetchMemberships } from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";

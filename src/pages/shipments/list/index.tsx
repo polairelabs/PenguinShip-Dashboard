@@ -25,6 +25,8 @@ import { Link, Tooltip } from "@mui/material";
 import { capitalizeFirstLettersOnly } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
 import { CurrencyUsd } from "mdi-material-ui";
+import { fetchAddresses } from "../../../store/apps/addresses";
+import { escapeRegExp } from "@mui/x-data-grid/utils/utils";
 
 interface CellType {
   row: Shipment;
@@ -110,10 +112,10 @@ const dateToHumanReadableFormat = (date: Date) => {
 };
 
 const ShipmentsList = () => {
-  const [value, setValue] = useState<number>(10);
-  const [open, setOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState("");
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowCount, setRowCount] = useState(100);
 
   const store = useSelector((state: RootState) => state.shipments);
 
@@ -129,12 +131,9 @@ const ShipmentsList = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchShipments());
-  }, [dispatch]);
-
-  const handleDialogToggle = () => {
-    setOpen(!open);
-  };
+    // Called on mount as well
+    dispatch(fetchShipments({ offset: currentPage, size: rowCount }));
+  }, [currentPage, rowCount]);
 
   const handleSearch = (searchValue) => {
     setSearchText(searchValue);
@@ -333,10 +332,13 @@ const ShipmentsList = () => {
             autoHeight
             rows={store.allShipments}
             columns={columns}
-            pageSize={value}
             disableSelectionOnClick
-            rowsPerPageOptions={[10, 25, 50]}
-            onPageSizeChange={(newPageSize: number) => setValue(newPageSize)}
+            pagination
+            paginationMode="server"
+            rowsPerPageOptions={[2, 50, 100]}
+            rowCount={store.total}
+            onPageSizeChange={(count) => setRowCount(count)}
+            onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
             components={{ Toolbar: QuickSearchToolbar }}
             componentsProps={{

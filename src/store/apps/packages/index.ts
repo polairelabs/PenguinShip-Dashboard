@@ -53,9 +53,7 @@ export const packagesSlice = createSlice({
   name: "packages",
   initialState: {
     data: [],
-    total: 1,
-    params: {},
-    allData: [],
+    total: 0,
     fetchDataStatus: "" as Status,
     createStatus: "" as Status,
     updateStatus: "" as Status,
@@ -88,6 +86,7 @@ export const packagesSlice = createSlice({
       })
       .addCase(fetchPackages.fulfilled, (state, action) => {
         state.data = action.payload.data;
+        state.total = action.payload.totalCount;
         state.fetchDataStatus = "SUCCESS";
       })
       .addCase(fetchPackages.rejected, (state) => {

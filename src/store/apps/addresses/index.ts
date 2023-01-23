@@ -25,7 +25,7 @@ export const searchAddresses = createAsyncThunk(
 export const addAddress = createAsyncThunk(
   "addresses/addAddress",
   async (
-    data: { [key: string]: number | string },
+    data: { [key: string]: number | string | boolean },
     { getState, dispatch }: Redux
   ) => {
     const response = await BaseApi.post("/addresses", data);
@@ -37,7 +37,7 @@ export const addAddress = createAsyncThunk(
 export const updateAddress = createAsyncThunk(
   "addresses/updateAddress",
   async (
-    data: { [key: string]: number | string },
+    data: { [key: string]: number | string | boolean },
     { getState, dispatch }: Redux
   ) => {
     const response = await BaseApi.put(`/addresses/${data.id}`, data);
@@ -59,7 +59,7 @@ export const addressesSlice = createSlice({
   name: "addresses",
   initialState: {
     data: [],
-    total: 1,
+    total: 0,
     params: {},
     allData: [],
     searchResults: [],
@@ -95,6 +95,7 @@ export const addressesSlice = createSlice({
       })
       .addCase(fetchAddresses.fulfilled, (state, action) => {
         state.data = action.payload.data;
+        state.total = action.payload.totalCount;
         state.fetchDataStatus = "SUCCESS";
       })
       .addCase(fetchAddresses.rejected, (state) => {

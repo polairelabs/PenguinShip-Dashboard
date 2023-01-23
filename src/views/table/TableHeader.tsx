@@ -1,12 +1,9 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { ExportVariant } from "mdi-material-ui";
 
 interface TableHeaderProps {
-  // value: number;
   toggle: () => void;
   toggleLabel: string;
-  // handleFilter: (val: number) => void;
 }
 
 const TableHeader = (props: TableHeaderProps) => {
@@ -23,14 +20,6 @@ const TableHeader = (props: TableHeaderProps) => {
         justifyContent: "space-between"
       }}
     >
-      {/*<Button*/}
-      {/*  sx={{ mr: 4, mb: 2 }}*/}
-      {/*  color="secondary"*/}
-      {/*  variant="outlined"*/}
-      {/*  startIcon={<ExportVariant fontSize="small" />}*/}
-      {/*>*/}
-      {/*  Export*/}
-      {/*</Button>*/}
       <Box
         sx={{
           display: "flex",

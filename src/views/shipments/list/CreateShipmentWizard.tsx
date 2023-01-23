@@ -240,7 +240,9 @@ const CreateShipmentWizard = () => {
       setActiveStep(activeStep + 1);
     } else if (shipmentStore.createShipmentStatus === "ERROR") {
       toast.error(
-        `${shipmentStore.createShipmentError ?? "Error creating shipment"}`,
+        `Error: ${
+          shipmentStore.createShipmentError ?? "Error creating shipment"
+        }`,
         {
           position: "top-center"
         }
@@ -254,7 +256,7 @@ const CreateShipmentWizard = () => {
   useEffect(() => {
     // Handle page once rate is bought
     if (shipmentStore.buyShipmentRateStatus === "SUCCESS") {
-      toast.success("Label was successfully bought", {
+      toast.success("Label was successfully purchased", {
         position: "top-center"
       });
       setSourceAddress(null);
@@ -263,9 +265,12 @@ const CreateShipmentWizard = () => {
       setSelectedRate(null);
       setActiveStep(0);
     } else if (shipmentStore.buyShipmentRateStatus === "ERROR") {
-      toast.error("Error buying label", {
-        position: "top-center"
-      });
+      toast.error(
+        `Error: ${shipmentStore.buyShipmentError ?? "Error buying label"}`,
+        {
+          position: "top-center"
+        }
+      );
     }
     dispatch(clearBuyShipmentRateStatus());
   }, [shipmentStore.buyShipmentRateStatus]);
@@ -277,13 +282,13 @@ const CreateShipmentWizard = () => {
   const asAddressValues = (address: Address | null) => {
     return {
       id: address?.id,
-      index: address?.index,
       street1: address?.street1,
       street2: address?.street2,
       city: address?.city,
       state: address?.state,
       zip: address?.zip,
-      country: address?.country
+      country: address?.country,
+      residential: address?.residential
     } as Address;
   };
 
