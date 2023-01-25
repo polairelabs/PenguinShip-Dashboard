@@ -18,78 +18,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { deletePackage } from "src/store/apps/packages";
 
 import { AppDispatch, RootState } from "src/store";
-import { Person, Shipment } from "src/types/apps/navashipInterfaces";
-import { fetchShipments } from "../../../store/apps/shipments";
+import { Person, Shipment, ShipmentStatus } from "src/types/apps/navashipInterfaces";
+import { deleteShipment, fetchShipments } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
 import { capitalizeFirstLettersOnly } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
-import { CurrencyUsd } from "mdi-material-ui";
+import { CurrencyUsd, CurrencyUsdOff } from "mdi-material-ui";
+import SelectRateModal from "../../../components/rates/selectRateModal";
+import { setOffset, setSize } from "../../../store/apps/addresses";
 
 interface CellType {
   row: Shipment;
 }
-
-const MenuItemLink = styled("a")(({ theme }) => ({
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  textDecoration: "none",
-  padding: theme.spacing(1.5, 4),
-  color: theme.palette.text.primary
-}));
-
-const RowOptions = ({ id }: { id: number | string }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const rowOptionsOpen = Boolean(anchorEl);
-
-  const handleRowOptionsClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleRowOptionsClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDelete = () => {
-    dispatch(deletePackage(id));
-    handleRowOptionsClose();
-  };
-
-  return (
-    <>
-      <IconButton size="small" onClick={handleRowOptionsClick}>
-        <DotsVertical />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        open={rowOptionsOpen}
-        onClose={handleRowOptionsClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right"
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right"
-        }}
-        PaperProps={{ style: { minWidth: "8rem" } }}
-      >
-        <MenuItem onClick={handleRowOptionsClose}>
-          <PencilOutline fontSize="small" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <DeleteOutline fontSize="small" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
-  );
-};
 
 const getCarrierImageSrc = (shipment: Shipment) => {
   return `/images/carriers/${shipment?.rate?.carrier?.toLowerCase()}_logo.svg`;
@@ -114,6 +55,8 @@ const ShipmentsList = () => {
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowCount, setRowCount] = useState(100);
+  const [openRateSelect, setOpenRateSelect] = useState<boolean>(false);
+  const [selectedShipment, setSelectedShipment] = useState<Shipment | undefined>(undefined);
 
   const store = useSelector((state: RootState) => state.shipments);
 
@@ -128,9 +71,15 @@ const ShipmentsList = () => {
     setHoveredRow(null);
   };
 
+  const handleDialogToggleRateSelect = () => {
+    setOpenRateSelect(!openRateSelect);
+  };
+
   useEffect(() => {
     // Called when first mounted as well
     dispatch(fetchShipments({ offset: currentPage, size: rowCount }));
+    dispatch(setOffset(currentPage));
+    dispatch(setSize(rowCount));
   }, [currentPage, rowCount]);
 
   const handleSearch = (searchValue) => {
@@ -301,20 +250,30 @@ const ShipmentsList = () => {
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
-              <Tooltip title="Buy rate">
+              {row.navashipShipmentStatus == ShipmentStatus.PURCHASED &&
+              <Tooltip title="Refund label">
                 <IconButton onClick={() => {}}>
+                  <CurrencyUsdOff />
+                </IconButton>
+              </Tooltip>
+              }
+              {row.navashipShipmentStatus === ShipmentStatus.DRAFT  &&
+              <Tooltip title="Buy rate">
+                <IconButton onClick={() => handleBuyRate(row)}>
                   <CurrencyUsd />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton onClick={() => {}}>
-                  <DeleteOutline />
-                </IconButton>
-              </Tooltip>
+              }
+              {row.navashipShipmentStatus === ShipmentStatus.DRAFT &&
+                <Tooltip title="Delete">
+                  <IconButton onClick={() => handleDelete(row.id)}>
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
+              }
             </Box>
           );
         } else return null;
@@ -322,10 +281,24 @@ const ShipmentsList = () => {
     }
   ];
 
+  const handleBuyRate = (shipment: Shipment) => {
+    setOpenRateSelect(true);
+    setSelectedShipment(shipment);
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteShipment(id));
+  };
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
+          <SelectRateModal
+            open={openRateSelect}
+            handleDialogToggle={handleDialogToggleRateSelect}
+            shipment={selectedShipment}
+          />
           <DataGrid
             autoHeight
             rows={store.allShipments}

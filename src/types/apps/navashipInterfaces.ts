@@ -91,3 +91,8 @@ export interface AccountData {
   membershipProductLink: string;
   stripePriceId: string;
 }
+
+export enum ShipmentStatus {
+  DRAFT = "DRAFT",
+  PURCHASED = "PURCHASED",
+}

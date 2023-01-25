@@ -21,7 +21,7 @@ import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import {
-  buyShipmentRate,
+  buyShipmentRate, clearBuyShipmentError,
   clearBuyShipmentRateStatus,
   clearCreateShipmentError,
   clearCreateShipmentStatus,
@@ -190,7 +190,6 @@ const CreateShipmentWizard = () => {
 
   useEffect(() => {
     // Reset
-    console.log("Reseting!!");
     setSourceAddress(null);
     setDeliveryAddress(null);
     setSelectedPackage(null);
@@ -277,6 +276,7 @@ const CreateShipmentWizard = () => {
           position: "top-center"
         }
       );
+      dispatch(clearBuyShipmentError());
     }
     dispatch(clearBuyShipmentRateStatus());
   }, [shipmentStore.buyShipmentRateStatus]);

@@ -16,7 +16,6 @@ import {
   deleteAddress,
   fetchAddresses,
   setOffset,
-  setShouldPopulateLastInsertedAddress,
   setSize
 } from "src/store/apps/addresses";
 
@@ -25,7 +24,7 @@ import { Address } from "src/types/apps/navashipInterfaces";
 
 import AddressModal from "src/components/addresses/addressModal";
 import TableHeader from "../../../views/table/TableHeader";
-import { Alert, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
 import CustomChip from "../../../@core/components/mui/chip";
 

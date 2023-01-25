@@ -2,6 +2,7 @@ import { Grid, Radio, Typography } from "@mui/material";
 import Box, { BoxProps } from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
 import FormHelperText from "@mui/material/FormHelperText";
+import { Rate } from "../../types/apps/navashipInterfaces";
 
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderWidth: 1,
@@ -20,12 +21,19 @@ const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   }
 }));
 
+interface RateSelectProps {
+  rates: Rate[];
+  selectedRate: Rate | null | undefined;
+  setSelectedRate: (rate: Rate | null | undefined) => void;
+  showRateError?: any;
+}
+
 const RateSelect = ({
   rates,
   selectedRate,
   setSelectedRate,
-  showRateError
-}) => {
+  showRateError,
+}: RateSelectProps) => {
   const deliveryDays = (rate) => {
     return rate.deliveryDays
       ? `- Delivery in ${rate.deliveryDays} ${
