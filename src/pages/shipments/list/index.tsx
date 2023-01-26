@@ -1,30 +1,23 @@
-import { MouseEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
-import Menu from "@mui/material/Menu";
 import Grid from "@mui/material/Grid";
 import { DataGrid } from "@mui/x-data-grid";
-import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import DotsVertical from "mdi-material-ui/DotsVertical";
-import PencilOutline from "mdi-material-ui/PencilOutline";
 import DeleteOutline from "mdi-material-ui/DeleteOutline";
 import CustomChip from "src/@core/components/mui/chip";
 
 import { useDispatch, useSelector } from "react-redux";
-
-import { deletePackage } from "src/store/apps/packages";
 
 import { AppDispatch, RootState } from "src/store";
 import { Person, Shipment, ShipmentStatus } from "src/types/apps/navashipInterfaces";
 import { deleteShipment, fetchShipments } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
-import { capitalizeFirstLettersOnly } from "../../../utils";
+import { capitalizeAndLowerCase } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
-import { CurrencyUsd, CurrencyUsdOff } from "mdi-material-ui";
+import { Close, CurrencyUsd } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import { setOffset, setSize } from "../../../store/apps/addresses";
 
@@ -38,7 +31,10 @@ const getCarrierImageSrc = (shipment: Shipment) => {
 
 const getRecipientInfo = (shipment: Shipment) => {
   const json = JSON.parse(shipment?.additionalInfoJson);
-  return json["receiver"] as Person;
+  const receiver = json["receiver"] as Person;
+  const receiverName = receiver.name ?? receiver.company;
+  const deliveryAddress = shipment.toAddress;
+  return receiverName ? capitalizeAndLowerCase(receiverName) + ", " + capitalizeAndLowerCase(deliveryAddress.city) : capitalizeAndLowerCase(deliveryAddress.city);
 };
 
 const getRecipientAddress = (shipment: Shipment) => {
@@ -161,8 +157,8 @@ const ShipmentsList = () => {
         const status =
           row?.navashipShipmentStatus !== "DRAFT"
             ? row?.easypostShipmentStatus === "unknown"
-              ? row?.navashipShipmentStatus
-              : row?.easypostShipmentStatus
+            ? row?.navashipShipmentStatus
+            : row?.easypostShipmentStatus
             : row?.navashipShipmentStatus;
         const statusColors = {
           purchased: "primary",
@@ -189,7 +185,6 @@ const ShipmentsList = () => {
       headerName: "Recipient",
       renderCell: ({ row }: CellType) => {
         const recipientInfo = getRecipientInfo(row);
-        const recipient = recipientInfo.name ?? recipientInfo.company;
         const recipientAddress = getRecipientAddress(row);
 
         return (
@@ -199,10 +194,7 @@ const ShipmentsList = () => {
               variant="body2"
               sx={{ color: "text.primary", fontWeight: 600 }}
             >
-              {recipient ? capitalizeFirstLettersOnly(recipient) : ""}{" "}
-              {recipientAddress
-                ? capitalizeFirstLettersOnly(recipientAddress.city)
-                : ""}
+              {recipientInfo}
             </Typography>
             <Typography
               noWrap
@@ -211,7 +203,7 @@ const ShipmentsList = () => {
             >
               {recipientAddress ? `${recipientAddress.state},` : ""}{" "}
               {recipientAddress ? `${recipientAddress.zip},` : ""}{" "}
-              {recipientAddress ? `${recipientAddress.country},` : ""}
+              {recipientAddress ? `${recipientAddress.country}` : ""}
             </Typography>
           </Box>
         );
@@ -250,17 +242,18 @@ const ShipmentsList = () => {
                 width: "100%",
                 height: "100%",
                 display: "flex",
-                alignItems: "center",
+                alignItems: "center"
               }}
             >
               {row.navashipShipmentStatus == ShipmentStatus.PURCHASED &&
-              <Tooltip title="Refund label">
-                <IconButton onClick={() => {}}>
-                  <CurrencyUsdOff />
+              <Tooltip title="Cancel label">
+                <IconButton onClick={() => {
+                }}>
+                  <Close />
                 </IconButton>
               </Tooltip>
               }
-              {row.navashipShipmentStatus === ShipmentStatus.DRAFT  &&
+              {row.navashipShipmentStatus === ShipmentStatus.DRAFT &&
               <Tooltip title="Buy rate">
                 <IconButton onClick={() => handleBuyRate(row)}>
                   <CurrencyUsd />
@@ -268,11 +261,11 @@ const ShipmentsList = () => {
               </Tooltip>
               }
               {row.navashipShipmentStatus === ShipmentStatus.DRAFT &&
-                <Tooltip title="Delete">
-                  <IconButton onClick={() => handleDelete(row.id)}>
-                    <DeleteOutline />
-                  </IconButton>
-                </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton onClick={() => handleDelete(row.id)}>
+                  <DeleteOutline />
+                </IconButton>
+              </Tooltip>
               }
             </Box>
           );

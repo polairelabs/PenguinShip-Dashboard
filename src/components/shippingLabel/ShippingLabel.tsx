@@ -28,7 +28,7 @@ const ShippingLabel = ({
   const addressLabel = (address: Address) => {
     return address?.street1
       ? address?.street1 +
-      (address?.street2 ? " , " + address?.street2 : "") +
+      (address?.street2 ? ", " + address?.street2 : "") +
       ", " +
       address?.zip +
       ", " +

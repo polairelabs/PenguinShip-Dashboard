@@ -189,11 +189,6 @@ const CreateShipmentWizard = () => {
   const PARCEL_SELECT_INDEX = 2;
 
   useEffect(() => {
-    // Reset
-    setSourceAddress(null);
-    setDeliveryAddress(null);
-    setSelectedPackage(null);
-    setSelectedRate(null);
     dispatch(fetchAddresses({ order: "desc" }));
     dispatch(fetchPackages({ order: "desc" }));
   }, [dispatch]);
@@ -794,6 +789,11 @@ const CreateShipmentWizard = () => {
                   parcel={selectedPackage}
                   rate={selectedRate}
                 />
+              </Grid>
+              <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
+                <Typography my={4} variant="body2">
+                  {selectedRate ? `You're going to be charged $${selectedRate?.rate} amount via Visa ending with 1111` : ""}
+                </Typography>
               </Grid>
               <Grid
                 item
