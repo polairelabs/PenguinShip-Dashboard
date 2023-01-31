@@ -32,7 +32,7 @@ const RateSelect = ({
   rates,
   selectedRate,
   setSelectedRate,
-  showRateError,
+  showRateError
 }: RateSelectProps) => {
   const deliveryDays = (rate) => {
     return rate.deliveryDays

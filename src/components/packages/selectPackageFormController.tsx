@@ -1,7 +1,15 @@
 import Grid from "@mui/material/Grid";
 import FormControl from "@mui/material/FormControl";
 import { Controller } from "react-hook-form";
-import { Autocomplete, Box, FormControlLabel, InputAdornment, Switch, Tooltip, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  FormControlLabel,
+  InputAdornment,
+  Switch,
+  Tooltip,
+  Typography
+} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Package } from "../../types/apps/navashipInterfaces";
@@ -16,16 +24,15 @@ interface PackageSelectProps {
 }
 
 const SelectPackageFormController = ({
-                                       currentParcel,
-                                       selectablePackages,
-                                       handleSelectedPackageChange,
-                                       control,
-                                       errors
-                                     }: PackageSelectProps) => {
+  currentParcel,
+  selectablePackages,
+  handleSelectedPackageChange,
+  control,
+  errors
+}: PackageSelectProps) => {
   const [showInsuranceValueField, setShowInsuranceValueField] =
     useState<boolean>(false);
-  const [insuranceAmount, setInsuranceAmount] =
-    useState<string>("");
+  const [insuranceAmount, setInsuranceAmount] = useState<string>("");
 
   const handlePackageChange = (event, newValue) => {
     if (!newValue) {
@@ -50,7 +57,7 @@ const SelectPackageFormController = ({
 
   useEffect(() => {
     setInsuranceAmount(currentParcel?.value ?? "");
-  }, [currentParcel])
+  }, [currentParcel]);
 
   return (
     <Box sx={{ height: "34vh" }}>
@@ -114,7 +121,6 @@ const SelectPackageFormController = ({
             />
           )}
         </Grid>
-
       </Grid>
     </Box>
   );

@@ -1,7 +1,14 @@
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Address, Package, Rate } from "../../types/apps/navashipInterfaces";
-import { Table, TableBody, TableCell, TableCellBaseProps, TableContainer, TableRow } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableCellBaseProps,
+  TableContainer,
+  TableRow
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const MUITableCell = styled(TableCell)<TableCellBaseProps>(({ theme }) => ({
@@ -9,7 +16,7 @@ const MUITableCell = styled(TableCell)<TableCellBaseProps>(({ theme }) => ({
   paddingLeft: "0 !important",
   paddingRight: "0 !important",
   paddingTop: `${theme.spacing(1)} !important`,
-  paddingBottom: `${theme.spacing(1)} !important`,
+  paddingBottom: `${theme.spacing(1)} !important`
 }));
 
 interface ShippingLabelProps {
@@ -20,21 +27,21 @@ interface ShippingLabelProps {
 }
 
 const ShippingLabel = ({
-                         sourceAddress,
-                         deliveryAddress,
-                         parcel,
-                         rate
-                       }: ShippingLabelProps) => {
+  sourceAddress,
+  deliveryAddress,
+  parcel,
+  rate
+}: ShippingLabelProps) => {
   const addressLabel = (address: Address) => {
     return address?.street1
       ? address?.street1 +
-      (address?.street2 ? ", " + address?.street2 : "") +
-      ", " +
-      address?.zip +
-      ", " +
-      address?.city +
-      ", " +
-      address?.country
+          (address?.street2 ? ", " + address?.street2 : "") +
+          ", " +
+          address?.zip +
+          ", " +
+          address?.city +
+          ", " +
+          address?.country
       : "";
   };
 
@@ -60,8 +67,8 @@ const ShippingLabel = ({
   const deliveryDays = (rate: Rate) => {
     return rate?.deliveryDays
       ? `Delivery in ${rate.deliveryDays} ${
-        rate.deliveryDays > 1 ? "days" : "day"
-      }`
+          rate.deliveryDays > 1 ? "days" : "day"
+        }`
       : "";
   };
 
@@ -78,9 +85,9 @@ const ShippingLabel = ({
         <Table>
           <TableBody>
             {sourceAddress?.street1 && (
-              <TableRow>
+              <TableRow style={{ width: "10px" }}>
                 <MUITableCell>
-                  <Typography mr={4} variant="body2" fontWeight="bold">
+                  <Typography variant="body2" fontWeight="bold">
                     From:
                   </Typography>
                 </MUITableCell>
@@ -91,19 +98,20 @@ const ShippingLabel = ({
                 </MUITableCell>
               </TableRow>
             )}
-            {(sourceAddress?.name ||
-              sourceAddress?.company ||
-              sourceAddress?.phone ||
-              sourceAddress?.email) && (
-              <TableRow>
-                <MUITableCell></MUITableCell>
-                <MUITableCell>
-                  <Typography variant="body2" fontStyle="italic">
-                    {displayAdditionalPersonInfo(sourceAddress)}
-                  </Typography>
-                </MUITableCell>
-              </TableRow>
-            )}
+            {sourceAddress?.street1 &&
+              (sourceAddress?.name ||
+                sourceAddress?.company ||
+                sourceAddress?.phone ||
+                sourceAddress?.email) && (
+                <TableRow>
+                  <MUITableCell></MUITableCell>
+                  <MUITableCell>
+                    <Typography variant="body2" fontStyle="italic">
+                      {displayAdditionalPersonInfo(sourceAddress)}
+                    </Typography>
+                  </MUITableCell>
+                </TableRow>
+              )}
             {deliveryAddress?.street1 && (
               <TableRow>
                 <MUITableCell>
@@ -118,19 +126,20 @@ const ShippingLabel = ({
                 </MUITableCell>
               </TableRow>
             )}
-            {(deliveryAddress?.name ||
-              deliveryAddress?.company ||
-              deliveryAddress?.phone ||
-              deliveryAddress?.email) && (
-              <TableRow>
-                <MUITableCell></MUITableCell>
-                <MUITableCell>
-                  <Typography variant="body2" fontStyle="italic">
-                    {displayAdditionalPersonInfo(deliveryAddress)}
-                  </Typography>
-                </MUITableCell>
-              </TableRow>
-            )}
+            {deliveryAddress?.street1 &&
+              (deliveryAddress?.name ||
+                deliveryAddress?.company ||
+                deliveryAddress?.phone ||
+                deliveryAddress?.email) && (
+                <TableRow>
+                  <MUITableCell></MUITableCell>
+                  <MUITableCell>
+                    <Typography variant="body2" fontStyle="italic">
+                      {displayAdditionalPersonInfo(deliveryAddress)}
+                    </Typography>
+                  </MUITableCell>
+                </TableRow>
+              )}
             {parcel?.name && (
               <TableRow>
                 <MUITableCell>

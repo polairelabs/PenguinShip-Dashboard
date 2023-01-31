@@ -11,7 +11,12 @@ import CustomChip from "src/@core/components/mui/chip";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "src/store";
-import { Person, Shipment, ShipmentStatus } from "src/types/apps/navashipInterfaces";
+import {
+  Person,
+  PersonType,
+  Shipment,
+  ShipmentStatus
+} from "src/types/apps/navashipInterfaces";
 import { deleteShipment, fetchShipments } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
@@ -30,11 +35,20 @@ const getCarrierImageSrc = (shipment: Shipment) => {
 };
 
 const getRecipientInfo = (shipment: Shipment) => {
-  const json = JSON.parse(shipment?.additionalInfoJson);
-  const receiver = json["receiver"] as Person;
-  const receiverName = receiver.name ?? receiver.company;
+  const found = shipment.persons.find(
+    (person) => person.type === PersonType.RECEIVER
+  );
+  let receiverName;
+  if (found) {
+    const receiver: Person = found;
+    receiverName = receiver.name ?? receiver.company;
+  }
   const deliveryAddress = shipment.toAddress;
-  return receiverName ? capitalizeAndLowerCase(receiverName) + ", " + capitalizeAndLowerCase(deliveryAddress.city) : capitalizeAndLowerCase(deliveryAddress.city);
+  return receiverName
+    ? capitalizeAndLowerCase(receiverName) +
+        ", " +
+        capitalizeAndLowerCase(deliveryAddress.city)
+    : capitalizeAndLowerCase(deliveryAddress.city);
 };
 
 const getRecipientAddress = (shipment: Shipment) => {
@@ -52,7 +66,9 @@ const ShipmentsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowCount, setRowCount] = useState(100);
   const [openRateSelect, setOpenRateSelect] = useState<boolean>(false);
-  const [selectedShipment, setSelectedShipment] = useState<Shipment | undefined>(undefined);
+  const [selectedShipment, setSelectedShipment] = useState<
+    Shipment | undefined
+  >(undefined);
 
   const store = useSelector((state: RootState) => state.shipments);
 
@@ -157,8 +173,8 @@ const ShipmentsList = () => {
         const status =
           row?.navashipShipmentStatus !== "DRAFT"
             ? row?.easypostShipmentStatus === "unknown"
-            ? row?.navashipShipmentStatus
-            : row?.easypostShipmentStatus
+              ? row?.navashipShipmentStatus
+              : row?.easypostShipmentStatus
             : row?.navashipShipmentStatus;
         const statusColors = {
           purchased: "primary",
@@ -245,28 +261,27 @@ const ShipmentsList = () => {
                 alignItems: "center"
               }}
             >
-              {row.navashipShipmentStatus == ShipmentStatus.PURCHASED &&
-              <Tooltip title="Cancel label">
-                <IconButton onClick={() => {
-                }}>
-                  <Close />
-                </IconButton>
-              </Tooltip>
-              }
-              {row.navashipShipmentStatus === ShipmentStatus.DRAFT &&
-              <Tooltip title="Buy rate">
-                <IconButton onClick={() => handleBuyRate(row)}>
-                  <CurrencyUsd />
-                </IconButton>
-              </Tooltip>
-              }
-              {row.navashipShipmentStatus === ShipmentStatus.DRAFT &&
-              <Tooltip title="Delete">
-                <IconButton onClick={() => handleDelete(row.id)}>
-                  <DeleteOutline />
-                </IconButton>
-              </Tooltip>
-              }
+              {row.navashipShipmentStatus == ShipmentStatus.PURCHASED && (
+                <Tooltip title="Cancel label">
+                  <IconButton onClick={() => {}}>
+                    <Close />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {row.navashipShipmentStatus === ShipmentStatus.DRAFT && (
+                <Tooltip title="Buy rate">
+                  <IconButton onClick={() => handleBuyRate(row)}>
+                    <CurrencyUsd />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {row.navashipShipmentStatus === ShipmentStatus.DRAFT && (
+                <Tooltip title="Delete">
+                  <IconButton onClick={() => handleDelete(row.id)}>
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Box>
           );
         } else return null;

@@ -48,7 +48,7 @@ export const buyShipmentRate = createAsyncThunk(
       const state = getState();
       const params = {
         offset: state.addresses.offset,
-        size: state.addresses.size,
+        size: state.addresses.size
       };
       dispatch(fetchShipments(params));
       return response;
@@ -66,7 +66,7 @@ export const deleteShipment = createAsyncThunk(
     const state = getState();
     const params = {
       offset: state.addresses.offset,
-      size: state.addresses.size,
+      size: state.addresses.size
     };
     dispatch(fetchShipments(params));
     return response;
@@ -95,7 +95,7 @@ export const shipmentsSlice = createSlice({
     // Offset and size to be used for pagination in all fetchAll calls inside the store
     offset: 1,
     size: 100,
-    selectedRates: [],
+    selectedRates: []
   },
   reducers: {
     clearCreateShipmentStatus: (state) => {

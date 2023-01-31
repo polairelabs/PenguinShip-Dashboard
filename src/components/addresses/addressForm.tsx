@@ -19,7 +19,7 @@ import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { toast } from "react-hot-toast";
 import { Address } from "../../types/apps/navashipInterfaces";
-import { Typography } from "@mui/material";
+import { Checkbox, FormControlLabel, Typography } from "@mui/material";
 import {
   Briefcase,
   BriefcaseOutline,
@@ -377,6 +377,14 @@ const AddressForm = ({
               {errors.country.message}
             </FormHelperText>
           )}
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <FormControlLabel
+            control={<Checkbox />}
+            label={
+              <Typography variant="body2">Mark as default address</Typography>
+            }
+          />
         </Grid>
         <Grid item xs={12}>
           <Box

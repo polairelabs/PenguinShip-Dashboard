@@ -41,6 +41,7 @@ export interface Shipment {
   postageLabelUrl: string;
   publicTrackingUrl: string;
   additionalInfoJson: string;
+  persons: Person[];
 }
 
 export interface Rate {
@@ -64,10 +65,12 @@ export interface CreatedShipment {
 }
 
 export interface Person {
+  id: number;
   name: string;
   company: string;
   phone: string;
   email: string;
+  type: PersonType;
 }
 
 export interface Membership {
@@ -94,5 +97,10 @@ export interface AccountData {
 
 export enum ShipmentStatus {
   DRAFT = "DRAFT",
-  PURCHASED = "PURCHASED",
+  PURCHASED = "PURCHASED"
+}
+
+export enum PersonType {
+  SENDER = "SENDER",
+  RECEIVER = "RECEIVER"
 }

@@ -1,6 +1,12 @@
 import Box from "@mui/material/Box";
 
-import { Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography
+} from "@mui/material";
 import { Close } from "mdi-material-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
@@ -25,13 +31,15 @@ interface SelectRateModalProps {
 }
 
 const SelectRateModal = ({
-                           open,
-                           handleDialogToggle,
-                           shipment
-                         }: SelectRateModalProps) => {
+  open,
+  handleDialogToggle,
+  shipment
+}: SelectRateModalProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const shipmentStore = useSelector((state: RootState) => state.shipments);
-  const rates = useSelector((state: RootState) => state.shipments.selectedRates);
+  const rates = useSelector(
+    (state: RootState) => state.shipments.selectedRates
+  );
   const [selectedRate, setSelectedRate] = useState<Rate | null>();
   // Select rate button loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
@@ -93,9 +101,7 @@ const SelectRateModal = ({
             <Typography variant="h5" sx={{ mb: 3 }}>
               Buy Rate
             </Typography>
-            <Typography variant="body2">
-              Select a rate to buy
-            </Typography>
+            <Typography variant="body2">Select a rate to buy</Typography>
           </Box>
           <IconButton
             size="small"

@@ -21,7 +21,8 @@ import StepperWrapper from "src/@core/styles/mui/stepper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import {
-  buyShipmentRate, clearBuyShipmentError,
+  buyShipmentRate,
+  clearBuyShipmentError,
   clearBuyShipmentRateStatus,
   clearCreateShipmentError,
   clearCreateShipmentStatus,
@@ -95,15 +96,19 @@ const additionalInfoSchema = yup.object().shape({
   name: yup
     .string()
     .optional()
-    .max(30, "Name must be at most 30 characters")
+    .max(60, "Name must be less than or equal to 60 characters")
     .nullable(true),
   company: yup
     .string()
     .optional()
-    .max(30, "Company must be at most 30 characters")
+    .max(60, "Company must be less than or equal to 60 characters")
     .nullable(true),
-  email: yup.string().email("Email is not valid").optional().nullable(true),
-  // transform() empty string into a null
+  email: yup
+    .string()
+    .email("Email is not valid")
+    .optional()
+    .nullable(true)
+    .max(60, "Email number must be less than or equal to 60 characters"),
   phone: yup
     .string()
     .nullable()
@@ -111,6 +116,7 @@ const additionalInfoSchema = yup.object().shape({
     .matches(phoneRegExp, "Phone number is not valid")
     .optional()
     .nullable(true)
+    .max(20, "Phone number must be less than or equal to 20 characters")
 });
 
 const fromAddressSchema = additionalInfoSchema.shape({
@@ -790,9 +796,15 @@ const CreateShipmentWizard = () => {
                   rate={selectedRate}
                 />
               </Grid>
-              <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
+              <Grid
+                item
+                xs={12}
+                sx={{ display: "flex", justifyContent: "end" }}
+              >
                 <Typography my={4} variant="body2">
-                  {selectedRate ? `You're going to be charged $${selectedRate?.rate} amount via Visa ending with 1111` : ""}
+                  {selectedRate
+                    ? `You're going to be charged $${selectedRate?.rate} amount via Visa ending with 1111`
+                    : ""}
                 </Typography>
               </Grid>
               <Grid
