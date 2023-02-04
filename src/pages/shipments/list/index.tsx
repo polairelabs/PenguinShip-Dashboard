@@ -14,7 +14,7 @@ import { AppDispatch, RootState } from "src/store";
 import {
   Person,
   PersonType,
-  Shipment,
+  Shipment, ShipmentAddress, ShipmentAddressType,
   ShipmentStatus
 } from "src/types/apps/navashipInterfaces";
 import { deleteShipment, fetchShipments } from "../../../store/apps/shipments";
@@ -43,7 +43,7 @@ const getRecipientInfo = (shipment: Shipment) => {
     const receiver: Person = found;
     receiverName = receiver.name ?? receiver.company;
   }
-  const deliveryAddress = shipment.toAddress;
+  const deliveryAddress = getRecipientAddress(shipment);
   return receiverName
     ? capitalizeAndLowerCase(receiverName) +
         ", " +
@@ -51,8 +51,12 @@ const getRecipientInfo = (shipment: Shipment) => {
     : capitalizeAndLowerCase(deliveryAddress.city);
 };
 
+const getSourceAddress = (shipment: Shipment) => {
+  return shipment.addresses.find((address) => address.type === ShipmentAddressType.SOURCE) as ShipmentAddress;
+};
+
 const getRecipientAddress = (shipment: Shipment) => {
-  return shipment.toAddress;
+  return shipment.addresses.find((address) => address.type === ShipmentAddressType.DESTINATION) as ShipmentAddress;
 };
 
 const dateToHumanReadableFormat = (date: Date) => {

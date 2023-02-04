@@ -26,11 +26,14 @@ export interface Address {
   verified?: boolean;
 }
 
+export interface ShipmentAddress extends Address {
+  type: ShipmentAddressType;
+}
+
 export interface Shipment {
   id: number;
   easypostShipmentId: string;
-  toAddress: Address;
-  fromAddress: Address;
+  addresses: ShipmentAddress[];
   parcel: Package;
   navashipShipmentStatus: string;
   easypostShipmentStatus: string;
@@ -103,4 +106,9 @@ export enum ShipmentStatus {
 export enum PersonType {
   SENDER = "SENDER",
   RECEIVER = "RECEIVER"
+}
+
+export enum ShipmentAddressType {
+  SOURCE = "SOURCE",
+  DESTINATION = "DESTINATION"
 }
