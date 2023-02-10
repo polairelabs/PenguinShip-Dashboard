@@ -1,13 +1,7 @@
-import { Dispatch } from "redux";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import BaseApi from "../../api/api";
-import { Membership } from "../../types/apps/navashipInterfaces";
+import { Membership } from "../../types/apps/NavashipTypes";
 import { Status } from "../index";
-
-interface Redux {
-  getState: any;
-  dispatch: Dispatch<any>;
-}
 
 export const createAccount = createAsyncThunk(
   "auth/createAccount",

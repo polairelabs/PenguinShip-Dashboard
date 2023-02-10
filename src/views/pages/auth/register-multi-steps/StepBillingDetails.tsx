@@ -16,7 +16,7 @@ import "react-credit-cards/es/styles-compiled.css";
 import { fetchMemberships } from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store";
-import { Membership } from "../../../../types/apps/navashipInterfaces";
+import { Membership } from "../../../../types/apps/NavashipTypes";
 
 interface Props {
   formData: any;

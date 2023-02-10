@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Close } from "mdi-material-ui";
 import PackageForm from "./packageForm";
-import { Package } from "../../types/apps/navashipInterfaces";
+import { Package } from "../../types/apps/NavashipTypes";
 
 interface PackageModalProps {
   open: boolean;

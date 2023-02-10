@@ -36,7 +36,7 @@ import {
   Package,
   Rate,
   ShipmentInsurance
-} from "../../../types/apps/navashipInterfaces";
+} from "../../../types/apps/NavashipTypes";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
 import { fetchAddresses } from "../../../store/apps/addresses";
@@ -48,6 +48,7 @@ import { fetchPackages } from "../../../store/apps/packages";
 import { Box } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
+import { useAuth } from "../../../hooks/useAuth";
 
 const steps = [
   {
@@ -141,6 +142,7 @@ const CreateShipmentWizard = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
+  const auth = useAuth();
 
   const shipmentStore = useSelector((state: RootState) => state.shipments);
 
@@ -278,12 +280,9 @@ const CreateShipmentWizard = () => {
       setSelectedRate(null);
       setActiveStep(0);
     } else if (shipmentStore.buyShipmentRateStatus === "ERROR") {
-      toast.error(
-        `${shipmentStore.buyShipmentError ?? "Error buying label"}`,
-        {
-          position: "top-center"
-        }
-      );
+      toast.error(`${shipmentStore.buyShipmentError ?? "Error buying label"}`, {
+        position: "top-center"
+      });
       dispatch(clearBuyShipmentError());
     }
     dispatch(clearBuyShipmentRateStatus());
@@ -505,6 +504,26 @@ const CreateShipmentWizard = () => {
       marginTop: "5.2rem"
     }
   }));
+
+  const getPurchaseLabelMessage = (selectedRate: Rate | null | undefined) => {
+    return (
+      <Typography my={4} variant="body2">
+        {selectedRate ? (
+          <>
+            {"You're going to be charged "}
+            <Typography variant="body2" fontWeight="bold" component="span">
+              ${selectedRate.rate}
+            </Typography>
+            {" via "}
+            {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending with{" "}
+            {auth.user?.subscriptionDetail.cardLastFourDigits}
+          </>
+        ) : (
+          ""
+        )}
+      </Typography>
+    );
+  };
 
   const getStepContent = (step: number) => {
     switch (step) {
@@ -811,11 +830,7 @@ const CreateShipmentWizard = () => {
                 xs={12}
                 sx={{ display: "flex", justifyContent: "end" }}
               >
-                <Typography my={4} variant="body2">
-                  {selectedRate
-                    ? `You're going to be charged $${selectedRate?.rate} amount via Visa ending with 1111`
-                    : ""}
-                </Typography>
+                {getPurchaseLabelMessage(selectedRate)}
               </Grid>
               <Grid
                 item

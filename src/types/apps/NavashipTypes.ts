@@ -104,6 +104,18 @@ export interface AccountData {
   stripePriceId: string;
 }
 
+export interface SubscriptionDetail {
+  currentLimit: number;
+  cardLastFourDigits?: string;
+  cardType?: string;
+  subscriptionPlan: SubscriptionPlan;
+}
+
+export interface SubscriptionPlan {
+  name: string;
+  maxLimit: number;
+}
+
 export enum ShipmentStatus {
   DRAFT = "DRAFT",
   PURCHASED = "PURCHASED"

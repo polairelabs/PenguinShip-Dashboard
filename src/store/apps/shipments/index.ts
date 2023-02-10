@@ -5,7 +5,7 @@ import {
   CreatedShipment,
   Rate,
   Shipment
-} from "../../../types/apps/navashipInterfaces";
+} from "../../../types/apps/NavashipTypes";
 import { Status } from "../../index";
 import { Dispatch } from "redux";
 
@@ -145,7 +145,7 @@ export const shipmentsSlice = createSlice({
         state.total = action.payload.totalCount;
       })
       .addCase(fetchRates.fulfilled, (state, action) => {
-        state.selectedRates = action.payload;
+        state.selectedRates = action.payload?.rates;
       })
       .addCase(deleteShipment.fulfilled, (state, action) => {
         state.deleteStatus = "SUCCESS";
@@ -163,6 +163,6 @@ export const {
   clearBuyShipmentError,
   clearDeleteStatus,
   setOffset,
-  setSize,
+  setSize
 } = shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

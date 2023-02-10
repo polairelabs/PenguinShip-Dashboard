@@ -18,7 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import FormHelperText from "@mui/material/FormHelperText";
 import { toast } from "react-hot-toast";
-import { Address } from "../../types/apps/navashipInterfaces";
+import { Address } from "../../types/apps/NavashipTypes";
 import { Checkbox, FormControlLabel, Typography } from "@mui/material";
 import {
   Briefcase,

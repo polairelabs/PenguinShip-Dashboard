@@ -11,10 +11,7 @@ import {
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
-import {
-  Package,
-  ShipmentInsurance
-} from "../../types/apps/navashipInterfaces";
+import { Package, ShipmentInsurance } from "../../types/apps/NavashipTypes";
 import { ChangeEvent, useEffect, useState } from "react";
 
 interface PackageSelectProps {

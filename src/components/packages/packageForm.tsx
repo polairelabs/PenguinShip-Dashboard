@@ -19,7 +19,7 @@ import {
   updatePackage
 } from "../../store/apps/packages";
 import { toast } from "react-hot-toast";
-import { Package } from "../../types/apps/navashipInterfaces";
+import { Package } from "../../types/apps/NavashipTypes";
 
 export type PackageDetails = {
   name: string;

@@ -7,7 +7,7 @@ import {
   RegisterParams,
   LoginParams,
   ErrCallbackType,
-  UserDataType
+  User
 } from "./types";
 
 const defaultProvider: AuthValuesType = {
@@ -29,7 +29,7 @@ type Props = {
 };
 
 const AuthProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<UserDataType | null>(defaultProvider.user);
+  const [user, setUser] = useState<User | null>(defaultProvider.user);
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
   const [isInitialized, setIsInitialized] = useState<boolean>(
     defaultProvider.isInitialized

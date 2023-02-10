@@ -10,7 +10,7 @@ import {
 import { Close } from "mdi-material-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
-import { Rate, Shipment } from "../../types/apps/navashipInterfaces";
+import { Rate, Shipment } from "../../types/apps/NavashipTypes";
 import { useEffect, useState } from "react";
 import {
   buyShipmentRate,

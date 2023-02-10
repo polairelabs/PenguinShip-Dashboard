@@ -18,8 +18,14 @@ import {
   ShipmentAddress,
   ShipmentAddressType,
   ShipmentStatus
-} from "src/types/apps/navashipInterfaces";
-import { deleteShipment, fetchShipments, clearDeleteStatus, setOffset, setSize } from "../../../store/apps/shipments";
+} from "src/types/apps/NavashipTypes";
+import {
+  deleteShipment,
+  fetchShipments,
+  clearDeleteStatus,
+  setOffset,
+  setSize
+} from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
 import { capitalizeAndLowerCase } from "../../../utils";

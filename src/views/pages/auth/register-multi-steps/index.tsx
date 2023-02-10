@@ -16,7 +16,7 @@ import StepperWrapper from "src/@core/styles/mui/stepper";
 import { createAccount, fetchMemberships } from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store";
-import { AccountData } from "../../../../types/apps/navashipInterfaces";
+import { AccountData } from "../../../../types/apps/NavashipTypes";
 import BaseApi from "../../../../api/api";
 import { Link } from "@mui/material";
 import VerificationModal from "../../../../components/verificationToken/verificationModal";

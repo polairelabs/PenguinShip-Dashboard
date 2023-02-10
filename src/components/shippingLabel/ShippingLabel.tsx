@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { Address, Package, Rate } from "../../types/apps/navashipInterfaces";
+import { Address, Package, Rate } from "../../types/apps/NavashipTypes";
 import {
   Table,
   TableBody,

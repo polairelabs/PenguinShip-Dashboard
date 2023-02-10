@@ -4,7 +4,7 @@ import { Controller } from "react-hook-form";
 import { Autocomplete, Box, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Address } from "../../types/apps/navashipInterfaces";
+import { Address } from "../../types/apps/NavashipTypes";
 import { ChangeEvent } from "react";
 
 export enum AddressType {

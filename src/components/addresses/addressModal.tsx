@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Close } from "mdi-material-ui";
 import AddressForm from "./addressForm";
-import { Address } from "../../types/apps/navashipInterfaces";
+import { Address } from "../../types/apps/NavashipTypes";
 
 interface AddressModalProps {
   open: boolean;

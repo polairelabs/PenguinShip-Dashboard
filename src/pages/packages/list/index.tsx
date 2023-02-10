@@ -19,7 +19,7 @@ import {
 } from "src/store/apps/packages";
 
 import { AppDispatch, RootState } from "src/store";
-import { Package } from "src/types/apps/navashipInterfaces";
+import { Package } from "src/types/apps/NavashipTypes";
 
 import TableHeader from "src/views/table/TableHeader";
 import PackageModal from "../../../components/packages/packagesModal";

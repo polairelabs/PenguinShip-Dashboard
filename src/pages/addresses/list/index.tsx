@@ -20,7 +20,7 @@ import {
 } from "src/store/apps/addresses";
 
 import { AppDispatch, RootState } from "src/store";
-import { Address } from "src/types/apps/navashipInterfaces";
+import { Address } from "src/types/apps/NavashipTypes";
 
 import AddressModal from "src/components/addresses/addressModal";
 import TableHeader from "../../../views/table/TableHeader";

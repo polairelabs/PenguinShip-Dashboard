@@ -2,7 +2,7 @@ import { Grid, Radio, Typography } from "@mui/material";
 import Box, { BoxProps } from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Rate } from "../../types/apps/navashipInterfaces";
+import { Rate } from "../../types/apps/NavashipTypes";
 
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderWidth: 1,
