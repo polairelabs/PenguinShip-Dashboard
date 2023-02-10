@@ -194,7 +194,7 @@ const PackagesList = () => {
         position: "top-center"
       });
     } else if (store.deleteStatus === "ERROR") {
-      toast.error("Error deleting package", {
+      toast.error("Error deleting parcel", {
         position: "top-center"
       });
     }
