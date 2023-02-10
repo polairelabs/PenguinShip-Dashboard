@@ -167,12 +167,12 @@ const PackageForm = ({
   // Add toast message
   useEffect(() => {
     if (store.createStatus === "SUCCESS") {
-      toast.success("Package was successfully created", {
+      toast.success("Parcel was successfully created", {
         position: "top-center"
       });
       handleDialogToggle();
     } else if (store.createStatus === "ERROR") {
-      toast.error("Error creating package", {
+      toast.error("Error creating parcel", {
         position: "top-center"
       });
     }
@@ -182,12 +182,12 @@ const PackageForm = ({
   // Edit toast message
   useEffect(() => {
     if (store.updateStatus === "SUCCESS") {
-      toast.success("Package was successfully updated", {
+      toast.success("Parcel was successfully updated", {
         position: "top-center"
       });
       handleDialogToggle();
     } else if (store.updateStatus === "ERROR") {
-      toast.error("Error updating package", {
+      toast.error("Error updating parcel", {
         position: "top-center"
       });
     }

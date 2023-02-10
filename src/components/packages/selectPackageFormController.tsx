@@ -7,18 +7,21 @@ import {
   FormControlLabel,
   InputAdornment,
   Switch,
-  Tooltip,
   Typography
 } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Package } from "../../types/apps/navashipInterfaces";
+import {
+  Package,
+  ShipmentInsurance
+} from "../../types/apps/navashipInterfaces";
 import { ChangeEvent, useEffect, useState } from "react";
 
 interface PackageSelectProps {
   currentParcel: Package | null | undefined;
   selectablePackages: Package[];
   handleSelectedPackageChange: (parcel: Package | null) => void;
+  setInsuranceData: (insuranceData: ShipmentInsurance) => void;
   control: any;
   errors: any;
 }
@@ -27,16 +30,24 @@ const SelectPackageFormController = ({
   currentParcel,
   selectablePackages,
   handleSelectedPackageChange,
+  setInsuranceData,
   control,
   errors
 }: PackageSelectProps) => {
-  const [showInsuranceValueField, setShowInsuranceValueField] =
-    useState<boolean>(false);
+  const [parcelInsured, setParcelInsured] = useState<boolean>(false);
   const [insuranceAmount, setInsuranceAmount] = useState<string>("");
+
+  useEffect(() => {
+    const insuranceData = {
+      insured: parcelInsured,
+      amountToInsure: insuranceAmount
+    } as ShipmentInsurance;
+    setInsuranceData(insuranceData);
+  }, [parcelInsured, insuranceAmount]);
 
   const handlePackageChange = (event, newValue) => {
     if (!newValue) {
-      setShowInsuranceValueField(false);
+      setParcelInsured(false);
     }
     let selectedPackage = newValue as Package | null;
     handleSelectedPackageChange(selectedPackage);
@@ -48,7 +59,7 @@ const SelectPackageFormController = ({
   };
 
   const insureParcelSwitch = () => {
-    setShowInsuranceValueField(!showInsuranceValueField);
+    setParcelInsured(!parcelInsured);
   };
 
   const handleInsuranceChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -105,7 +116,7 @@ const SelectPackageFormController = ({
             label="Insure Parcel"
             control={<Switch onChange={insureParcelSwitch} />}
           />
-          {showInsuranceValueField && (
+          {parcelInsured && (
             <TextField
               disabled={!currentParcel}
               sx={{ width: 200 }}

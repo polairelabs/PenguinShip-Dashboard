@@ -13,7 +13,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   clearDeleteStatus,
   deletePackage,
-  fetchPackages
+  fetchPackages,
+  setOffset,
+  setSize
 } from "src/store/apps/packages";
 
 import { AppDispatch, RootState } from "src/store";
@@ -23,7 +25,6 @@ import TableHeader from "src/views/table/TableHeader";
 import PackageModal from "../../../components/packages/packagesModal";
 import { Box, Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
-import { setOffset, setSize } from "../../../store/apps/addresses";
 
 interface CellType {
   row: Package;
@@ -189,7 +190,7 @@ const PackagesList = () => {
   // Delete toast
   useEffect(() => {
     if (store.deleteStatus === "SUCCESS") {
-      toast.success("Package was successfully deleted", {
+      toast.success("Parcel was successfully deleted", {
         position: "top-center"
       });
     } else if (store.deleteStatus === "ERROR") {

@@ -25,7 +25,7 @@ export const fetchShipments = createAsyncThunk(
 export const createShipment = createAsyncThunk(
   "shipments/createShipment",
   async (
-    data: { [key: string]: number | string | undefined },
+    data: { [key: string]: number | string | undefined | boolean },
     { getState, dispatch, rejectWithValue }
   ) => {
     try {
@@ -47,8 +47,8 @@ export const buyShipmentRate = createAsyncThunk(
       const response = await BaseApi.post("/shipments/buy", data);
       const state = getState();
       const params = {
-        offset: state.addresses.offset,
-        size: state.addresses.size
+        offset: state.shipments.offset,
+        size: state.shipments.size
       };
       dispatch(fetchShipments(params));
       return response;
@@ -65,8 +65,8 @@ export const deleteShipment = createAsyncThunk(
     const response = await BaseApi.delete(`/shipments/${id}`);
     const state = getState();
     const params = {
-      offset: state.addresses.offset,
-      size: state.addresses.size
+      offset: state.shipments.offset,
+      size: state.shipments.size
     };
     dispatch(fetchShipments(params));
     return response;
@@ -90,6 +90,7 @@ export const shipmentsSlice = createSlice({
     total: 0,
     createShipmentStatus: "" as Status,
     buyShipmentRateStatus: "" as Status,
+    deleteStatus: "" as Status,
     createShipmentError: "",
     buyShipmentError: "",
     // Offset and size to be used for pagination in all fetchAll calls inside the store
@@ -110,6 +111,9 @@ export const shipmentsSlice = createSlice({
     clearBuyShipmentError: (state) => {
       state.buyShipmentError = "";
     },
+    clearDeleteStatus: (state) => {
+      state.deleteStatus = "";
+    },
     setOffset: (state, action) => {
       state.offset = action.payload;
     },
@@ -120,10 +124,7 @@ export const shipmentsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createShipment.fulfilled, (state, action) => {
-        state.createdShipment = action.payload;
-        state.createdShipmentRates = action.payload?.rates?.sort(
-          (r1: Rate, r2: Rate) => r1?.rate - r2.rate
-        );
+        state.createdShipmentRates = action.payload?.rates;
         state.createShipmentStatus = "SUCCESS";
       })
       .addCase(createShipment.rejected, (state, action) => {
@@ -145,9 +146,12 @@ export const shipmentsSlice = createSlice({
       })
       .addCase(fetchRates.fulfilled, (state, action) => {
         state.selectedRates = action.payload;
-        state.selectedRates = action.payload?.sort(
-          (r1: Rate, r2: Rate) => r1?.rate - r2.rate
-        );
+      })
+      .addCase(deleteShipment.fulfilled, (state, action) => {
+        state.deleteStatus = "SUCCESS";
+      })
+      .addCase(deleteShipment.rejected, (state, action) => {
+        state.deleteStatus = "ERROR";
       });
   }
 });
@@ -157,7 +161,8 @@ export const {
   clearBuyShipmentRateStatus,
   clearCreateShipmentError,
   clearBuyShipmentError,
+  clearDeleteStatus,
   setOffset,
-  setSize
+  setSize,
 } = shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

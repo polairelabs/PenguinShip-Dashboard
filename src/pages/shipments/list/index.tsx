@@ -14,17 +14,19 @@ import { AppDispatch, RootState } from "src/store";
 import {
   Person,
   PersonType,
-  Shipment, ShipmentAddress, ShipmentAddressType,
+  Shipment,
+  ShipmentAddress,
+  ShipmentAddressType,
   ShipmentStatus
 } from "src/types/apps/navashipInterfaces";
-import { deleteShipment, fetchShipments } from "../../../store/apps/shipments";
+import { deleteShipment, fetchShipments, clearDeleteStatus, setOffset, setSize } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
 import { capitalizeAndLowerCase } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
 import { Close, CurrencyUsd } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
-import { setOffset, setSize } from "../../../store/apps/addresses";
+import toast from "react-hot-toast";
 
 interface CellType {
   row: Shipment;
@@ -52,11 +54,15 @@ const getRecipientInfo = (shipment: Shipment) => {
 };
 
 const getSourceAddress = (shipment: Shipment) => {
-  return shipment.addresses.find((address) => address.type === ShipmentAddressType.SOURCE) as ShipmentAddress;
+  return shipment.addresses.find(
+    (address) => address.type === ShipmentAddressType.SOURCE
+  ) as ShipmentAddress;
 };
 
 const getRecipientAddress = (shipment: Shipment) => {
-  return shipment.addresses.find((address) => address.type === ShipmentAddressType.DESTINATION) as ShipmentAddress;
+  return shipment.addresses.find(
+    (address) => address.type === ShipmentAddressType.DESTINATION
+  ) as ShipmentAddress;
 };
 
 const dateToHumanReadableFormat = (date: Date) => {
@@ -97,6 +103,20 @@ const ShipmentsList = () => {
     dispatch(setOffset(currentPage));
     dispatch(setSize(rowCount));
   }, [currentPage, rowCount]);
+
+  // Delete toast
+  useEffect(() => {
+    if (store.deleteStatus === "SUCCESS") {
+      toast.success("Shipment was successfully deleted", {
+        position: "top-center"
+      });
+    } else if (store.deleteStatus === "ERROR") {
+      toast.error("Error deleting shipment", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearDeleteStatus());
+  }, [store.deleteStatus]);
 
   const handleSearch = (searchValue) => {
     setSearchText(searchValue);
@@ -174,12 +194,13 @@ const ShipmentsList = () => {
       renderCell: ({ row }: CellType) => {
         // status can either come from easypost or navaship api (if easypost status is unknown use the navaship status)
         // Status in easypost is unknown until it is scanned by the carrier
-        const status =
-          row?.navashipShipmentStatus !== "DRAFT"
-            ? row?.easypostShipmentStatus === "unknown"
-              ? row?.navashipShipmentStatus
-              : row?.easypostShipmentStatus
-            : row?.navashipShipmentStatus;
+        // const status =
+        //   row?.navashipShipmentStatus !== "DRAFT"
+        //     ? row?.easypostShipmentStatus === "unknown"
+        //       ? row?.navashipShipmentStatus
+        //       : row?.easypostShipmentStatus
+        //     : row?.navashipShipmentStatus;
+        const status = row.status;
         const statusColors = {
           purchased: "primary",
           delivered: "success",
@@ -265,21 +286,21 @@ const ShipmentsList = () => {
                 alignItems: "center"
               }}
             >
-              {row.navashipShipmentStatus == ShipmentStatus.PURCHASED && (
+              {row.status == ShipmentStatus.PURCHASED && (
                 <Tooltip title="Cancel label">
                   <IconButton onClick={() => {}}>
                     <Close />
                   </IconButton>
                 </Tooltip>
               )}
-              {row.navashipShipmentStatus === ShipmentStatus.DRAFT && (
+              {row.status === ShipmentStatus.DRAFT && (
                 <Tooltip title="Buy rate">
                   <IconButton onClick={() => handleBuyRate(row)}>
                     <CurrencyUsd />
                   </IconButton>
                 </Tooltip>
               )}
-              {row.navashipShipmentStatus === ShipmentStatus.DRAFT && (
+              {row.status === ShipmentStatus.DRAFT && (
                 <Tooltip title="Delete">
                   <IconButton onClick={() => handleDelete(row.id)}>
                     <DeleteOutline />

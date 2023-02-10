@@ -25,8 +25,8 @@ export const createPackage = createAsyncThunk(
     const response = await BaseApi.post("/packages", data);
     const state = getState();
     const params = {
-      offset: state.addresses.offset,
-      size: state.addresses.size,
+      offset: state.packages.offset,
+      size: state.packages.size,
       order: "desc"
     };
     dispatch(fetchPackages(params));
@@ -43,8 +43,8 @@ export const updatePackage = createAsyncThunk(
     const response = await BaseApi.put(`/packages/${data.id}`, data);
     const state = getState();
     const params = {
-      offset: state.addresses.offset,
-      size: state.addresses.size,
+      offset: state.packages.offset,
+      size: state.packages.size,
       order: "desc"
     };
     dispatch(fetchPackages(params));
@@ -58,8 +58,8 @@ export const deletePackage = createAsyncThunk(
     const response = await BaseApi.delete(`/packages/${id}`);
     const state = getState();
     const params = {
-      offset: state.addresses.offset,
-      size: state.addresses.size,
+      offset: state.packages.offset,
+      size: state.packages.size,
       order: "desc"
     };
     dispatch(fetchPackages(params));

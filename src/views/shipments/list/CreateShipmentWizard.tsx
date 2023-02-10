@@ -31,7 +31,12 @@ import {
 import SelectAddressFormController, {
   AddressType
 } from "../../../components/addresses/selectAddressFormController";
-import { Address, Package, Rate } from "../../../types/apps/navashipInterfaces";
+import {
+  Address,
+  Package,
+  Rate,
+  ShipmentInsurance
+} from "../../../types/apps/navashipInterfaces";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
 import { fetchAddresses } from "../../../store/apps/addresses";
@@ -153,6 +158,10 @@ const CreateShipmentWizard = () => {
   // Selectable lists as to not change the store when we filter on them
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
   const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
+  const [insuranceData, setInsuranceData] = useState<ShipmentInsurance>({
+    amountToInsure: "0",
+    insured: false
+  });
 
   const lastInsertedAddress = useSelector(
     (state: RootState) => state.addresses.lastInsertedAddress
@@ -246,9 +255,7 @@ const CreateShipmentWizard = () => {
       setActiveStep(activeStep + 1);
     } else if (shipmentStore.createShipmentStatus === "ERROR") {
       toast.error(
-        `Error: ${
-          shipmentStore.createShipmentError ?? "Error creating shipment"
-        }`,
+        `${shipmentStore.createShipmentError ?? "Error creating shipment"}`,
         {
           position: "top-center"
         }
@@ -272,7 +279,7 @@ const CreateShipmentWizard = () => {
       setActiveStep(0);
     } else if (shipmentStore.buyShipmentRateStatus === "ERROR") {
       toast.error(
-        `Error: ${shipmentStore.buyShipmentError ?? "Error buying label"}`,
+        `${shipmentStore.buyShipmentError ?? "Error buying label"}`,
         {
           position: "top-center"
         }
@@ -450,7 +457,9 @@ const CreateShipmentWizard = () => {
         receiverName: deliveryAddress?.name,
         receiverCompany: deliveryAddress?.company,
         receiverPhone: deliveryAddress?.phone,
-        receiverEmail: deliveryAddress?.email
+        receiverEmail: deliveryAddress?.email,
+        insured: insuranceData.insured,
+        amountToInsure: Number(insuranceData.amountToInsure)
       };
 
       setCreateShipmentLoading(true);
@@ -686,6 +695,7 @@ const CreateShipmentWizard = () => {
                   currentParcel={selectedPackage}
                   selectablePackages={selectablePackages}
                   handleSelectedPackageChange={handleSelectedPackageChange}
+                  setInsuranceData={setInsuranceData}
                   control={packageControl}
                   errors={packageErrors}
                 />

@@ -9,6 +9,11 @@ export interface Package {
   height: string;
 }
 
+export interface ShipmentInsurance {
+  insured: boolean;
+  amountToInsure: string;
+}
+
 export interface Address {
   id: number;
   street1: string;
@@ -18,6 +23,7 @@ export interface Address {
   zip: string;
   country: string;
   residential: boolean;
+  // Handled in CreateShipmentWizard
   // Person address info
   name?: string;
   company?: string;
@@ -35,8 +41,8 @@ export interface Shipment {
   easypostShipmentId: string;
   addresses: ShipmentAddress[];
   parcel: Package;
-  navashipShipmentStatus: string;
-  easypostShipmentStatus: string;
+  status: ShipmentStatus;
+  easyPostStatus: string;
   rate: Rate;
   createdAt: Date;
   updatedAt: Date;
