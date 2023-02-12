@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Step from "@mui/material/Step";
@@ -28,15 +28,8 @@ import {
   clearCreateShipmentStatus,
   createShipment
 } from "../../../store/apps/shipments";
-import SelectAddressFormController, {
-  AddressType
-} from "../../../components/addresses/selectAddressFormController";
-import {
-  Address,
-  Package,
-  Rate,
-  ShipmentInsurance
-} from "../../../types/apps/NavashipTypes";
+import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
+import { Address, BoughtShipment, Package, Rate, ShipmentInsurance } from "../../../types/apps/NavashipTypes";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
 import { fetchAddresses } from "../../../store/apps/addresses";
@@ -49,6 +42,9 @@ import { Box } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../../hooks/useAuth";
+import jsPDF from "jspdf";
+import PrintImage from "../../../pages/print/printImage";
+import Link from "next/link";
 
 const steps = [
   {
@@ -65,14 +61,19 @@ const steps = [
   },
   {
     title: "Parcel",
-    subtitle: "Set the parcel to be sent",
+    subtitle: "Set parcel",
     description: "Select an existing parcel",
     notExist: "Parcel doesn't exist?"
   },
   {
     title: "Rates",
-    subtitle: "Choose a shipping rate",
+    subtitle: "Buy a shipping rate",
     description: "Select one of these following rates"
+  },
+  {
+    title: "Success",
+    subtitle: "Consult your label",
+    description: "Success! The shipping label was successfully purchased"
   }
 ];
 
@@ -171,6 +172,10 @@ const CreateShipmentWizard = () => {
   const lastInsertedPackage = useSelector(
     (state: RootState) => state.packages.lastInsertedPackage
   ) as Package;
+  // Populated once shipment label is bought
+  const boughtShipment = useSelector(
+    (state: RootState) => state.shipments.boughtShipment
+  ) as BoughtShipment;
 
   // Selected entities
   const [sourceAddress, setSourceAddress] = useState<Address | null>();
@@ -184,14 +189,21 @@ const CreateShipmentWizard = () => {
   // To create a shipment or keep old one
   const [createNewShipment, setCreateNewShipment] = useState<boolean>(true);
   // Create shipment loading
-  const [createShipmentLoading, setCreateShipmentLoading] =
-    useState<boolean>(false);
+  const [createShipmentLoading, setCreateShipmentLoading] = useState<boolean>(false);
   // Select rate loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
 
   // Modals
   const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
   const [openPackageModal, setOpenPackageModal] = useState<boolean>(false);
+
+  const PreviewRef = useRef(null);
+
+  const handleDownload = (imageUrl: string, trackingNumber: string) => {
+    const pdf = new jsPDF();
+    pdf.addImage(imageUrl, "JPEG", 15, 40, 500, 500);
+    pdf.save(`shipping-label-${trackingNumber}.pdf`);
+  };
 
   const handleAddressModalToggle = () => {
     setOpenAddressModal(!openAddressModal);
@@ -274,11 +286,11 @@ const CreateShipmentWizard = () => {
       toast.success("Label was successfully purchased", {
         position: "top-center"
       });
-      setSourceAddress(null);
-      setDeliveryAddress(null);
-      setSelectedPackage(null);
-      setSelectedRate(null);
-      setActiveStep(0);
+      // setSourceAddress(null);
+      // setDeliveryAddress(null);
+      // setSelectedPackage(null);
+      // setSelectedRate(null);
+      setActiveStep(activeStep + 1);
     } else if (shipmentStore.buyShipmentRateStatus === "ERROR") {
       toast.error(`${shipmentStore.buyShipmentError ?? "Error buying label"}`, {
         position: "top-center"
@@ -438,6 +450,11 @@ const CreateShipmentWizard = () => {
     }
   };
 
+  const handleBackToStart = () => {
+    scrollToTheTop();
+    setActiveStep(0);
+  };
+
   const onSubmitAddress = () => {
     scrollToTheTop();
     setActiveStep(activeStep + 1);
@@ -577,7 +594,7 @@ const CreateShipmentWizard = () => {
                         variant="outlined"
                         color="info"
                       >
-                        Create Address
+                        Create New Address
                       </Button>
                     </Box>
                   </Box>
@@ -615,7 +632,7 @@ const CreateShipmentWizard = () => {
         );
       case 1:
         return (
-          <form key={0} onSubmit={handleDeliveryAddressSubmit(onSubmitAddress)}>
+          <form key={1} onSubmit={handleDeliveryAddressSubmit(onSubmitAddress)}>
             <Grid container>
               <Grid item xs={12} sm={6}>
                 <Typography
@@ -663,7 +680,7 @@ const CreateShipmentWizard = () => {
                         variant="outlined"
                         color="info"
                       >
-                        Create Address
+                        Create New Address
                       </Button>
                     </Box>
                   </Box>
@@ -701,7 +718,7 @@ const CreateShipmentWizard = () => {
         );
       case 2:
         return (
-          <form key={1} onSubmit={handlePackageSubmit(onSubmitCreateShipment)}>
+          <form key={2} onSubmit={handlePackageSubmit(onSubmitCreateShipment)}>
             <Grid container>
               <Grid item xs={12} sm={6}>
                 <Typography
@@ -746,7 +763,7 @@ const CreateShipmentWizard = () => {
                         variant="outlined"
                         color="info"
                       >
-                        Create Parcel
+                        Create New Parcel
                       </Button>
                     </Box>
                   </Box>
@@ -790,7 +807,7 @@ const CreateShipmentWizard = () => {
         );
       case 3:
         return (
-          <form key={2} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
+          <form key={3} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
             <Grid container>
               <Grid item xs={12} sm={6}>
                 <Typography
@@ -855,6 +872,153 @@ const CreateShipmentWizard = () => {
                 >
                   Buy label
                 </LoadingButton>
+              </Grid>
+            </Grid>
+          </form>
+        );
+      case 4:
+        return (
+          <form key={4} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
+            <Grid container>
+              <Grid item xs={12} sm={6}>
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 600, color: "text.primary", mb: 4, justifyContent: "center" }}
+                  >
+                    {steps[activeStep].description}
+                  </Typography>
+                  {/*<Typography*/}
+                  {/*  variant="body2"*/}
+                  {/*  sx={{ fontWeight: 600, color: "text.primary", mb: 4, justifyContent: "center"  }}*/}
+                  {/*>*/}
+                  {/*  {boughtShipment.trackingCode}*/}
+                  {/*</Typography>*/}
+                </Box>
+                {/*<Box*/}
+                {/*  sx={{*/}
+                {/*    display: "flex",*/}
+                {/*    flexDirection: "column",*/}
+                {/*    alignItems: "center",*/}
+                {/*  }}>*/}
+                {/*  <Box>*/}
+                {/*    <Button*/}
+                {/*      onClick={() => {*/}
+                {/*        handleDownload(boughtShipment.postageLabelUrl, boughtShipment.trackingCode);*/}
+                {/*      }}*/}
+                {/*    >*/}
+                {/*      Print*/}
+                {/*    </Button>*/}
+                {/*    <Button*/}
+                {/*      onClick={() => {*/}
+                {/*        handleDownload(boughtShipment.postageLabelUrl, boughtShipment.trackingCode);*/}
+                {/*      }}*/}
+                {/*    >*/}
+                {/*      Download*/}
+                {/*    </Button>*/}
+                {/*  </Box>*/}
+                {/*</Box>*/}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    p: 6
+                  }}>
+                  {/*<Box*/}
+                  {/*  component="img"*/}
+                  {/*  sx={{*/}
+                  {/*    height: { xs: "55%", md: "65%" },*/}
+                  {/*    width: { xs: "50%", md: "60%" }*/}
+                  {/*  }}*/}
+                  {/*  alt="Shipping label"*/}
+                  {/*  src={`${boughtShipment.postageLabelUrl}`}*/}
+                  {/*/>*/}
+                  {/*<Document file="https://www.uab.edu/citherapy/images/pdf_files/CIT_Training_MAL_manual.pdf"/>*/}
+                </Box>
+              </Grid>
+              <GridDividerStyle
+                item
+                container
+                sm={1}
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Divider orientation="vertical" />
+              </GridDividerStyle>
+              <SecondColumnGridStyle item xs={12} sm={5}>
+                <Grid item xs={12} sm={12}>
+                  <Box>
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                      >
+                        Label actions
+                      </Typography>
+                    </Box>
+                    <Box my={3}>
+                      <Link href={`/shipments/list`} passHref>
+                        <Button
+                          sx={{ padding: 2 }}
+                          variant="outlined"
+                          color="info"
+                        >
+                          Print
+                        </Button>
+                      </Link>
+                    </Box>
+                    <Box my={3}>
+                      <Button
+                        sx={{ padding: 2 }}
+                        variant="outlined"
+                        color="info"
+                      >
+                        Download
+                      </Button>
+                    </Box>
+                    <Divider
+                      orientation="horizontal"
+                      sx={{ width: "50%", display: "flex", my: 4 }}
+                    />
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                      >
+                        Made a mistake?
+                      </Typography>
+                    </Box>
+                    <Box my={3}>
+                      <Button
+                        sx={{ padding: 2 }}
+                        variant="outlined"
+                        color="info"
+                      >
+                        Return Label
+                      </Button>
+                    </Box>
+                  </Box>
+                </Grid>
+              </SecondColumnGridStyle>
+              <Grid
+                item
+                xs={12}
+                sx={{ display: "flex", justifyContent: "end" }}
+              >
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <Button
+                  size="large"
+                  variant="contained"
+                  onClick={handleBackToStart}
+                >
+                  Back To Start
+                </Button>
               </Grid>
             </Grid>
           </form>

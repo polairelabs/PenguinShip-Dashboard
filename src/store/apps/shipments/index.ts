@@ -4,7 +4,7 @@ import BaseApi, { ApiError } from "../../../api/api";
 import {
   CreatedShipment,
   Rate,
-  Shipment
+  Shipment, BoughtShipment
 } from "../../../types/apps/NavashipTypes";
 import { Status } from "../../index";
 import { Dispatch } from "redux";
@@ -85,6 +85,7 @@ export const shipmentsSlice = createSlice({
   initialState: {
     // createdShipment is used to retrieve the rates of the shipment (+ its easypost id)
     createdShipment: {} as CreatedShipment,
+    boughtShipment: {} as BoughtShipment,
     createdShipmentRates: [] as Rate[],
     allShipments: [] as Shipment[],
     total: 0,
@@ -124,6 +125,7 @@ export const shipmentsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createShipment.fulfilled, (state, action) => {
+        state.createdShipment = action.payload;
         state.createdShipmentRates = action.payload?.rates;
         state.createShipmentStatus = "SUCCESS";
       })
@@ -135,6 +137,7 @@ export const shipmentsSlice = createSlice({
       })
       .addCase(buyShipmentRate.fulfilled, (state, action) => {
         state.buyShipmentRateStatus = "SUCCESS";
+        state.boughtShipment = action.payload;
       })
       .addCase(buyShipmentRate.rejected, (state, action) => {
         state.buyShipmentRateStatus = "ERROR";

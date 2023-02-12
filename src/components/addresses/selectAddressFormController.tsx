@@ -170,7 +170,7 @@ const SelectAddressFormController = ({
               <Autocomplete
                 options={selectableAddresses}
                 value={currentAddress?.street1 ? currentAddress : null}
-                noOptionsText="No addresses found"
+                noOptionsText="No address found"
                 // PopperComponent={StyledPopper}
                 // ListboxComponent={ListboxComponent}
                 getOptionLabel={(address) => addressOptionLabel(address)}
@@ -182,7 +182,7 @@ const SelectAddressFormController = ({
                     value={value}
                     label={labelName}
                     variant="standard"
-                    placeholder={"Search by address..."}
+                    placeholder={"Search address..."}
                   />
                 )}
               />

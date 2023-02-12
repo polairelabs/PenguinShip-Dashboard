@@ -40,30 +40,17 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       setIsInitialized(true);
-      const storedToken = window.localStorage.getItem(
-        authConfig.storageTokenKeyName
-      )!;
-      if (storedToken) {
-        setLoading(true);
-        await axios
-          .get(authConfig.loginEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
-          .then(async (response) => {
-            setLoading(false);
-            setUser({ ...response.data.userData });
-          })
-          .catch(() => {
-            localStorage.removeItem("userData");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("accessToken");
-            setUser(null);
-            setLoading(false);
-          });
+      const userData = window.localStorage.getItem(
+        authConfig.storageUserDataKey
+      );
+      if (userData) {
+        const user: User = JSON.parse(userData);
+        setUser({ ...user });
+        setLoading(false);
       } else {
         setLoading(false);
+        resetAuthValues();
+        router.push("/login");
       }
     };
     initAuth();
@@ -77,17 +64,21 @@ const AuthProvider = ({ children }: Props) => {
       .post(authConfig.loginEndpoint, params)
       .then(async (res) => {
         window.localStorage.setItem(
-          authConfig.storageTokenKeyName,
+          authConfig.storageAccessTokenKey,
           res.data.access_token
         );
-        const returnUrl = router.query.returnUrl;
+        window.localStorage.setItem(
+          authConfig.storageRefreshTokenKey,
+          res.data.refresh_token
+        );
+        window.localStorage.setItem(
+          authConfig.storageUserDataKey,
+          JSON.stringify(res.data.user)
+        );
         setUser({ ...res.data.user });
-        // await window.localStorage.setItem(
-        //   "userData",
-        //   JSON.stringify(res.data.userData)
-        // );
+        const returnUrl = router.query.returnUrl;
         const redirectURL = returnUrl && returnUrl !== "/" ? returnUrl : "/";
-        router.replace(redirectURL as string);
+        await router.replace(redirectURL as string);
       })
       .catch((err) => {
         if (errorCallback) errorCallback(err);
@@ -95,12 +86,17 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const handleLogout = () => {
-    setUser(null);
-    setIsInitialized(false);
-    window.localStorage.removeItem("userData");
-    window.localStorage.removeItem(authConfig.storageTokenKeyName);
+    resetAuthValues();
     router.push("/login");
   };
+
+  const resetAuthValues = () => {
+    setUser(null);
+    setIsInitialized(false);
+    window.localStorage.removeItem(authConfig.storageUserDataKey);
+    window.localStorage.removeItem(authConfig.storageAccessTokenKey);
+    window.localStorage.removeItem(authConfig.storageRefreshTokenKey);
+  }
 
   const handleRegister = (
     params: RegisterParams,

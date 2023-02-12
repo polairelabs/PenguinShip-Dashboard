@@ -80,6 +80,7 @@ const SelectPackageFormController = ({
                 options={selectablePackages}
                 id="autocomplete-default"
                 value={currentParcel?.name ? currentParcel : null}
+                noOptionsText="No parcel found"
                 getOptionLabel={(parcel) => parcelOptionLabel(parcel)}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onChange={handlePackageChange}
@@ -87,9 +88,9 @@ const SelectPackageFormController = ({
                   <TextField
                     {...params}
                     value={value}
-                    label="Choose parcel"
+                    label="Parcel"
                     variant="standard"
-                    placeholder={"Search or select a parcel"}
+                    placeholder={"Search parcel..."}
                   />
                 )}
               />

@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
+import authConfig from "src/configs/auth";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -26,7 +27,7 @@ export const httpRequest = http;
 
 httpRequest.interceptors.request.use(
   async (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem(authConfig.storageAccessTokenKey);
     if (accessToken) {
       // @ts-ignore
       config.headers.Authorization = `Bearer ${accessToken}`;

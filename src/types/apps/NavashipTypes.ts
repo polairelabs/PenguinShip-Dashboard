@@ -49,8 +49,20 @@ export interface Shipment {
   trackingCode: string;
   postageLabelUrl: string;
   publicTrackingUrl: string;
-  additionalInfoJson: string;
   persons: Person[];
+}
+
+// Response from Shipment buy endpoint
+export interface BoughtShipment {
+  id: number;
+  easypostShipmentId: string;
+  toAddress: number; // id from db
+  fromAddress: number; // id from db
+  parcel: number; // id from db
+  rate: Rate;
+  postageLabelUrl: string;
+  postageLabelPdfUrl: string;
+  trackingCode: string;
 }
 
 export interface Rate {

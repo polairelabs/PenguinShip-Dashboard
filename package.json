@@ -10,7 +10,6 @@
     "lint": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "build:icons": "tsc -b src/iconify-bundle && node src/iconify-bundle/bundle-icons-react.js"
-
   },
   "dependencies": {
     "@casl/ability": "5.4.3",
@@ -27,6 +26,7 @@
     "@fullcalendar/react": "5.10.1",
     "@fullcalendar/timegrid": "5.10.1",
     "@hookform/resolvers": "2.4.0",
+    "@iconify/react": "4.0.0",
     "@mui/lab": "5.0.0-alpha.80",
     "@mui/material": "5.6.4",
     "@mui/x-data-grid": "5.10.0",
@@ -46,6 +46,7 @@
     "i18next-browser-languagedetector": "6.1.2",
     "i18next-http-backend": "1.3.1",
     "jsonwebtoken": "8.5.1",
+    "jspdf": "^2.5.1",
     "keen-slider": "6.6.14",
     "mdi-material-ui": "7.1.0",
     "next": "12.1.6",
@@ -63,19 +64,23 @@
     "react-hook-form": "7.3.0",
     "react-hot-toast": "2.1.1",
     "react-i18next": "11.14.3",
+    "react-pdf": "^6.2.2",
     "react-perfect-scrollbar": "1.5.8",
     "react-popper": "2.2.5",
     "react-redux": "8.0.1",
-    "react-to-pdf": "0.0.14",
     "react-window": "^1.8.8",
     "recharts": "2.1.6",
     "stylis": "4.0.10",
     "stylis-plugin-rtl": "2.1.1",
     "use-places-autocomplete": "^4.0.0",
-    "yup": "0.32.9",
-    "@iconify/react": "4.0.0"
+    "yup": "0.32.9"
   },
   "devDependencies": {
+    "@iconify/iconify": "3.0.0",
+    "@iconify/json": "2.1.131",
+    "@iconify/tools": "2.1.1",
+    "@iconify/types": "2.0.0",
+    "@iconify/utils": "2.0.1",
     "@types/cleave.js": "1.4.6",
     "@types/draft-js": "0.11.8",
     "@types/google.maps": "^3.50.1",
@@ -99,11 +104,6 @@
     "eslint-plugin-import": "2.25.4",
     "next-transpile-modules": "9.0.0",
     "prettier": "2.6.2",
-    "typescript": "4.6.4",
-    "@iconify/iconify": "3.0.0",
-    "@iconify/json": "2.1.131",
-    "@iconify/tools": "2.1.1",
-    "@iconify/types": "2.0.0",
-    "@iconify/utils": "2.0.1"
+    "typescript": "4.6.4"
   }
 }
