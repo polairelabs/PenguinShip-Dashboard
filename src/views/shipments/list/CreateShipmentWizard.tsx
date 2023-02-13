@@ -28,8 +28,16 @@ import {
   clearCreateShipmentStatus,
   createShipment
 } from "../../../store/apps/shipments";
-import SelectAddressFormController, { AddressType } from "../../../components/addresses/selectAddressFormController";
-import { Address, BoughtShipment, Package, Rate, ShipmentInsurance } from "../../../types/apps/NavashipTypes";
+import SelectAddressFormController, {
+  AddressType
+} from "../../../components/addresses/selectAddressFormController";
+import {
+  Address,
+  BoughtShipment,
+  Package,
+  Rate,
+  ShipmentInsurance
+} from "../../../types/apps/NavashipTypes";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
 import { fetchAddresses } from "../../../store/apps/addresses";
@@ -189,7 +197,8 @@ const CreateShipmentWizard = () => {
   // To create a shipment or keep old one
   const [createNewShipment, setCreateNewShipment] = useState<boolean>(true);
   // Create shipment loading
-  const [createShipmentLoading, setCreateShipmentLoading] = useState<boolean>(false);
+  const [createShipmentLoading, setCreateShipmentLoading] =
+    useState<boolean>(false);
   // Select rate loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
 
@@ -884,7 +893,12 @@ const CreateShipmentWizard = () => {
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 600, color: "text.primary", mb: 4, justifyContent: "center" }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "text.primary",
+                      mb: 4,
+                      justifyContent: "center"
+                    }}
                   >
                     {steps[activeStep].description}
                   </Typography>
@@ -924,7 +938,8 @@ const CreateShipmentWizard = () => {
                     flexDirection: "column",
                     alignItems: "center",
                     p: 6
-                  }}>
+                  }}
+                >
                   {/*<Box*/}
                   {/*  component="img"*/}
                   {/*  sx={{*/}
@@ -1005,8 +1020,7 @@ const CreateShipmentWizard = () => {
                 item
                 xs={12}
                 sx={{ display: "flex", justifyContent: "end" }}
-              >
-              </Grid>
+              ></Grid>
               <Grid
                 item
                 xs={12}

@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 // ** Next Imports
 import Head from "next/head";

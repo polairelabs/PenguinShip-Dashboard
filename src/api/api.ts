@@ -25,20 +25,6 @@ const http = axios.create({
 
 export const httpRequest = http;
 
-httpRequest.interceptors.request.use(
-  async (config) => {
-    const accessToken = localStorage.getItem(authConfig.storageAccessTokenKey);
-    if (accessToken) {
-      // @ts-ignore
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    return config;
-  },
-  (error) => {
-    // No action
-  }
-);
-
 function instanceOfApiErrorResponse(error: any): error is ApiErrorResponse {
   return "status_code" in error && "status" in error && "message" in error;
 }

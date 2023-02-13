@@ -28,9 +28,7 @@ const PrintImage = ({ src }) => {
     }
   };
 
-  return (
-    <button onClick={handlePrint}>Print</button>
-  );
+  return <button onClick={handlePrint}>Print</button>;
 };
 
 export default PrintImage;

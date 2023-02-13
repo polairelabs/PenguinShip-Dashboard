@@ -4,7 +4,8 @@ import BaseApi, { ApiError } from "../../../api/api";
 import {
   CreatedShipment,
   Rate,
-  Shipment, BoughtShipment
+  Shipment,
+  BoughtShipment
 } from "../../../types/apps/NavashipTypes";
 import { Status } from "../../index";
 import { Dispatch } from "redux";

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import authConfig from "src/configs/auth";
 import {
   AuthValuesType,
@@ -9,6 +9,7 @@ import {
   ErrCallbackType,
   User
 } from "./types";
+import { httpRequest } from "../api/api";
 
 const defaultProvider: AuthValuesType = {
   user: null,
@@ -38,6 +39,45 @@ const AuthProvider = ({ children }: Props) => {
   const router = useRouter();
 
   useEffect(() => {
+    // SET AXIOS INTERCEPTORS HERE
+    console.log("SET AXIOS INTERCEPTORS HERE");
+    const reqInterceptor = httpRequest.interceptors.request.use(
+      async (config) => {
+        const accessToken = localStorage.getItem(
+          authConfig.storageAccessTokenKey
+        );
+        if (accessToken) {
+          // @ts-ignore
+          config.headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return config;
+      },
+      (error) => {
+        // No action
+      }
+    );
+
+    const resInterceptor = httpRequest.interceptors.response.use(
+      async (response) => {
+        return response;
+      },
+      (error) => {
+        let axiosError = error as AxiosError;
+        if (axiosError.response?.status == 401) {
+          handleLogout();
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      // Remove all intercepts when done
+      httpRequest.interceptors.request.eject(reqInterceptor);
+      httpRequest.interceptors.response.eject(resInterceptor);
+    };
+  }, []);
+
+  useEffect(() => {
     const initAuth = async (): Promise<void> => {
       setIsInitialized(true);
       const userData = window.localStorage.getItem(
@@ -49,8 +89,7 @@ const AuthProvider = ({ children }: Props) => {
         setLoading(false);
       } else {
         setLoading(false);
-        resetAuthValues();
-        router.push("/login");
+        handleLogout();
       }
     };
     initAuth();
@@ -86,6 +125,7 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const handleLogout = () => {
+    console.log("Resetting and signing out...");
     resetAuthValues();
     router.push("/login");
   };
@@ -96,7 +136,7 @@ const AuthProvider = ({ children }: Props) => {
     window.localStorage.removeItem(authConfig.storageUserDataKey);
     window.localStorage.removeItem(authConfig.storageAccessTokenKey);
     window.localStorage.removeItem(authConfig.storageRefreshTokenKey);
-  }
+  };
 
   const handleRegister = (
     params: RegisterParams,

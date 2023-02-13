@@ -61,7 +61,6 @@ const UserDropdown = (props: Props) => {
   };
 
   const handleDropdownClose = (url?: string) => {
-    console.log(user);
     if (url) {
       router.push(url);
     }
