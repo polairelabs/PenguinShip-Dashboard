@@ -12,7 +12,7 @@ import CardContent from "@mui/material/CardContent";
 
 import * as yup from "yup";
 import toast from "react-hot-toast";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
 
 import StepperCustomDot from "./StepperCustomDot";
@@ -51,8 +51,8 @@ import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../../hooks/useAuth";
 import jsPDF from "jspdf";
-import PrintImage from "../../../pages/print/printImage";
 import Link from "next/link";
+import InsuranceField from "../../../components/fields/insuranceField";
 
 const steps = [
   {
@@ -169,10 +169,10 @@ const CreateShipmentWizard = () => {
   // Selectable lists as to not change the store when we filter on them
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
   const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
-  const [insuranceData, setInsuranceData] = useState<ShipmentInsurance>({
-    amountToInsure: "0",
-    insured: false
-  });
+
+  // Insurance state
+  const [amountToInsure, setAmountToInsure] = useState<string | undefined>();
+  const [insured, setInsured] = useState<boolean>(false);
 
   const lastInsertedAddress = useSelector(
     (state: RootState) => state.addresses.lastInsertedAddress
@@ -446,7 +446,7 @@ const CreateShipmentWizard = () => {
     }
   });
 
-  const { handleSubmit: handleRateSubmit } = useForm();
+  const { control: rateControl, handleSubmit: handleRateSubmit } = useForm();
 
   const handleBack = () => {
     scrollToTheTop();
@@ -483,8 +483,8 @@ const CreateShipmentWizard = () => {
         receiverCompany: deliveryAddress?.company,
         receiverPhone: deliveryAddress?.phone,
         receiverEmail: deliveryAddress?.email,
-        insured: insuranceData.insured,
-        amountToInsure: Number(insuranceData.amountToInsure)
+        insured: insured,
+        amountToInsure: amountToInsure
       };
 
       setCreateShipmentLoading(true);
@@ -740,7 +740,6 @@ const CreateShipmentWizard = () => {
                   currentParcel={selectedPackage}
                   selectablePackages={selectablePackages}
                   handleSelectedPackageChange={handleSelectedPackageChange}
-                  setInsuranceData={setInsuranceData}
                   control={packageControl}
                   errors={packageErrors}
                 />
@@ -826,11 +825,17 @@ const CreateShipmentWizard = () => {
                   {steps[activeStep].description}
                 </Typography>
                 <Box height={"40vh"}>
-                  <RateSelect
-                    rates={rates}
-                    selectedRate={selectedRate}
-                    setSelectedRate={setSelectedRate}
-                    showRateError={showRateError}
+                  <Controller
+                    name="rate"
+                    control={rateControl}
+                    render={({ field: { value, onChange } }) => (
+                      <RateSelect
+                        rates={rates}
+                        selectedRate={selectedRate}
+                        setSelectedRate={setSelectedRate}
+                        showRateError={showRateError}
+                      />
+                    )}
                   />
                 </Box>
               </Grid>
@@ -843,14 +848,30 @@ const CreateShipmentWizard = () => {
               >
                 <Divider orientation="vertical" />
               </GridDividerStyle>
-              <Grid item xs={12} sm={5}>
+              <SecondColumnGridStyle item xs={12} sm={5}>
+                <Grid item xs={12} sm={12}>
+                  <Box>
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
+                      >
+                        Additional add-ons
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Divider
+                  orientation="horizontal"
+                  sx={{ width: "50%", display: "flex", my: 4 }}
+                />
                 <ShippingLabel
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
                   rate={selectedRate}
                 />
-              </Grid>
+              </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}

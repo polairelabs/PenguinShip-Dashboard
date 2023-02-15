@@ -12,6 +12,7 @@ import {
 import { styled } from "@mui/material/styles";
 
 const MUITableCell = styled(TableCell)<TableCellBaseProps>(({ theme }) => ({
+  display: "flex",
   borderBottom: 0,
   paddingLeft: "0 !important",
   paddingRight: "0 !important",
@@ -78,94 +79,112 @@ const ShippingLabel = ({
         variant="body2"
         sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}
       >
-        Shipping Label (preview)
+        Shipping Label (Preview)
       </Typography>
-
       <TableContainer>
         <Table>
           <TableBody>
             {sourceAddress?.street1 && (
-              <TableRow style={{ width: "10px" }}>
+              <TableRow>
                 <MUITableCell>
-                  <Typography variant="body2" fontWeight="bold">
+                  <Typography component="span" variant="body2" color="primary">
                     From:
                   </Typography>
+                  {
+                    <Typography
+                      variant="body2"
+                      display="inline"
+                      sx={{ marginLeft: "2rem" }}
+                    >
+                      {addressLabel(sourceAddress)}
+                    </Typography>
+                  }
                 </MUITableCell>
-                <MUITableCell>
-                  <Typography variant="body2" fontWeight="480">
-                    {addressLabel(sourceAddress)}
-                  </Typography>
-                </MUITableCell>
+                {(sourceAddress?.name ||
+                  sourceAddress?.company ||
+                  sourceAddress?.phone ||
+                  sourceAddress?.email) && (
+                  <MUITableCell>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="primary"
+                      sx={{ visibility: "hidden" }}
+                    >
+                      From:
+                    </Typography>
+                    {
+                      <Typography
+                        variant="body2"
+                        display="inline"
+                        sx={{ marginLeft: "2rem" }}
+                      >
+                        {displayAdditionalPersonInfo(sourceAddress)}
+                      </Typography>
+                    }
+                  </MUITableCell>
+                )}
               </TableRow>
             )}
-            {sourceAddress?.street1 &&
-              (sourceAddress?.name ||
-                sourceAddress?.company ||
-                sourceAddress?.phone ||
-                sourceAddress?.email) && (
-                <TableRow>
-                  <MUITableCell></MUITableCell>
-                  <MUITableCell>
-                    <Typography variant="body2" fontStyle="italic">
-                      {displayAdditionalPersonInfo(sourceAddress)}
-                    </Typography>
-                  </MUITableCell>
-                </TableRow>
-              )}
+
             {deliveryAddress?.street1 && (
               <TableRow>
                 <MUITableCell>
-                  <Typography variant="body2" fontWeight="bold">
+                  <Typography component="span" variant="body2" color="primary">
                     To:
                   </Typography>
+                  {
+                    <Typography
+                      variant="body2"
+                      display="inline"
+                      sx={{ marginLeft: "3.15rem" }}
+                    >
+                      {addressLabel(deliveryAddress)}
+                    </Typography>
+                  }
                 </MUITableCell>
-                <MUITableCell>
-                  <Typography variant="body2" fontWeight="480">
-                    {addressLabel(deliveryAddress)}
-                  </Typography>
-                </MUITableCell>
+                {(deliveryAddress?.name ||
+                  deliveryAddress?.company ||
+                  deliveryAddress?.phone ||
+                  deliveryAddress?.email) && (
+                  <MUITableCell>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="primary"
+                      sx={{ visibility: "hidden" }}
+                    >
+                      To:
+                    </Typography>
+                    {
+                      <Typography
+                        variant="body2"
+                        display="inline"
+                        sx={{ marginLeft: "3.15rem" }}
+                      >
+                        {displayAdditionalPersonInfo(deliveryAddress)}
+                      </Typography>
+                    }
+                  </MUITableCell>
+                )}
               </TableRow>
             )}
-            {deliveryAddress?.street1 &&
-              (deliveryAddress?.name ||
-                deliveryAddress?.company ||
-                deliveryAddress?.phone ||
-                deliveryAddress?.email) && (
-                <TableRow>
-                  <MUITableCell></MUITableCell>
-                  <MUITableCell>
-                    <Typography variant="body2" fontStyle="italic">
-                      {displayAdditionalPersonInfo(deliveryAddress)}
-                    </Typography>
-                  </MUITableCell>
-                </TableRow>
-              )}
+
             {parcel?.name && (
               <TableRow>
                 <MUITableCell>
-                  <Typography variant="body2" fontWeight="bold">
+                  <Typography component="span" variant="body2" color="primary">
                     Parcel:
                   </Typography>
-                </MUITableCell>
-                <MUITableCell>
-                  <Typography variant="body2" fontWeight="480">
-                    {displayPackageInfo(parcel)}
-                  </Typography>
-                </MUITableCell>
-              </TableRow>
-            )}
-            {rate && (
-              <TableRow>
-                <MUITableCell>
-                  <Typography variant="body2" fontWeight="bold">
-                    Rate:
-                  </Typography>
-                </MUITableCell>
-                <MUITableCell>
-                  <Typography variant="body2" fontWeight="480">
-                    {rate?.carrier} {rate?.service} - {rate?.rate}{" "}
-                    {rate?.currency}
-                  </Typography>
+                  {
+                    <Typography
+                      variant="body2"
+                      display="inline"
+                      sx={{ marginLeft: "1.6rem" }}
+                    >
+                      {displayPackageInfo(parcel)}
+                    </Typography>
+                  }
                 </MUITableCell>
               </TableRow>
             )}

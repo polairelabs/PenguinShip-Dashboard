@@ -40,7 +40,6 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     // SET AXIOS INTERCEPTORS HERE
-    console.log("SET AXIOS INTERCEPTORS HERE");
     const reqInterceptor = httpRequest.interceptors.request.use(
       async (config) => {
         const accessToken = localStorage.getItem(

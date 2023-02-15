@@ -18,7 +18,6 @@ interface PackageSelectProps {
   currentParcel: Package | null | undefined;
   selectablePackages: Package[];
   handleSelectedPackageChange: (parcel: Package | null) => void;
-  setInsuranceData: (insuranceData: ShipmentInsurance) => void;
   control: any;
   errors: any;
 }
@@ -27,25 +26,10 @@ const SelectPackageFormController = ({
   currentParcel,
   selectablePackages,
   handleSelectedPackageChange,
-  setInsuranceData,
   control,
   errors
 }: PackageSelectProps) => {
-  const [parcelInsured, setParcelInsured] = useState<boolean>(false);
-  const [insuranceAmount, setInsuranceAmount] = useState<string>("");
-
-  useEffect(() => {
-    const insuranceData = {
-      insured: parcelInsured,
-      amountToInsure: insuranceAmount
-    } as ShipmentInsurance;
-    setInsuranceData(insuranceData);
-  }, [parcelInsured, insuranceAmount]);
-
   const handlePackageChange = (event, newValue) => {
-    if (!newValue) {
-      setParcelInsured(false);
-    }
     let selectedPackage = newValue as Package | null;
     handleSelectedPackageChange(selectedPackage);
     errors.parcel = "";
@@ -54,18 +38,6 @@ const SelectPackageFormController = ({
   const parcelOptionLabel = (parcel: Package) => {
     return parcel.name;
   };
-
-  const insureParcelSwitch = () => {
-    setParcelInsured(!parcelInsured);
-  };
-
-  const handleInsuranceChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInsuranceAmount(event.target.value);
-  };
-
-  useEffect(() => {
-    setInsuranceAmount(currentParcel?.value ?? "");
-  }, [currentParcel]);
 
   return (
     <Box sx={{ height: "34vh" }}>
@@ -106,29 +78,6 @@ const SelectPackageFormController = ({
       <Grid container spacing={2}>
         <Grid item xs={12} mb={2}>
           <Typography variant="body2">Additional add-ons</Typography>
-        </Grid>
-
-        <Grid item>
-          <FormControlLabel
-            disabled={!currentParcel}
-            label="Insure Parcel"
-            control={<Switch onChange={insureParcelSwitch} />}
-          />
-          {parcelInsured && (
-            <TextField
-              disabled={!currentParcel}
-              sx={{ width: 200 }}
-              onChange={handleInsuranceChange}
-              value={insuranceAmount}
-              label="Amount to insure"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">US$</InputAdornment>
-                )
-              }}
-            />
-          )}
         </Grid>
       </Grid>
     </Box>
