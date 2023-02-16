@@ -40,7 +40,7 @@ const SelectPackageFormController = ({
   };
 
   return (
-    <Box sx={{ height: "34vh" }}>
+    <Box>
       <Grid item xs={12} sm={12} mb={8}>
         <FormControl fullWidth>
           <Controller
@@ -74,11 +74,6 @@ const SelectPackageFormController = ({
             {errors.parcel.message}
           </FormHelperText>
         )}
-      </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={12} mb={2}>
-          <Typography variant="body2">Additional add-ons</Typography>
-        </Grid>
       </Grid>
     </Box>
   );

@@ -46,7 +46,7 @@ import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 import { fetchPackages } from "../../../store/apps/packages";
-import { Box } from "@mui/material";
+import { Box, Hidden } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../../hooks/useAuth";
@@ -527,7 +527,7 @@ const CreateShipmentWizard = () => {
   // Style to be applied on the second grid column on the left
   const SecondColumnGridStyle = styled(Grid)(() => ({
     [theme.breakpoints.down("sm")]: {
-      marginTop: "5.2rem"
+      marginTop: "0.5rem",
     }
   }));
 
@@ -535,7 +535,7 @@ const CreateShipmentWizard = () => {
     return (
       <Typography my={4} variant="body2">
         {selectedRate ? (
-          <>
+          <Box>
             {"You're going to be charged "}
             <Typography variant="body2" fontWeight="bold" component="span">
               ${selectedRate.rate}
@@ -543,9 +543,11 @@ const CreateShipmentWizard = () => {
             {" via "}
             {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending with{" "}
             {auth.user?.subscriptionDetail.cardLastFourDigits}
-          </>
+          </Box>
         ) : (
-          ""
+          <Box sx={{visibility: "hidden"}}>
+            &nbsp;
+          </Box>
         )}
       </Typography>
     );
@@ -586,6 +588,9 @@ const CreateShipmentWizard = () => {
                 <Divider orientation="vertical" />
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
+                <Hidden smUp>
+                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                </Hidden>
                 <Grid item>
                   <Box>
                     <Box>
@@ -672,6 +677,9 @@ const CreateShipmentWizard = () => {
                 <Divider orientation="vertical" />
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
+                <Hidden smUp>
+                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
@@ -754,6 +762,9 @@ const CreateShipmentWizard = () => {
                 <Divider orientation="vertical" />
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
+                <Hidden smUp>
+                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
@@ -824,7 +835,7 @@ const CreateShipmentWizard = () => {
                 >
                   {steps[activeStep].description}
                 </Typography>
-                <Box height={"40vh"}>
+                <Box>
                   <Controller
                     name="rate"
                     control={rateControl}
@@ -849,6 +860,9 @@ const CreateShipmentWizard = () => {
                 <Divider orientation="vertical" />
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
+                <Hidden smUp>
+                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
@@ -923,53 +937,26 @@ const CreateShipmentWizard = () => {
                   >
                     {steps[activeStep].description}
                   </Typography>
-                  {/*<Typography*/}
-                  {/*  variant="body2"*/}
-                  {/*  sx={{ fontWeight: 600, color: "text.primary", mb: 4, justifyContent: "center"  }}*/}
-                  {/*>*/}
-                  {/*  {boughtShipment.trackingCode}*/}
-                  {/*</Typography>*/}
                 </Box>
-                {/*<Box*/}
-                {/*  sx={{*/}
-                {/*    display: "flex",*/}
-                {/*    flexDirection: "column",*/}
-                {/*    alignItems: "center",*/}
-                {/*  }}>*/}
-                {/*  <Box>*/}
-                {/*    <Button*/}
-                {/*      onClick={() => {*/}
-                {/*        handleDownload(boughtShipment.postageLabelUrl, boughtShipment.trackingCode);*/}
-                {/*      }}*/}
-                {/*    >*/}
-                {/*      Print*/}
-                {/*    </Button>*/}
-                {/*    <Button*/}
-                {/*      onClick={() => {*/}
-                {/*        handleDownload(boughtShipment.postageLabelUrl, boughtShipment.trackingCode);*/}
-                {/*      }}*/}
-                {/*    >*/}
-                {/*      Download*/}
-                {/*    </Button>*/}
-                {/*  </Box>*/}
-                {/*</Box>*/}
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    p: 6
+                    p: 2,
+                    mb: 4,
                   }}
                 >
-                  {/*<Box*/}
-                  {/*  component="img"*/}
-                  {/*  sx={{*/}
-                  {/*    height: { xs: "55%", md: "65%" },*/}
-                  {/*    width: { xs: "50%", md: "60%" }*/}
-                  {/*  }}*/}
-                  {/*  alt="Shipping label"*/}
-                  {/*  src={`${boughtShipment.postageLabelUrl}`}*/}
-                  {/*/>*/}
+                  <Box
+                    component="img"
+                    sx={{
+                      maxHeight: { xs: "400px", md: "630px" },
+                      maxWidth: { xs: "300px", md: "400px" },
+                      border: "1px dashed black"
+                    }}
+                    alt="Shipping label"
+                    src={`${boughtShipment.postageLabelUrl}`}
+                  />
                   {/*<Document file="https://www.uab.edu/citherapy/images/pdf_files/CIT_Training_MAL_manual.pdf"/>*/}
                 </Box>
               </Grid>
@@ -983,6 +970,9 @@ const CreateShipmentWizard = () => {
                 <Divider orientation="vertical" />
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
+                <Hidden smUp>
+                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>

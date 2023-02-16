@@ -94,7 +94,7 @@ const ShippingLabel = ({
                     <Typography
                       variant="body2"
                       display="inline"
-                      sx={{ marginLeft: "2rem" }}
+                      sx={{ marginLeft: "2rem", fontWeight: "480" }}
                     >
                       {addressLabel(sourceAddress)}
                     </Typography>
@@ -137,7 +137,7 @@ const ShippingLabel = ({
                     <Typography
                       variant="body2"
                       display="inline"
-                      sx={{ marginLeft: "3.15rem" }}
+                      sx={{ marginLeft: "3.15rem", fontWeight: "480" }}
                     >
                       {addressLabel(deliveryAddress)}
                     </Typography>
@@ -180,7 +180,7 @@ const ShippingLabel = ({
                     <Typography
                       variant="body2"
                       display="inline"
-                      sx={{ marginLeft: "1.6rem" }}
+                      sx={{ marginLeft: "1.6rem", fontWeight: "480" }}
                     >
                       {displayPackageInfo(parcel)}
                     </Typography>

@@ -124,7 +124,6 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const handleLogout = () => {
-    console.log("Resetting and signing out...");
     resetAuthValues();
     router.push("/login");
   };

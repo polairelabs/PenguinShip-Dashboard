@@ -43,7 +43,7 @@ const RateSelect = ({
   };
 
   return (
-    <Box sx={{ height: "36vh", overflowY: "auto" }}>
+    <Box sx={{ maxHeight: "36vh", overflowY: "auto" }}>
       <Grid item>
         <Grid item sm={6}>
           {showRateError && (
