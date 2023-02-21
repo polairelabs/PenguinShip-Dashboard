@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Step from "@mui/material/Step";
@@ -35,8 +35,7 @@ import {
   Address,
   BoughtShipment,
   Package,
-  Rate,
-  ShipmentInsurance
+  Rate
 } from "../../../types/apps/NavashipTypes";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
@@ -46,13 +45,12 @@ import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 import { fetchPackages } from "../../../store/apps/packages";
-import { Box, Hidden } from "@mui/material";
+import { Box, CircularProgress, Hidden } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../../hooks/useAuth";
-import jsPDF from "jspdf";
 import Link from "next/link";
-import InsuranceField from "../../../components/fields/insuranceField";
+import { convertAndDownloadImageToPdf, printPdf } from "../../../utils";
 
 const steps = [
   {
@@ -206,12 +204,34 @@ const CreateShipmentWizard = () => {
   const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
   const [openPackageModal, setOpenPackageModal] = useState<boolean>(false);
 
-  const PreviewRef = useRef(null);
+  const [postageImageWidth, setPostageImageWidth] = useState<number>();
+  const [postageImageHeight, setPostageImageHeight] = useState<number>();
+  const [postageImageLoaded, setPostageImageLoaded] = useState<boolean>(false);
 
-  const handleDownload = (imageUrl: string, trackingNumber: string) => {
-    const pdf = new jsPDF();
-    pdf.addImage(imageUrl, "JPEG", 15, 40, 500, 500);
-    pdf.save(`shipping-label-${trackingNumber}.pdf`);
+  const handleImageLoad = (event) => {
+    const imgElement = event.target;
+    setPostageImageWidth(imgElement.width);
+    setPostageImageHeight(imgElement.height);
+    setPostageImageLoaded(true);
+  };
+
+  const handleDownloadPdf = (imageUrl: string, trackingNumber: string) => {
+    if (!postageImageWidth || !postageImageHeight) {
+      return;
+    }
+    convertAndDownloadImageToPdf(
+      imageUrl,
+      postageImageWidth,
+      postageImageHeight,
+      `shipping-label-${trackingNumber}`
+    );
+  };
+
+  const handlePrintPdf = (imageUrl: string) => {
+    if (!postageImageWidth || !postageImageHeight) {
+      return;
+    }
+    printPdf(imageUrl, postageImageWidth, postageImageHeight);
   };
 
   const handleAddressModalToggle = () => {
@@ -527,7 +547,7 @@ const CreateShipmentWizard = () => {
   // Style to be applied on the second grid column on the left
   const SecondColumnGridStyle = styled(Grid)(() => ({
     [theme.breakpoints.down("sm")]: {
-      marginTop: "0.5rem",
+      marginTop: "0.5rem"
     }
   }));
 
@@ -545,9 +565,7 @@ const CreateShipmentWizard = () => {
             {auth.user?.subscriptionDetail.cardLastFourDigits}
           </Box>
         ) : (
-          <Box sx={{visibility: "hidden"}}>
-            &nbsp;
-          </Box>
+          <Box sx={{ visibility: "hidden" }}>&nbsp;</Box>
         )}
       </Typography>
     );
@@ -589,7 +607,10 @@ const CreateShipmentWizard = () => {
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
                 <Hidden smUp>
-                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                  <Divider
+                    orientation="horizontal"
+                    sx={{ width: "50%", my: 4 }}
+                  />
                 </Hidden>
                 <Grid item>
                   <Box>
@@ -678,7 +699,10 @@ const CreateShipmentWizard = () => {
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
                 <Hidden smUp>
-                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                  <Divider
+                    orientation="horizontal"
+                    sx={{ width: "50%", my: 4 }}
+                  />
                 </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
@@ -763,7 +787,10 @@ const CreateShipmentWizard = () => {
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
                 <Hidden smUp>
-                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                  <Divider
+                    orientation="horizontal"
+                    sx={{ width: "50%", my: 4 }}
+                  />
                 </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
@@ -861,7 +888,10 @@ const CreateShipmentWizard = () => {
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
                 <Hidden smUp>
-                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                  <Divider
+                    orientation="horizontal"
+                    sx={{ width: "50%", my: 4 }}
+                  />
                 </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
@@ -944,7 +974,7 @@ const CreateShipmentWizard = () => {
                     flexDirection: "column",
                     alignItems: "center",
                     p: 2,
-                    mb: 4,
+                    mb: 4
                   }}
                 >
                   <Box
@@ -956,8 +986,8 @@ const CreateShipmentWizard = () => {
                     }}
                     alt="Shipping label"
                     src={`${boughtShipment.postageLabelUrl}`}
+                    onLoad={handleImageLoad}
                   />
-                  {/*<Document file="https://www.uab.edu/citherapy/images/pdf_files/CIT_Training_MAL_manual.pdf"/>*/}
                 </Box>
               </Grid>
               <GridDividerStyle
@@ -971,7 +1001,10 @@ const CreateShipmentWizard = () => {
               </GridDividerStyle>
               <SecondColumnGridStyle item xs={12} sm={5}>
                 <Hidden smUp>
-                  <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
+                  <Divider
+                    orientation="horizontal"
+                    sx={{ width: "50%", my: 4 }}
+                  />
                 </Hidden>
                 <Grid item xs={12} sm={12}>
                   <Box>
@@ -984,21 +1017,30 @@ const CreateShipmentWizard = () => {
                       </Typography>
                     </Box>
                     <Box my={3}>
-                      <Link href={`/shipments/list`} passHref>
-                        <Button
-                          sx={{ padding: 2 }}
-                          variant="outlined"
-                          color="info"
-                        >
-                          Print
-                        </Button>
-                      </Link>
+                      <Button
+                        sx={{ padding: 2 }}
+                        variant="outlined"
+                        color="info"
+                        onClick={() =>
+                          handlePrintPdf(boughtShipment.postageLabelUrl)
+                        }
+                        disabled={!postageImageLoaded}
+                      >
+                        Print
+                      </Button>
                     </Box>
                     <Box my={3}>
                       <Button
                         sx={{ padding: 2 }}
                         variant="outlined"
                         color="info"
+                        onClick={() =>
+                          handleDownloadPdf(
+                            boughtShipment.postageLabelUrl,
+                            boughtShipment.trackingCode
+                          )
+                        }
+                        disabled={!postageImageLoaded}
                       >
                         Download
                       </Button>
@@ -1031,11 +1073,6 @@ const CreateShipmentWizard = () => {
                 item
                 xs={12}
                 sx={{ display: "flex", justifyContent: "end" }}
-              ></Grid>
-              <Grid
-                item
-                xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
               >
                 <Button
                   size="large"
