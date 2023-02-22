@@ -38,7 +38,10 @@ const PackagesList = () => {
   );
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowCount, setRowCount] = useState(100);
+  const [pageSize, setPageSize] = useState<number>(() => {
+    const storedPageSize = localStorage.getItem("packagesDataGridSize");
+    return storedPageSize ? Number(storedPageSize) : 100;
+  });
 
   const totalCount = useSelector((state: RootState) => state.packages.total);
 
@@ -181,11 +184,11 @@ const PackagesList = () => {
   useEffect(() => {
     // Called when first mounted as well
     dispatch(
-      fetchPackages({ offset: currentPage, size: rowCount, order: "desc" })
+      fetchPackages({ offset: currentPage, size: pageSize, order: "desc" })
     );
     dispatch(setOffset(currentPage));
-    dispatch(setSize(rowCount));
-  }, [currentPage, rowCount]);
+    dispatch(setSize(pageSize));
+  }, [currentPage, pageSize]);
 
   // Delete toast
   useEffect(() => {
@@ -200,6 +203,11 @@ const PackagesList = () => {
     }
     dispatch(clearDeleteStatus());
   }, [store.deleteStatus]);
+
+  const onPageSizeChange = (size: number) => {
+    setPageSize(size);
+    window.localStorage.setItem("packagesDataGridSize", size.toString());
+  };
 
   return (
     <Grid container spacing={6}>
@@ -223,8 +231,9 @@ const PackagesList = () => {
             pagination
             paginationMode="server"
             rowsPerPageOptions={[20, 50, 100]}
+            pageSize={pageSize}
             rowCount={totalCount}
-            onPageSizeChange={(count) => setRowCount(count)}
+            onPageSizeChange={(count) => onPageSizeChange(count)}
             onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
             componentsProps={{

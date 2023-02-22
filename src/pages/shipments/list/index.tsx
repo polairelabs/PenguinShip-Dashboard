@@ -29,7 +29,7 @@ import {
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
 import {
-  capitalizeAndLowerCase,
+  capitalizeFirstLetterOnly,
   dateToHumanReadableFormat
 } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
@@ -53,7 +53,10 @@ const ShipmentsList = () => {
   const [searchText, setSearchText] = useState("");
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowCount, setRowCount] = useState(100);
+  const [pageSize, setPageSize] = useState<number>(() => {
+    const storedPageSize = localStorage.getItem("shipmentsDataGridSize");
+    return storedPageSize ? Number(storedPageSize) : 100;
+  });
   const [openRateSelect, setOpenRateSelect] = useState<boolean>(false);
   const [selectedShipment, setSelectedShipment] = useState<
     Shipment | undefined
@@ -92,10 +95,10 @@ const ShipmentsList = () => {
     }
     const deliveryAddress = getRecipientAddress(shipment);
     return receiverName
-      ? capitalizeAndLowerCase(receiverName) +
+      ? capitalizeFirstLetterOnly(receiverName) +
           ", " +
-          capitalizeAndLowerCase(deliveryAddress.city)
-      : capitalizeAndLowerCase(deliveryAddress.city);
+          capitalizeFirstLetterOnly(deliveryAddress.city)
+      : capitalizeFirstLetterOnly(deliveryAddress.city);
   };
 
   const getRecipientAddress = (shipment: Shipment) => {
@@ -107,11 +110,11 @@ const ShipmentsList = () => {
   useEffect(() => {
     // Called when first mounted as well
     dispatch(
-      fetchShipments({ offset: currentPage, size: rowCount, order: "desc" })
+      fetchShipments({ offset: currentPage, size: pageSize, order: "desc" })
     );
     dispatch(setOffset(currentPage));
-    dispatch(setSize(rowCount));
-  }, [currentPage, rowCount]);
+    dispatch(setSize(pageSize));
+  }, [currentPage, pageSize]);
 
   // Delete toast
   useEffect(() => {
@@ -126,6 +129,11 @@ const ShipmentsList = () => {
     }
     dispatch(clearDeleteStatus());
   }, [store.deleteStatus]);
+
+  const onPageSizeChange = (size: number) => {
+    setPageSize(size);
+    window.localStorage.setItem("shipmentsDataGridSize", size.toString());
+  };
 
   const ActionsCell = memo(
     ({ row, hoveredRow, handleBuyRate, handleDelete }: ActionsCellProps) => {
@@ -389,8 +397,9 @@ const ShipmentsList = () => {
             pagination
             paginationMode="server"
             rowsPerPageOptions={[20, 50, 100]}
+            pageSize={pageSize}
             rowCount={store.total}
-            onPageSizeChange={(count) => setRowCount(count)}
+            onPageSizeChange={(count) => onPageSizeChange(count)}
             onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
             components={{ Toolbar: QuickSearchToolbar }}

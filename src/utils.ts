@@ -47,7 +47,7 @@ export const printPdf = (
   URL.revokeObjectURL(url);
 };
 
-export const capitalizeAndLowerCase = (str: string) => {
+export const capitalizeFirstLetterOnly = (str: string) => {
   return str
     .toLowerCase()
     .replace(/(^|\s)[a-z]/g, (char) => char.toUpperCase());

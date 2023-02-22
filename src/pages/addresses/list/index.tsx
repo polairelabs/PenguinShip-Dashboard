@@ -40,7 +40,10 @@ const AddressesList = () => {
   );
   const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowCount, setRowCount] = useState(100);
+  const [pageSize, setPageSize] = useState<number>(() => {
+    const storedPageSize = localStorage.getItem("addressesDataGridSize");
+    return storedPageSize ? Number(storedPageSize) : 100;
+  });
 
   const totalCount = useSelector((state: RootState) => state.addresses.total);
 
@@ -189,11 +192,11 @@ const AddressesList = () => {
   useEffect(() => {
     // Called when first mounted as well
     dispatch(
-      fetchAddresses({ offset: currentPage, size: rowCount, order: "desc" })
+      fetchAddresses({ offset: currentPage, size: pageSize, order: "desc" })
     );
     dispatch(setOffset(currentPage));
-    dispatch(setSize(rowCount));
-  }, [currentPage, rowCount]);
+    dispatch(setSize(pageSize));
+  }, [currentPage, pageSize]);
 
   // Delete toast
   useEffect(() => {
@@ -208,6 +211,11 @@ const AddressesList = () => {
     }
     dispatch(clearDeleteStatus());
   }, [store.deleteStatus]);
+
+  const onPageSizeChange = (size: number) => {
+    setPageSize(size);
+    window.localStorage.setItem("addressesDataGridSize", size.toString());
+  };
 
   return (
     <Grid container spacing={6}>
@@ -231,8 +239,9 @@ const AddressesList = () => {
             pagination
             paginationMode="server"
             rowsPerPageOptions={[20, 50, 100]}
+            pageSize={pageSize}
             rowCount={totalCount}
-            onPageSizeChange={(count) => setRowCount(count)}
+            onPageSizeChange={(count) => onPageSizeChange(count)}
             onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
             componentsProps={{

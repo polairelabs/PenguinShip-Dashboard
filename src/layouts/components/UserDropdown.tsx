@@ -28,6 +28,7 @@ import { useAuth } from "src/hooks/useAuth";
 
 // ** Type Imports
 import { Settings } from "src/@core/context/settingsContext";
+import { capitalizeFirstLetterOnly } from "../../utils";
 
 interface Props {
   settings: Settings;
@@ -142,7 +143,9 @@ const UserDropdown = (props: Props) => {
               }}
             >
               <Typography sx={{ fontWeight: 600 }}>
-                {user?.firstName + " " + user?.lastName}
+                {capitalizeFirstLetterOnly(user?.firstName ?? "") +
+                  " " +
+                  capitalizeFirstLetterOnly(user?.lastName ?? "")}
               </Typography>
               <Typography
                 variant="body2"
