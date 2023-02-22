@@ -91,6 +91,7 @@ export const shipmentsSlice = createSlice({
     allShipments: [] as Shipment[],
     total: 0,
     createShipmentStatus: "" as Status,
+    fetchRatesStatus: "" as Status,
     buyShipmentRateStatus: "" as Status,
     deleteStatus: "" as Status,
     createShipmentError: "",
@@ -115,6 +116,9 @@ export const shipmentsSlice = createSlice({
     },
     clearDeleteStatus: (state) => {
       state.deleteStatus = "";
+    },
+    clearFetchRatesStatus: (state) => {
+      state.fetchRatesStatus = "";
     },
     setOffset: (state, action) => {
       state.offset = action.payload;
@@ -153,6 +157,13 @@ export const shipmentsSlice = createSlice({
       })
       .addCase(fetchRates.fulfilled, (state, action) => {
         state.selectedRates = action.payload?.rates;
+        state.fetchRatesStatus = "SUCCESS";
+      })
+      .addCase(fetchRates.pending, (state, action) => {
+        state.fetchRatesStatus = "LOADING";
+      })
+      .addCase(fetchRates.rejected, (state, action) => {
+        state.fetchRatesStatus = "ERROR";
       })
       .addCase(deleteShipment.fulfilled, (state, action) => {
         state.deleteStatus = "SUCCESS";
@@ -171,6 +182,7 @@ export const {
   clearDeleteStatus,
   setOffset,
   setSize,
-  clearRates
+  clearRates,
+  clearFetchRatesStatus
 } = shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

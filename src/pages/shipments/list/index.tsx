@@ -107,29 +107,6 @@ const ShipmentsList = () => {
     ) as ShipmentAddress;
   };
 
-  useEffect(() => {
-    // Called when first mounted as well
-    dispatch(
-      fetchShipments({ offset: currentPage, size: pageSize, order: "desc" })
-    );
-    dispatch(setOffset(currentPage));
-    dispatch(setSize(pageSize));
-  }, [currentPage, pageSize]);
-
-  // Delete toast
-  useEffect(() => {
-    if (store.deleteStatus === "SUCCESS") {
-      toast.success("Shipment was successfully deleted", {
-        position: "top-center"
-      });
-    } else if (store.deleteStatus === "ERROR") {
-      toast.error("Error deleting shipment", {
-        position: "top-center"
-      });
-    }
-    dispatch(clearDeleteStatus());
-  }, [store.deleteStatus]);
-
   const onPageSizeChange = (size: number) => {
     setPageSize(size);
     window.localStorage.setItem("shipmentsDataGridSize", size.toString());
@@ -137,7 +114,8 @@ const ShipmentsList = () => {
 
   const ActionsCell = memo(
     ({ row, hoveredRow, handleBuyRate, handleDelete }: ActionsCellProps) => {
-      if (row && hoveredRow === row.id) {
+      if (row) {
+        // && hoveredRow === row.ids
         return (
           <Box
             sx={{
@@ -148,7 +126,7 @@ const ShipmentsList = () => {
             }}
           >
             {row.status == ShipmentStatus.PURCHASED && (
-              <Tooltip title="Cancel label">
+              <Tooltip title="Return label">
                 <IconButton onClick={() => {}}>
                   <Close />
                 </IconButton>
@@ -196,7 +174,7 @@ const ShipmentsList = () => {
       return searchRegex.test(searchString);
     });
 
-    if (searchValue.length) {
+    if (searchValue?.length) {
       setSearchResult(filteredRows);
     } else {
       setSearchResult([]);
@@ -380,6 +358,29 @@ const ShipmentsList = () => {
     dispatch(deleteShipment(id));
   };
 
+  useEffect(() => {
+    // Called when first mounted as well
+    dispatch(
+      fetchShipments({ offset: currentPage, size: pageSize, order: "desc" })
+    );
+    dispatch(setOffset(currentPage));
+    dispatch(setSize(pageSize));
+  }, [currentPage, pageSize]);
+
+  // Delete toast
+  useEffect(() => {
+    if (store.deleteStatus === "SUCCESS") {
+      toast.success("Shipment was successfully deleted", {
+        position: "top-center"
+      });
+    } else if (store.deleteStatus === "ERROR") {
+      toast.error("Error deleting shipment", {
+        position: "top-center"
+      });
+    }
+    dispatch(clearDeleteStatus());
+  }, [store.deleteStatus]);
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -391,7 +392,7 @@ const ShipmentsList = () => {
           />
           <DataGrid
             autoHeight
-            rows={searchResult.length > 0 ? searchResult : store.allShipments}
+            rows={searchResult?.length > 0 ? searchResult : store.allShipments}
             columns={columns}
             disableSelectionOnClick
             pagination

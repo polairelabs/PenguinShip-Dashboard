@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 
 import {
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -14,9 +15,9 @@ import { Rate, Shipment } from "../../types/apps/NavashipTypes";
 import { useEffect, useState } from "react";
 import {
   buyShipmentRate,
+  clearFetchRatesStatus,
   clearBuyShipmentError,
   clearBuyShipmentRateStatus,
-  clearRates,
   fetchRates
 } from "../../store/apps/shipments";
 import RateSelect from "./rateSelect";
@@ -43,12 +44,14 @@ const SelectRateModal = ({
     (state: RootState) => state.shipments.selectedRates
   );
   const [selectedRate, setSelectedRate] = useState<Rate | null>();
+  const [fetchRatesLoading, setFetchRatesLoading] = useState<boolean>(false);
   // Select rate button loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
   const auth = useAuth();
 
   useEffect(() => {
     if (shipment) {
+      setFetchRatesLoading(true);
       dispatch(fetchRates(shipment?.id));
     }
   }, [shipment]);
@@ -64,7 +67,6 @@ const SelectRateModal = ({
     setSelectRateLoading(true);
     await dispatch(buyShipmentRate(setShipmentRatePayload));
     setSelectRateLoading(false);
-
     // use effect handle toaster message and reset
   };
 
@@ -88,6 +90,17 @@ const SelectRateModal = ({
     dispatch(clearBuyShipmentRateStatus());
   }, [shipmentStore.buyShipmentRateStatus]);
 
+  useEffect(() => {
+    // Progress bar to load data
+    if (
+      shipmentStore.fetchRatesStatus === "SUCCESS" ||
+      shipmentStore.fetchRatesStatus === "ERROR"
+    ) {
+      setFetchRatesLoading(false);
+    }
+    dispatch(clearFetchRatesStatus());
+  }, [shipmentStore.fetchRatesStatus]);
+
   const getPurchaseLabelMessage = (selectedRate: Rate | null | undefined) => {
     return (
       <Typography my={4} variant="body2">
@@ -110,7 +123,8 @@ const SelectRateModal = ({
 
   const onClose = () => {
     setSelectedRate(null);
-    dispatch(clearRates());
+    // dispatch(clearRates());
+    setFetchRatesLoading(false);
     handleDialogToggle();
   };
 
@@ -161,11 +175,26 @@ const SelectRateModal = ({
           {/*/>*/}
           <form onSubmit={handleRateSubmit(onSubmitSelectRate)}>
             <Grid item xs={12} mb={8}>
-              <RateSelect
-                rates={rates}
-                selectedRate={selectedRate}
-                setSelectedRate={setSelectedRate}
-              />
+              {fetchRatesLoading && (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "12vh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              )}
+              {!fetchRatesLoading && (
+                <RateSelect
+                  rates={rates}
+                  selectedRate={selectedRate}
+                  setSelectedRate={setSelectedRate}
+                />
+              )}
             </Grid>
             <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
               {getPurchaseLabelMessage(selectedRate)}
