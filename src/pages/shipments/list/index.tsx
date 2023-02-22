@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridValueGetterParams } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import DeleteOutline from "mdi-material-ui/DeleteOutline";
@@ -20,61 +20,34 @@ import {
   ShipmentStatus
 } from "src/types/apps/NavashipTypes";
 import {
+  clearDeleteStatus,
   deleteShipment,
   fetchShipments,
-  clearDeleteStatus,
   setOffset,
   setSize
 } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
-import { capitalizeAndLowerCase } from "../../../utils";
+import {
+  capitalizeAndLowerCase,
+  dateToHumanReadableFormat
+} from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
 import { Close, CurrencyUsd } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
+import { escapeRegExp } from "@mui/x-data-grid/utils/utils";
 
 interface CellType {
   row: Shipment;
 }
 
-const getCarrierImageSrc = (shipment: Shipment) => {
-  return `/images/carriers/${shipment?.rate?.carrier?.toLowerCase()}_logo.svg`;
-};
-
-const getRecipientInfo = (shipment: Shipment) => {
-  const found = shipment.persons.find(
-    (person) => person.type === PersonType.RECEIVER
-  );
-  let receiverName;
-  if (found) {
-    const receiver: Person = found;
-    receiverName = receiver.name ?? receiver.company;
-  }
-  const deliveryAddress = getRecipientAddress(shipment);
-  return receiverName
-    ? capitalizeAndLowerCase(receiverName) +
-        ", " +
-        capitalizeAndLowerCase(deliveryAddress.city)
-    : capitalizeAndLowerCase(deliveryAddress.city);
-};
-
-const getSourceAddress = (shipment: Shipment) => {
-  return shipment.addresses.find(
-    (address) => address.type === ShipmentAddressType.SOURCE
-  ) as ShipmentAddress;
-};
-
-const getRecipientAddress = (shipment: Shipment) => {
-  return shipment.addresses.find(
-    (address) => address.type === ShipmentAddressType.DESTINATION
-  ) as ShipmentAddress;
-};
-
-const dateToHumanReadableFormat = (date: Date) => {
-  const dateObj = new Date(date);
-  return dateObj.toDateString() + ", " + dateObj.toLocaleTimeString();
-};
+interface ActionsCellProps {
+  row: Shipment | null | undefined;
+  hoveredRow: any;
+  handleBuyRate: any;
+  handleDelete: any;
+}
 
 const ShipmentsList = () => {
   const [searchText, setSearchText] = useState("");
@@ -85,6 +58,7 @@ const ShipmentsList = () => {
   const [selectedShipment, setSelectedShipment] = useState<
     Shipment | undefined
   >(undefined);
+  const [searchResult, setSearchResult] = useState<Shipment[]>([]);
 
   const store = useSelector((state: RootState) => state.shipments);
 
@@ -103,9 +77,38 @@ const ShipmentsList = () => {
     setOpenRateSelect(!openRateSelect);
   };
 
+  const getCarrierImageSrc = (shipment: Shipment) => {
+    return `/images/carriers/${shipment?.rate?.carrier?.toLowerCase()}_logo.svg`;
+  };
+
+  const getRecipientInfo = (shipment: Shipment) => {
+    const found = shipment.persons.find(
+      (person) => person.type === PersonType.RECEIVER
+    );
+    let receiverName;
+    if (found) {
+      const receiver: Person = found;
+      receiverName = receiver.name ?? receiver.company;
+    }
+    const deliveryAddress = getRecipientAddress(shipment);
+    return receiverName
+      ? capitalizeAndLowerCase(receiverName) +
+          ", " +
+          capitalizeAndLowerCase(deliveryAddress.city)
+      : capitalizeAndLowerCase(deliveryAddress.city);
+  };
+
+  const getRecipientAddress = (shipment: Shipment) => {
+    return shipment.addresses.find(
+      (address) => address.type === ShipmentAddressType.DESTINATION
+    ) as ShipmentAddress;
+  };
+
   useEffect(() => {
     // Called when first mounted as well
-    dispatch(fetchShipments({ offset: currentPage, size: rowCount }));
+    dispatch(
+      fetchShipments({ offset: currentPage, size: rowCount, order: "desc" })
+    );
     dispatch(setOffset(currentPage));
     dispatch(setSize(rowCount));
   }, [currentPage, rowCount]);
@@ -124,21 +127,72 @@ const ShipmentsList = () => {
     dispatch(clearDeleteStatus());
   }, [store.deleteStatus]);
 
+  const ActionsCell = memo(
+    ({ row, hoveredRow, handleBuyRate, handleDelete }: ActionsCellProps) => {
+      if (row && hoveredRow === row.id) {
+        return (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center"
+            }}
+          >
+            {row.status == ShipmentStatus.PURCHASED && (
+              <Tooltip title="Cancel label">
+                <IconButton onClick={() => {}}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
+            )}
+            {row.status === ShipmentStatus.DRAFT && (
+              <Tooltip title="Buy rate">
+                <IconButton onClick={() => handleBuyRate(row)}>
+                  <CurrencyUsd />
+                </IconButton>
+              </Tooltip>
+            )}
+            {row.status === ShipmentStatus.DRAFT && (
+              <Tooltip title="Delete">
+                <IconButton onClick={() => handleDelete(row.id)}>
+                  <DeleteOutline />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
+        );
+      } else {
+        return null;
+      }
+    }
+  );
+
   const handleSearch = (searchValue) => {
     setSearchText(searchValue);
-    // const searchRegex = new RegExp(escapeRegExp(searchValue), 'i')
-    //
-    // const filteredRows = data.filter(row => {
-    //   return Object.keys(row).some(field => {
-    //     // @ts-ignore
-    //     return searchRegex.test(row[field].toString())
-    //   })
-    // })
-    // if (searchValue.length) {
-    //   setFilteredData(filteredRows)
-    // } else {
-    //   setFilteredData([])
-    // }
+    if (!searchValue) {
+      setSearchResult([]);
+      return;
+    }
+    const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
+    const filteredRows = store.allShipments.filter((row) => {
+      const searchString = [
+        row.rate.carrier,
+        row.rate.service,
+        row.trackingCode,
+        row.status,
+        getRecipientInfo(row)
+      ]
+        .join(" ")
+        .toLowerCase();
+      return searchRegex.test(searchString);
+    });
+
+    if (searchValue.length) {
+      setSearchResult(filteredRows);
+    } else {
+      setSearchResult([]);
+    }
   };
 
   const columns = [
@@ -146,7 +200,10 @@ const ShipmentsList = () => {
       minWidth: 160,
       field: "carrier",
       headerName: "Carrier",
-      cellClassName: "cool",
+      type: "text",
+      valueGetter: (params: GridValueGetterParams) => {
+        return params.row.rate?.carrier.toLowerCase() || "";
+      },
       renderCell: ({ row }: CellType) => {
         if (row?.rate?.carrier) {
           return (
@@ -171,6 +228,10 @@ const ShipmentsList = () => {
       minWidth: 240,
       field: "service",
       headerName: "Service",
+      type: "text",
+      valueGetter: (params: GridValueGetterParams) => {
+        return params.row.rate?.service.toLowerCase() || "";
+      },
       renderCell: ({ row }: CellType) => {
         return (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -230,6 +291,10 @@ const ShipmentsList = () => {
       minWidth: 250,
       field: "recipient",
       headerName: "Recipient",
+      type: "text",
+      valueGetter: (params: GridValueGetterParams) => {
+        return getRecipientInfo(params.row);
+      },
       renderCell: ({ row }: CellType) => {
         const recipientInfo = getRecipientInfo(row);
         const recipientAddress = getRecipientAddress(row);
@@ -261,6 +326,10 @@ const ShipmentsList = () => {
       minWidth: 150,
       field: "date",
       headerName: "Date",
+      type: "date",
+      valueGetter: (params: GridValueGetterParams) => {
+        return params.row.updatedAt;
+      },
       renderCell: ({ row }: CellType) => {
         return (
           <Box sx={{ display: "flex" }}>
@@ -269,7 +338,7 @@ const ShipmentsList = () => {
               variant="body2"
               sx={{ color: "text.primary", fontWeight: 600 }}
             >
-              {dateToHumanReadableFormat(row?.createdAt)}
+              {dateToHumanReadableFormat(row?.updatedAt)}
             </Typography>
           </Box>
         );
@@ -282,40 +351,14 @@ const ShipmentsList = () => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: ({ row }: CellType) => {
-        if (hoveredRow === row.id) {
-          return (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center"
-              }}
-            >
-              {row.status == ShipmentStatus.PURCHASED && (
-                <Tooltip title="Cancel label">
-                  <IconButton onClick={() => {}}>
-                    <Close />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {row.status === ShipmentStatus.DRAFT && (
-                <Tooltip title="Buy rate">
-                  <IconButton onClick={() => handleBuyRate(row)}>
-                    <CurrencyUsd />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {row.status === ShipmentStatus.DRAFT && (
-                <Tooltip title="Delete">
-                  <IconButton onClick={() => handleDelete(row.id)}>
-                    <DeleteOutline />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </Box>
-          );
-        } else return null;
+        return (
+          <ActionsCell
+            row={row}
+            hoveredRow={hoveredRow}
+            handleBuyRate={handleBuyRate}
+            handleDelete={handleDelete}
+          />
+        );
       }
     }
   ];
@@ -340,7 +383,7 @@ const ShipmentsList = () => {
           />
           <DataGrid
             autoHeight
-            rows={store.allShipments}
+            rows={searchResult.length > 0 ? searchResult : store.allShipments}
             columns={columns}
             disableSelectionOnClick
             pagination

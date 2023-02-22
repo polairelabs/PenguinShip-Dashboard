@@ -1,11 +1,5 @@
 import jsPDF from "jspdf";
 
-export const capitalizeAndLowerCase = (str: string) => {
-  return str
-    .toLowerCase()
-    .replace(/(^|\s)[a-z]/g, (char) => char.toUpperCase());
-};
-
 const convertToPdf = (
   imageUrl: string,
   imageWidth: number,
@@ -52,4 +46,15 @@ export const printPdf = (
     printWindow.print();
   }
   URL.revokeObjectURL(url);
+};
+
+export const capitalizeAndLowerCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .replace(/(^|\s)[a-z]/g, (char) => char.toUpperCase());
+};
+
+export const dateToHumanReadableFormat = (date: Date) => {
+  const dateObj = new Date(date);
+  return dateObj.toDateString() + ", " + dateObj.toLocaleTimeString();
 };

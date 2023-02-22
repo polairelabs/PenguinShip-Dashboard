@@ -45,11 +45,10 @@ import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 import { fetchPackages } from "../../../store/apps/packages";
-import { Box, CircularProgress, Hidden } from "@mui/material";
+import { Box, Hidden } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../../hooks/useAuth";
-import Link from "next/link";
 import { convertAndDownloadImageToPdf, printPdf } from "../../../utils";
 
 const steps = [
@@ -77,8 +76,7 @@ const steps = [
     description: "Select one of these following rates"
   },
   {
-    title: "Success",
-    subtitle: "Consult your label",
+    title: "Success!",
     description: "Success! The shipping label was successfully purchased"
   }
 ];
