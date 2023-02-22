@@ -313,10 +313,10 @@ const CreateShipmentWizard = () => {
       toast.success("Label was successfully purchased", {
         position: "top-center"
       });
-      // setSourceAddress(null);
-      // setDeliveryAddress(null);
-      // setSelectedPackage(null);
-      // setSelectedRate(null);
+      setSourceAddress(null);
+      setDeliveryAddress(null);
+      setSelectedPackage(null);
+      setSelectedRate(null);
       setActiveStep(activeStep + 1);
     } else if (shipmentStore.buyShipmentRateStatus === "ERROR") {
       toast.error(`${shipmentStore.buyShipmentError ?? "Error buying label"}`, {
@@ -488,6 +488,7 @@ const CreateShipmentWizard = () => {
   };
 
   const onSubmitCreateShipment = async () => {
+    scrollToTheTop();
     if (createNewShipment) {
       const createShipmentPayload = {
         fromAddressId: sourceAddress?.id,
@@ -517,6 +518,7 @@ const CreateShipmentWizard = () => {
   };
 
   const onSubmitSelectRate = async () => {
+    scrollToTheTop();
     const setShipmentRatePayload = {
       easypostShipmentId: shipmentStore.createdShipment?.id,
       easypostRateId: selectedRate?.id
@@ -640,13 +642,16 @@ const CreateShipmentWizard = () => {
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
-                  rate={selectedRate}
                 />
               </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "2rem"
+                }}
               >
                 <Button
                   size="large"
@@ -732,13 +737,16 @@ const CreateShipmentWizard = () => {
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
-                  rate={selectedRate}
                 />
               </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "2rem"
+                }}
               >
                 <Button
                   size="large"
@@ -820,13 +828,16 @@ const CreateShipmentWizard = () => {
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
-                  rate={selectedRate}
                 />
               </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "space-between" }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "2rem"
+                }}
               >
                 <Button
                   size="large"
@@ -911,13 +922,16 @@ const CreateShipmentWizard = () => {
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
-                  rate={selectedRate}
                 />
               </SecondColumnGridStyle>
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "end" }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "end",
+                  marginTop: "2rem"
+                }}
               >
                 {getPurchaseLabelMessage(selectedRate)}
               </Grid>
@@ -960,6 +974,7 @@ const CreateShipmentWizard = () => {
                       fontWeight: 600,
                       color: "text.primary",
                       mb: 4,
+                      display: "flex",
                       justifyContent: "center"
                     }}
                   >

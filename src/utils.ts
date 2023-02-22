@@ -10,8 +10,7 @@ const convertToPdf = (
   const pageHeight = pdf.internal.pageSize.getHeight();
 
   const aspectRatio = imageWidth / imageHeight;
-  // Take 70% of original image
-  const imgWidthOnPage = pageWidth * 0.7;
+  const imgWidthOnPage = pageWidth * 0.6;
   const imgHeightOnPage = imgWidthOnPage / aspectRatio;
 
   // Centers the image on the page

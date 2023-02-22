@@ -24,14 +24,14 @@ interface ShippingLabelProps {
   sourceAddress: Address | null | undefined;
   deliveryAddress: Address | null | undefined;
   parcel: Package | null | undefined;
-  rate?: Rate | null | undefined;
+  hideTitle?: boolean;
 }
 
 const ShippingLabel = ({
   sourceAddress,
   deliveryAddress,
   parcel,
-  rate
+  hideTitle
 }: ShippingLabelProps) => {
   const addressLabel = (address: Address) => {
     return address?.street1
@@ -65,22 +65,16 @@ const ShippingLabel = ({
     return `${parcel.weight} oz ${dimensions} ${value}`;
   };
 
-  const deliveryDays = (rate: Rate) => {
-    return rate?.deliveryDays
-      ? `Delivery in ${rate.deliveryDays} ${
-          rate.deliveryDays > 1 ? "days" : "day"
-        }`
-      : "";
-  };
-
   return (
-    <Box sx={{ height: "26vh", overflowY: "auto" }} mb={4}>
-      <Typography
-        variant="body2"
-        sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}
-      >
-        Shipping Label (Preview)
-      </Typography>
+    <Box sx={{ minHeight: "16vh", overflowY: "auto" }} mb={4}>
+      {hideTitle === undefined && (
+        <Typography
+          variant="body2"
+          sx={{ fontWeight: 600, color: "text.primary", mb: 2 }}
+        >
+          Shipping Label (Preview)
+        </Typography>
+      )}
       <TableContainer>
         <Table>
           <TableBody>

@@ -121,6 +121,9 @@ export const shipmentsSlice = createSlice({
     },
     setSize: (state, action) => {
       state.size = action.payload;
+    },
+    clearRates: (state) => {
+      state.selectedRates = [];
     }
   },
   extraReducers: (builder) => {
@@ -167,6 +170,7 @@ export const {
   clearBuyShipmentError,
   clearDeleteStatus,
   setOffset,
-  setSize
+  setSize,
+  clearRates
 } = shipmentsSlice.actions;
 export default shipmentsSlice.reducer;

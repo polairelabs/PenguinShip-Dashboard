@@ -43,7 +43,7 @@ const RateSelect = ({
   };
 
   return (
-    <Box sx={{ maxHeight: "36vh", overflowY: "auto" }}>
+    <Box sx={{ maxHeight: "38vh", overflowY: "auto" }}>
       <Grid item>
         <Grid item sm={6}>
           {showRateError && (
@@ -93,7 +93,12 @@ const RateSelect = ({
           ))}
         </Box>
         {(!rates || rates?.length === 0) && (
-          <Typography variant="body2">No rates found</Typography>
+          <Typography
+            variant="body2"
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            No rates found
+          </Typography>
         )}
       </Grid>
     </Box>

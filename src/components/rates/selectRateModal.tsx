@@ -16,6 +16,7 @@ import {
   buyShipmentRate,
   clearBuyShipmentError,
   clearBuyShipmentRateStatus,
+  clearRates,
   fetchRates
 } from "../../store/apps/shipments";
 import RateSelect from "./rateSelect";
@@ -23,6 +24,7 @@ import Grid from "@mui/material/Grid";
 import { LoadingButton } from "@mui/lab";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useAuth } from "../../hooks/useAuth";
 
 interface SelectRateModalProps {
   open: boolean;
@@ -43,6 +45,7 @@ const SelectRateModal = ({
   const [selectedRate, setSelectedRate] = useState<Rate | null>();
   // Select rate button loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
+  const auth = useAuth();
 
   useEffect(() => {
     if (shipment) {
@@ -85,6 +88,32 @@ const SelectRateModal = ({
     dispatch(clearBuyShipmentRateStatus());
   }, [shipmentStore.buyShipmentRateStatus]);
 
+  const getPurchaseLabelMessage = (selectedRate: Rate | null | undefined) => {
+    return (
+      <Typography my={4} variant="body2">
+        {selectedRate ? (
+          <Box>
+            {"You're going to be charged "}
+            <Typography variant="body2" fontWeight="bold" component="span">
+              ${selectedRate.rate}
+            </Typography>
+            {" via "}
+            {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending with{" "}
+            {auth.user?.subscriptionDetail.cardLastFourDigits}
+          </Box>
+        ) : (
+          <Box sx={{ visibility: "hidden" }}>&nbsp;</Box>
+        )}
+      </Typography>
+    );
+  };
+
+  const onClose = () => {
+    setSelectedRate(null);
+    dispatch(clearRates());
+    handleDialogToggle();
+  };
+
   return (
     <Box>
       <Dialog
@@ -92,16 +121,18 @@ const SelectRateModal = ({
         open={open}
         scroll="body"
         maxWidth="md"
-        onClose={handleDialogToggle}
-        onBackdropClick={handleDialogToggle}
+        onClose={onClose}
+        onBackdropClick={onClose}
         key={`select-rate-modal-${shipment?.id}`}
       >
         <DialogTitle>
-          <Box sx={{ textAlign: "center", p: 6 }}>
+          <Box sx={{ textAlign: "center", p: 2 }}>
             <Typography variant="h5" sx={{ mb: 3 }}>
               Buy Rate
             </Typography>
-            <Typography variant="body2">Select a rate to buy</Typography>
+            <Typography variant="body2">
+              Please select a rate that you would like to purchase
+            </Typography>
           </Box>
           <IconButton
             size="small"
@@ -118,6 +149,16 @@ const SelectRateModal = ({
             pt: { xs: 8, sm: 12.5 }
           }}
         >
+          {/*<ShippingLabel*/}
+          {/*  sourceAddress={shipment?.addresses.find(*/}
+          {/*    (address) => address.type === ShipmentAddressType.SOURCE*/}
+          {/*  )}*/}
+          {/*  deliveryAddress={shipment?.addresses.find(*/}
+          {/*    (address) => address.type === ShipmentAddressType.DESTINATION*/}
+          {/*  )}*/}
+          {/*  parcel={shipment?.parcel}*/}
+          {/*  hideTitle={true}*/}
+          {/*/>*/}
           <form onSubmit={handleRateSubmit(onSubmitSelectRate)}>
             <Grid item xs={12} mb={8}>
               <RateSelect
@@ -126,10 +167,13 @@ const SelectRateModal = ({
                 setSelectedRate={setSelectedRate}
               />
             </Grid>
+            <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
+              {getPurchaseLabelMessage(selectedRate)}
+            </Grid>
             <Grid
               item
               xs={12}
-              sx={{ display: "flex", justifyContent: "center" }}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
             >
               <LoadingButton
                 size="large"
