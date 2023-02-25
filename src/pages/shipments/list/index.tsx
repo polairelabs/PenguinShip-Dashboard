@@ -36,7 +36,6 @@ import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolba
 import { Close, CurrencyUsd } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
-import { escapeRegExp } from "@mui/x-data-grid/utils/utils";
 
 interface CellType {
   row: Shipment;
@@ -160,7 +159,7 @@ const ShipmentsList = () => {
       setSearchResult([]);
       return;
     }
-    const searchRegex = new RegExp(escapeRegExp(searchValue), "i");
+    const searchRegex = new RegExp(searchValue, "i");
     const filteredRows = store.allShipments.filter((row) => {
       const searchString = [
         row.rate.carrier,
