@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import authConfig from "src/configs/auth";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -15,7 +14,7 @@ interface ApiErrorResponse {
 }
 
 const headers = {
-  "Content-type": "application/json"
+  "Content-Type": "application/json"
 };
 
 const http = axios.create({
@@ -70,7 +69,7 @@ export const BaseApi = {
 
   async post(url: string, body: object) {
     try {
-      const response = await http.post(url, body);
+      const response = await httpRequest.post(url, body);
       return Promise.resolve(response.data);
     } catch (error) {
       return Promise.reject(handleError(error));
@@ -79,11 +78,11 @@ export const BaseApi = {
 
   async createCheckoutSession(priceId: string, stripeCustomerId: string) {
     try {
-      const response = await http.post(
+      const response = await httpRequest.post(
         "/subscriptions/create-checkout-session/?price=" +
-          priceId +
-          "&customerId=" +
-          stripeCustomerId
+        priceId +
+        "&customerId=" +
+        stripeCustomerId
       );
       return Promise.resolve(response.data);
     } catch (error) {
@@ -93,7 +92,7 @@ export const BaseApi = {
 
   async put(url: string, body: object) {
     try {
-      const response = await http.put(url, body);
+      const response = await httpRequest.put(url, body);
       return Promise.resolve(response.data);
     } catch (error) {
       return Promise.reject(handleError(error));
@@ -102,7 +101,7 @@ export const BaseApi = {
 
   async delete(url: string) {
     try {
-      const response = await http.delete(url);
+      const response = await httpRequest.delete(url);
       return Promise.resolve(response.data);
     } catch (error) {
       return Promise.reject(handleError(error));

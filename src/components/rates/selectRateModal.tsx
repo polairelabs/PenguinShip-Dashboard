@@ -11,7 +11,7 @@ import {
 import { Close } from "mdi-material-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
-import { Rate, Shipment } from "../../types/apps/NavashipTypes";
+import { Rate, Shipment, ShipmentInsurance } from "../../types/apps/NavashipTypes";
 import { useEffect, useState } from "react";
 import {
   buyShipmentRate,
@@ -47,6 +47,10 @@ const SelectRateModal = ({
   const [fetchRatesLoading, setFetchRatesLoading] = useState<boolean>(false);
   // Select rate button loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
+  const [shipmentInsurance, setShipmentInsurance] = useState<ShipmentInsurance>({
+    isInsured: false,
+  });
+
   const auth = useAuth();
 
   useEffect(() => {
@@ -123,7 +127,6 @@ const SelectRateModal = ({
 
   const onClose = () => {
     setSelectedRate(null);
-    // dispatch(clearRates());
     setFetchRatesLoading(false);
     handleDialogToggle();
   };
@@ -193,11 +196,13 @@ const SelectRateModal = ({
                   rates={rates}
                   selectedRate={selectedRate}
                   setSelectedRate={setSelectedRate}
+                  setShipmentInsurance={setShipmentInsurance}
+                  parcel={shipment?.parcel}
                 />
               )}
             </Grid>
             <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
-              {getPurchaseLabelMessage(selectedRate)}
+              {selectedRate && (getPurchaseLabelMessage(selectedRate))}
             </Grid>
             <Grid
               item

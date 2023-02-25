@@ -10,8 +10,8 @@ export interface Package {
 }
 
 export interface ShipmentInsurance {
-  insured: boolean;
-  amountToInsure: string;
+  isInsured: boolean;
+  insuranceAmount?: string;
 }
 
 export interface Address {

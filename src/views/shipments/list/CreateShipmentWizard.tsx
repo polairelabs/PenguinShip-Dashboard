@@ -35,7 +35,7 @@ import {
   Address,
   BoughtShipment,
   Package,
-  Rate
+  Rate, ShipmentInsurance
 } from "../../../types/apps/NavashipTypes";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
@@ -165,10 +165,9 @@ const CreateShipmentWizard = () => {
   // Selectable lists as to not change the store when we filter on them
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
   const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
-
-  // Insurance state
-  const [amountToInsure, setAmountToInsure] = useState<string | undefined>();
-  const [insured, setInsured] = useState<boolean>(false);
+  const [shipmentInsurance, setShipmentInsurance] = useState<ShipmentInsurance>({
+    isInsured: false,
+  });
 
   const lastInsertedAddress = useSelector(
     (state: RootState) => state.addresses.lastInsertedAddress
@@ -502,8 +501,8 @@ const CreateShipmentWizard = () => {
         receiverCompany: deliveryAddress?.company,
         receiverPhone: deliveryAddress?.phone,
         receiverEmail: deliveryAddress?.email,
-        insured: insured,
-        amountToInsure: amountToInsure
+        insured: false,
+        amountToInsure: "1"
       };
 
       setCreateShipmentLoading(true);
@@ -553,21 +552,25 @@ const CreateShipmentWizard = () => {
 
   const getPurchaseLabelMessage = (selectedRate: Rate | null | undefined) => {
     return (
-      <Typography my={4} variant="body2">
+      <Box my={4}>
         {selectedRate ? (
-          <Box>
+          <Typography variant="body2">
             {"You're going to be charged "}
             <Typography variant="body2" fontWeight="bold" component="span">
               ${selectedRate.rate}
             </Typography>
+            {/*{shipmentInsurance.isInsured && Number(shipmentInsurance.insuranceAmount) > 0 && (<Typography variant="body2" fontWeight="bold" component="span">*/}
+            {/*  {" "}${Math.round(Number(shipmentInsurance.insuranceAmount) * 0.05 * 100) / 100}*/}
+            {/*</Typography>)*/}
+            {/*}*/}
             {" via "}
             {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending with{" "}
             {auth.user?.subscriptionDetail.cardLastFourDigits}
-          </Box>
+          </Typography>
         ) : (
           <Box sx={{ visibility: "hidden" }}>&nbsp;</Box>
         )}
-      </Typography>
+      </Box>
     );
   };
 
@@ -880,6 +883,8 @@ const CreateShipmentWizard = () => {
                         rates={rates}
                         selectedRate={selectedRate}
                         setSelectedRate={setSelectedRate}
+                        setShipmentInsurance={setShipmentInsurance}
+                        parcel={selectedPackage}
                         showRateError={showRateError}
                       />
                     )}
@@ -902,22 +907,6 @@ const CreateShipmentWizard = () => {
                     sx={{ width: "50%", my: 4 }}
                   />
                 </Hidden>
-                <Grid item xs={12} sm={12}>
-                  <Box>
-                    <Box>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
-                      >
-                        Additional add-ons
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-                <Divider
-                  orientation="horizontal"
-                  sx={{ width: "50%", display: "flex", my: 4 }}
-                />
                 <ShippingLabel
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
@@ -930,7 +919,6 @@ const CreateShipmentWizard = () => {
                 sx={{
                   display: "flex",
                   justifyContent: "end",
-                  marginTop: "2rem"
                 }}
               >
                 {getPurchaseLabelMessage(selectedRate)}
