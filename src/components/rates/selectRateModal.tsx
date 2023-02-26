@@ -11,7 +11,11 @@ import {
 import { Close } from "mdi-material-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
-import { Rate, Shipment, ShipmentInsurance } from "../../types/apps/NavashipTypes";
+import {
+  Rate,
+  Shipment,
+  ShipmentInsurance
+} from "../../types/apps/NavashipTypes";
 import { useEffect, useState } from "react";
 import {
   buyShipmentRate,
@@ -26,6 +30,7 @@ import { LoadingButton } from "@mui/lab";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
+import PurchaseLabelMessage from "./purchaseLabelMessage";
 
 interface SelectRateModalProps {
   open: boolean;
@@ -47,9 +52,11 @@ const SelectRateModal = ({
   const [fetchRatesLoading, setFetchRatesLoading] = useState<boolean>(false);
   // Select rate button loading
   const [selectRateLoading, setSelectRateLoading] = useState<boolean>(false);
-  const [shipmentInsurance, setShipmentInsurance] = useState<ShipmentInsurance>({
-    isInsured: false,
-  });
+  const [shipmentInsurance, setShipmentInsurance] = useState<ShipmentInsurance>(
+    {
+      isInsured: false
+    }
+  );
 
   const auth = useAuth();
 
@@ -65,7 +72,9 @@ const SelectRateModal = ({
   const onSubmitSelectRate = async () => {
     const setShipmentRatePayload = {
       easypostShipmentId: shipment?.easypostShipmentId,
-      easypostRateId: selectedRate?.id
+      easypostRateId: selectedRate?.id,
+      isInsured: shipmentInsurance.isInsured,
+      insuranceAmount: shipmentInsurance.insuranceAmount,
     };
 
     setSelectRateLoading(true);
@@ -104,26 +113,6 @@ const SelectRateModal = ({
     }
     dispatch(clearFetchRatesStatus());
   }, [shipmentStore.fetchRatesStatus]);
-
-  const getPurchaseLabelMessage = (selectedRate: Rate | null | undefined) => {
-    return (
-      <Typography my={4} variant="body2">
-        {selectedRate ? (
-          <Box>
-            {"You're going to be charged "}
-            <Typography variant="body2" fontWeight="bold" component="span">
-              ${selectedRate.rate}
-            </Typography>
-            {" via "}
-            {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending with{" "}
-            {auth.user?.subscriptionDetail.cardLastFourDigits}
-          </Box>
-        ) : (
-          <Box sx={{ visibility: "hidden" }}>&nbsp;</Box>
-        )}
-      </Typography>
-    );
-  };
 
   const onClose = () => {
     setSelectedRate(null);
@@ -166,16 +155,6 @@ const SelectRateModal = ({
             pt: { xs: 8, sm: 12.5 }
           }}
         >
-          {/*<ShippingLabel*/}
-          {/*  sourceAddress={shipment?.addresses.find(*/}
-          {/*    (address) => address.type === ShipmentAddressType.SOURCE*/}
-          {/*  )}*/}
-          {/*  deliveryAddress={shipment?.addresses.find(*/}
-          {/*    (address) => address.type === ShipmentAddressType.DESTINATION*/}
-          {/*  )}*/}
-          {/*  parcel={shipment?.parcel}*/}
-          {/*  hideTitle={true}*/}
-          {/*/>*/}
           <form onSubmit={handleRateSubmit(onSubmitSelectRate)}>
             <Grid item xs={12} mb={8}>
               {fetchRatesLoading && (
@@ -202,7 +181,10 @@ const SelectRateModal = ({
               )}
             </Grid>
             <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
-              {selectedRate && (getPurchaseLabelMessage(selectedRate))}
+              <PurchaseLabelMessage
+                selectedRate={selectedRate}
+                shipmentInsurance={shipmentInsurance}
+              />
             </Grid>
             <Grid
               item

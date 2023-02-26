@@ -42,7 +42,7 @@ const AddressesList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(() => {
     const storedPageSize = localStorage.getItem("addressesDataGridSize");
-    return storedPageSize ? Number(storedPageSize) : 100;
+    return storedPageSize ? Number(storedPageSize) : 20;
   });
 
   const totalCount = useSelector((state: RootState) => state.addresses.total);

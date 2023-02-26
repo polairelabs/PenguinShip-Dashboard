@@ -80,9 +80,9 @@ export const BaseApi = {
     try {
       const response = await httpRequest.post(
         "/subscriptions/create-checkout-session/?price=" +
-        priceId +
-        "&customerId=" +
-        stripeCustomerId
+          priceId +
+          "&customerId=" +
+          stripeCustomerId
       );
       return Promise.resolve(response.data);
     } catch (error) {

@@ -35,7 +35,8 @@ import {
   Address,
   BoughtShipment,
   Package,
-  Rate, ShipmentInsurance
+  Rate,
+  ShipmentInsurance
 } from "../../../types/apps/NavashipTypes";
 import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
@@ -48,8 +49,8 @@ import { fetchPackages } from "../../../store/apps/packages";
 import { Box, Hidden } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
-import { useAuth } from "../../../hooks/useAuth";
 import { convertAndDownloadImageToPdf, printPdf } from "../../../utils";
+import PurchaseLabelMessage from "../../../components/rates/purchaseLabelMessage";
 
 const steps = [
   {
@@ -147,7 +148,6 @@ const CreateShipmentWizard = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
-  const auth = useAuth();
 
   const shipmentStore = useSelector((state: RootState) => state.shipments);
 
@@ -165,9 +165,11 @@ const CreateShipmentWizard = () => {
   // Selectable lists as to not change the store when we filter on them
   const [selectableAddresses, setSelectableAddresses] = useState<Address[]>([]);
   const [selectablePackages, setSelectablePackages] = useState<Package[]>([]);
-  const [shipmentInsurance, setShipmentInsurance] = useState<ShipmentInsurance>({
-    isInsured: false,
-  });
+  const [shipmentInsurance, setShipmentInsurance] = useState<ShipmentInsurance>(
+    {
+      isInsured: false
+    }
+  );
 
   const lastInsertedAddress = useSelector(
     (state: RootState) => state.addresses.lastInsertedAddress
@@ -520,7 +522,9 @@ const CreateShipmentWizard = () => {
     scrollToTheTop();
     const setShipmentRatePayload = {
       easypostShipmentId: shipmentStore.createdShipment?.id,
-      easypostRateId: selectedRate?.id
+      easypostRateId: selectedRate?.id,
+      isInsured: shipmentInsurance.isInsured,
+      insuranceAmount: shipmentInsurance.insuranceAmount,
     };
 
     // If no rate selected, return and don't submit the form yet
@@ -549,30 +553,6 @@ const CreateShipmentWizard = () => {
       marginTop: "0.5rem"
     }
   }));
-
-  const getPurchaseLabelMessage = (selectedRate: Rate | null | undefined) => {
-    return (
-      <Box my={4}>
-        {selectedRate ? (
-          <Typography variant="body2">
-            {"You're going to be charged "}
-            <Typography variant="body2" fontWeight="bold" component="span">
-              ${selectedRate.rate}
-            </Typography>
-            {/*{shipmentInsurance.isInsured && Number(shipmentInsurance.insuranceAmount) > 0 && (<Typography variant="body2" fontWeight="bold" component="span">*/}
-            {/*  {" "}${Math.round(Number(shipmentInsurance.insuranceAmount) * 0.05 * 100) / 100}*/}
-            {/*</Typography>)*/}
-            {/*}*/}
-            {" via "}
-            {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending with{" "}
-            {auth.user?.subscriptionDetail.cardLastFourDigits}
-          </Typography>
-        ) : (
-          <Box sx={{ visibility: "hidden" }}>&nbsp;</Box>
-        )}
-      </Box>
-    );
-  };
 
   const getStepContent = (step: number) => {
     switch (step) {
@@ -918,10 +898,13 @@ const CreateShipmentWizard = () => {
                 xs={12}
                 sx={{
                   display: "flex",
-                  justifyContent: "end",
+                  justifyContent: "end"
                 }}
               >
-                {getPurchaseLabelMessage(selectedRate)}
+                <PurchaseLabelMessage
+                  selectedRate={selectedRate}
+                  shipmentInsurance={shipmentInsurance}
+                />
               </Grid>
               <Grid
                 item

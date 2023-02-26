@@ -233,6 +233,7 @@ const PackageForm = ({
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
+                    type="number"
                     name="weight"
                     label="Weight"
                     onChange={handlePackageValueChange}
@@ -263,6 +264,7 @@ const PackageForm = ({
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
+                    type="number"
                     name="monetaryValue"
                     label="Value"
                     onChange={handlePackageValueChange}
@@ -303,6 +305,7 @@ const PackageForm = ({
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
+                    type="number"
                     name="length"
                     label="Length"
                     onChange={handlePackageValueChange}
@@ -333,6 +336,7 @@ const PackageForm = ({
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
+                    type="number"
                     label="Width"
                     name="width"
                     onChange={handlePackageValueChange}
@@ -363,6 +367,7 @@ const PackageForm = ({
                 render={({ field: { value, onChange } }) => (
                   <TextField
                     fullWidth
+                    type="number"
                     name="height"
                     label="Height"
                     onChange={handlePackageValueChange}

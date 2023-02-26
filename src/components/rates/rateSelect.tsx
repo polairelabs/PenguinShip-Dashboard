@@ -1,11 +1,23 @@
-import { FormControlLabel, Grid, InputAdornment, Radio, Switch, Typography } from "@mui/material";
+import {
+  Divider,
+  FormControlLabel,
+  Grid,
+  InputAdornment,
+  Radio,
+  Switch,
+  Typography
+} from "@mui/material";
 import Box, { BoxProps } from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
 import FormHelperText from "@mui/material/FormHelperText";
-import { Package, Rate, ShipmentInsurance } from "../../types/apps/NavashipTypes";
+import {
+  Package,
+  Rate,
+  ShipmentInsurance
+} from "../../types/apps/NavashipTypes";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Divider from "@mui/material/Divider";
+import { calculateInsuranceFee } from "../../utils";
 
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderWidth: 1,
@@ -28,20 +40,19 @@ interface RateSelectProps {
   rates: Rate[];
   selectedRate: Rate | null | undefined;
   setSelectedRate: (rate: Rate | null | undefined) => void;
-  setShipmentInsurance: (insurance: ShipmentInsurance) => void,
+  setShipmentInsurance: (insurance: ShipmentInsurance) => void;
   parcel: Package | null | undefined;
   showRateError?: any;
 }
 
 const RateSelect = ({
-                      rates,
-                      selectedRate,
-                      setSelectedRate,
-                      setShipmentInsurance,
-                      parcel,
-                      showRateError
-                    }: RateSelectProps) => {
-  const INSURANCE_FEE = 0.05; // 5% on top of existing price
+  rates,
+  selectedRate,
+  setSelectedRate,
+  setShipmentInsurance,
+  parcel,
+  showRateError
+}: RateSelectProps) => {
   const [insuranceAmount, setInsuranceAmount] = useState<string | undefined>();
   const [isInsured, setInsured] = useState<boolean>(false);
 
@@ -57,30 +68,19 @@ const RateSelect = ({
     });
   }, [insuranceAmount, isInsured]);
 
-  const getInsurance = () => {
-    const insuranceFee = Math.round(Number(insuranceAmount) * INSURANCE_FEE * 100) / 100;
-    return isInsured && insuranceAmount ? ` + (${insuranceFee} USD)*` : "";
-  };
-
-  const CalcWrapper = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    // '&:not(:last-of-type)': {
-    //   marginBottom: theme.spacing(2)
-    // }
-  }));
-
   const deliveryDays = (rate) => {
     return rate.deliveryDays
       ? `Delivery in ${rate.deliveryDays} ${
-        rate.deliveryDays > 1 ? "days" : "day"
-      }`
+          rate.deliveryDays > 1 ? "days" : "day"
+        }`
       : "";
   };
 
   const handleInsuranceAmountChange = (event) => {
     // Limit to 5 digits
+    if (event.target.value.includes("-")) {
+      return;
+    }
     setInsuranceAmount(event.target.value.slice(0, 5));
   };
 
@@ -118,35 +118,29 @@ const RateSelect = ({
                   checked={rate.id === selectedRate?.id}
                   name="form-layouts-collapsible-options-radio"
                   inputProps={{ "aria-label": "Standard Delivery" }}
-                  sx={{ mr: 2, ml: -2.5, mt: -2.5, alignItems: "flex-start" }}
+                  sx={{ alignItems: "flex-start" }}
                 />
                 <Box sx={{ width: "100%" }}>
-
-                  {/*<Box*/}
-                  {/*  component="img"*/}
-                  {/*  sx={{*/}
-                  {/*    width: 200,*/}
-                  {/*    height: 25,*/}
-                  {/*    justifyContent: "flex-end"*/}
-                  {/*  }}*/}
-                  {/*  alt={rate?.carrier}*/}
-                  {/*  src={}*/}
-                  {/*/>*/}
-                  {/*<Typography variant="body2" sx={{ fontWeight: "bold", flexGrow: 1 }}>*/}
-                  {/*  {rate.carrier} {rate.service}*/}
-                  {/*</Typography>*/}
                   <Box sx={{ display: "flex", flexDirection: "row" }}>
-                    <Typography variant="body2"
-                                sx={{
-                                  fontWeight: 600,
-                                  flexGrow: 1
-                                }}>{rate.carrier} {splitStringByCapitalCase(rate.service)}</Typography>
-                    <Typography variant="body2"
-                                sx={{ fontWeight: 700, justifyContent: "flex-end" }}>${rate.rate}</Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 600,
+                        flexGrow: 1
+                      }}
+                    >
+                      {rate.carrier} {splitStringByCapitalCase(rate.service)}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 700, justifyContent: "flex-end" }}
+                    >
+                      ${rate.rate}
+                    </Typography>
                   </Box>
                   <Box sx={{ display: "flex", flexDirection: "row" }}>
                     <Typography variant="body2">
-                      {deliveryDays(rate)} &nbsp;
+                      {deliveryDays(rate)}
                     </Typography>
                   </Box>
                 </Box>
@@ -163,11 +157,11 @@ const RateSelect = ({
           )}
         </Grid>
       </Box>
-      <Grid container mt={6}>
-        <Grid item sm={8}>
-          <Typography variant="body2">
-            Insurance
-          </Typography>
+      <Typography mt={6} variant="body2">
+        Insurance
+      </Typography>
+      <Grid item sm={8} xs={12} mt={2}>
+        <Grid sx={{ display: "flex", flexDirection: "column" }}>
           <FormControlLabel
             label="Insure Shipment"
             control={
@@ -177,41 +171,53 @@ const RateSelect = ({
               />
             }
           />
-          <TextField
-            autoFocus
-            variant="standard"
-            type="number"
-            onChange={handleInsuranceAmountChange}
-            value={insuranceAmount}
-            label="Insurance coverage"
-            InputLabelProps={{ shrink: true }}
-            InputProps={{
-              startAdornment: <InputAdornment position="start">US$</InputAdornment>
+          <Grid
+            my={4}
+            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+          >
+            <TextField
+              autoFocus
+              type="number"
+              onChange={handleInsuranceAmountChange}
+              value={insuranceAmount}
+              label="Insurance coverage"
+              InputLabelProps={{ shrink: true }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">US$</InputAdornment>
+                )
+              }}
+              sx={{ visibility: isInsured ? "visible" : "hidden" }}
+            />
+            <Typography
+              mx={2}
+              variant="h5"
+              sx={{ visibility: isInsured ? "visible" : "hidden" }}
+            >
+              =
+            </Typography>
+            <Box sx={{ visibility: isInsured ? "visible" : "hidden" }}>
+              <Typography variant="body2" sx={{ width: "6rem" }}>
+                Your cost
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                ${calculateInsuranceFee(insuranceAmount ?? "").toFixed(2)}
+              </Typography>
+            </Box>
+          </Grid>
+          <Typography
+            mx={2}
+            my={-3}
+            mb={1}
+            sx={{
+              fontSize: "0.75rem",
+              lineHeight: "1.66",
+              fontWeight: "400",
+              visibility: isInsured ? "visible" : "hidden"
             }}
-            // helperText="Insurance rate is 0.5% of declared value"
-            sx={{ width: 115, visibility: isInsured ? "visible" : "hidden", marginLeft: "1rem" }}
-          />
-        </Grid>
-        <Grid item sm={3} sx={{ mb: { sm: 0, xs: 4 }, order: { sm: 2, xs: 1 } }}>
-          <CalcWrapper>
-            <Typography variant='body2'>Rate:</Typography>
-            <Typography variant='body2' sx={{ fontWeight: 600 }}>
-              $0
-            </Typography>
-          </CalcWrapper>
-          <CalcWrapper>
-            <Typography variant='body2'>Insurance:</Typography>
-            <Typography variant='body2' sx={{ fontWeight: 600 }}>
-              $0
-            </Typography>
-          </CalcWrapper>
-          <Divider />
-          <CalcWrapper>
-            <Typography variant='body2'>Total:</Typography>
-            <Typography variant='body2' sx={{ fontWeight: 600 }}>
-              $0
-            </Typography>
-          </CalcWrapper>
+          >
+            Insurance rate is 0.5% of declared value
+          </Typography>
         </Grid>
       </Grid>
     </Box>

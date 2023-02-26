@@ -162,10 +162,10 @@ const ShipmentsList = () => {
     const searchRegex = new RegExp(searchValue, "i");
     const filteredRows = store.allShipments.filter((row) => {
       const searchString = [
-        row.rate.carrier,
-        row.rate.service,
-        row.trackingCode,
-        row.status,
+        row.rate?.carrier,
+        row.rate?.service,
+        row?.trackingCode,
+        row?.status,
         getRecipientInfo(row)
       ]
         .join(" ")
@@ -173,7 +173,7 @@ const ShipmentsList = () => {
       return searchRegex.test(searchString);
     });
 
-    if (searchValue?.length) {
+    if (filteredRows?.length) {
       setSearchResult(filteredRows);
     } else {
       setSearchResult([]);

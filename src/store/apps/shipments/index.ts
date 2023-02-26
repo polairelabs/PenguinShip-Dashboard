@@ -41,7 +41,7 @@ export const createShipment = createAsyncThunk(
 export const buyShipmentRate = createAsyncThunk(
   "shipments/setShipmentRate",
   async (
-    data: { [key: string]: number | string | undefined },
+    data: { [key: string]: number | string | boolean | undefined },
     { getState, dispatch, rejectWithValue }: Redux
   ) => {
     try {
