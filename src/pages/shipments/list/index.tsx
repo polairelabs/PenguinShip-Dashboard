@@ -36,16 +36,10 @@ import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolba
 import { Close, CurrencyUsd } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
+import ReturnConfirmationDialog from "../../../components/confirmationdialog/returnConfirmationDialog";
 
 interface CellType {
   row: Shipment;
-}
-
-interface ActionsCellProps {
-  row: Shipment | null | undefined;
-  hoveredRow: any;
-  handleBuyRate: any;
-  handleDelete: any;
 }
 
 const ShipmentsList = () => {
@@ -61,6 +55,8 @@ const ShipmentsList = () => {
     Shipment | undefined
   >(undefined);
   const [searchResult, setSearchResult] = useState<Shipment[]>([]);
+  const [returnConfirmationDialog, setReturnConfirmationDialog] =
+    useState<boolean>(false);
 
   const store = useSelector((state: RootState) => state.shipments);
 
@@ -110,48 +106,6 @@ const ShipmentsList = () => {
     setPageSize(size);
     window.localStorage.setItem("shipmentsDataGridSize", size.toString());
   };
-
-  const ActionsCell = memo(
-    ({ row, hoveredRow, handleBuyRate, handleDelete }: ActionsCellProps) => {
-      if (row) {
-        // && hoveredRow === row.ids
-        return (
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center"
-            }}
-          >
-            {row.status == ShipmentStatus.PURCHASED && (
-              <Tooltip title="Return label">
-                <IconButton onClick={() => {}}>
-                  <Close />
-                </IconButton>
-              </Tooltip>
-            )}
-            {row.status === ShipmentStatus.DRAFT && (
-              <Tooltip title="Buy rate">
-                <IconButton onClick={() => handleBuyRate(row)}>
-                  <CurrencyUsd />
-                </IconButton>
-              </Tooltip>
-            )}
-            {row.status === ShipmentStatus.DRAFT && (
-              <Tooltip title="Delete">
-                <IconButton onClick={() => handleDelete(row.id)}>
-                  <DeleteOutline />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
-        );
-      } else {
-        return null;
-      }
-    }
-  );
 
   const handleSearch = (searchValue) => {
     setSearchText(searchValue);
@@ -273,7 +227,7 @@ const ShipmentsList = () => {
       }
     },
     {
-      minWidth: 250,
+      minWidth: 265,
       field: "recipient",
       headerName: "Recipient",
       type: "text",
@@ -352,21 +306,64 @@ const ShipmentsList = () => {
     {
       field: "actions",
       headerName: "",
-      width: 120,
+      flex: 0.25,
+      minWidth: 150,
       sortable: false,
       disableColumnMenu: true,
       renderCell: ({ row }: CellType) => {
-        return (
-          <ActionsCell
-            row={row}
-            hoveredRow={hoveredRow}
-            handleBuyRate={handleBuyRate}
-            handleDelete={handleDelete}
-          />
-        );
+        if (row) {
+          return (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end"
+                // visibility: hoveredRow == row.id ? "visible" : "hidden"
+              }}
+            >
+              {row.status == ShipmentStatus.PURCHASED && (
+                <Tooltip title="Return label">
+                  <IconButton
+                    onClick={() => {
+                      handleReturnLabel();
+                    }}
+                  >
+                    <Close />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {row.status === ShipmentStatus.DRAFT && (
+                <Tooltip title="Buy rate">
+                  <IconButton onClick={() => handleBuyRate(row)}>
+                    <CurrencyUsd />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {row.status === ShipmentStatus.DRAFT && (
+                <Tooltip title="Delete">
+                  <IconButton onClick={() => handleDelete(row.id)}>
+                    <DeleteOutline />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
+          );
+        } else {
+          return null;
+        }
       }
     }
   ];
+
+  const handleConfirmationReturnDialogToggle = () => {
+    setReturnConfirmationDialog(!returnConfirmationDialog);
+  };
+
+  const handleReturnLabel = () => {
+    setReturnConfirmationDialog(true);
+  };
 
   const handleBuyRate = (shipment: Shipment) => {
     setOpenRateSelect(true);
@@ -441,6 +438,15 @@ const ShipmentsList = () => {
                   display: "none"
                 }
             }}
+          />
+          <ReturnConfirmationDialog
+            open={returnConfirmationDialog}
+            handleDialogToggle={handleConfirmationReturnDialogToggle}
+            title={"Do you want to return this label?"}
+            confirmButtonCallback={() => {
+              console.log("hehe");
+            }}
+            shipment={selectedShipment}
           />
         </Card>
       </Grid>

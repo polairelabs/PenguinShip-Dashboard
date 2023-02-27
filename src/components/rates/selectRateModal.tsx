@@ -29,7 +29,6 @@ import Grid from "@mui/material/Grid";
 import { LoadingButton } from "@mui/lab";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useAuth } from "../../hooks/useAuth";
 import PurchaseLabelMessage from "./purchaseLabelMessage";
 
 interface SelectRateModalProps {
@@ -57,8 +56,6 @@ const SelectRateModal = ({
       isInsured: false
     }
   );
-
-  const auth = useAuth();
 
   useEffect(() => {
     if (shipment) {

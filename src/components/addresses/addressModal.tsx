@@ -14,7 +14,7 @@ import { Address } from "../../types/apps/NavashipTypes";
 interface AddressModalProps {
   open: boolean;
   handleDialogToggle: () => void;
-  addressToEdit?: Address; // If value is defined, this means that the modal will be used to edit entry
+  addressToEdit?: Address; // If value is defined, this means that the modal will be used to edit an entry
   fromShipmentWizard?: boolean; // Indicates if the instance of the current modal was opened from shipmentWizard
 }
 

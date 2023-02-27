@@ -49,7 +49,8 @@ export const buyShipmentRate = createAsyncThunk(
       const state = getState();
       const params = {
         offset: state.shipments.offset,
-        size: state.shipments.size
+        size: state.shipments.size,
+        order: "desc"
       };
       dispatch(fetchShipments(params));
       return response;
@@ -67,7 +68,8 @@ export const deleteShipment = createAsyncThunk(
     const state = getState();
     const params = {
       offset: state.shipments.offset,
-      size: state.shipments.size
+      size: state.shipments.size,
+      order: "desc"
     };
     dispatch(fetchShipments(params));
     return response;

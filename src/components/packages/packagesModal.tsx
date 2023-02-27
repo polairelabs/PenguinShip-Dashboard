@@ -14,7 +14,7 @@ import { Package } from "../../types/apps/NavashipTypes";
 interface PackageModalProps {
   open: boolean;
   handleDialogToggle: () => void;
-  packageToEdit?: Package; // If value is defined, this means that the modal will be used to edit entry
+  packageToEdit?: Package; // If value is defined, this means that the modal will be used to edit an entry
   fromShipmentWizard?: boolean;
 }
 

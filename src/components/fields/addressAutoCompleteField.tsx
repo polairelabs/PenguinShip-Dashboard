@@ -13,13 +13,13 @@ type Libraries = (
 )[];
 const places: Libraries = ["places"];
 
-export default function AddressAutoCompleteField({
+const AddressAutoCompleteField = ({
   addressDetails,
   setAddressDetails,
   handleAddressValueChange,
   error,
   addressToEdit // When we edit an address, this object will be defined
-}) {
+}) => {
   const [value, setValue] = useState<string>("");
   // To detect if street1 has changed
   const [valueHasChanged, setValueHasChanged] = useState<boolean>(false);
@@ -65,7 +65,7 @@ export default function AddressAutoCompleteField({
       street1Value={addressToEdit?.street1}
     />
   );
-}
+};
 
 const PlacesAutoCompleteComboBox = ({
   addressDetails,
@@ -170,3 +170,5 @@ const PlacesAutoCompleteComboBox = ({
     />
   );
 };
+
+export default AddressAutoCompleteField;
