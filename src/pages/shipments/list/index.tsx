@@ -307,6 +307,26 @@ const ShipmentsList = () => {
       }
     },
     {
+      minWidth: 110,
+      field: "insurance",
+      headerName: "Insurance",
+      renderCell: ({ row }: CellType) => {
+        const insured = row.insured;
+        if (insured) {
+          return (
+            <CustomChip
+              title={`Insured for $${row.insuranceAmount}`}
+              size="small"
+              skin="light"
+              color={"success"}
+              label={"INSURED"}
+              sx={{ "& .MuiChip-label": { textTransform: "capitalize" } }}
+            />
+          );
+        }
+      }
+    },
+    {
       flex: 1,
       minWidth: 150,
       field: "date",

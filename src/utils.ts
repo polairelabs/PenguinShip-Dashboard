@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 
-const INSURANCE_FEE = 0.05;
+const INSURANCE_FEE_PERCENTAGE = 0.5;
 
 const convertToPdf = (
   imageUrl: string,
@@ -61,5 +61,9 @@ export const dateToHumanReadableFormat = (date: Date) => {
 };
 
 export const calculateInsuranceFee = (insuranceAmount: string) => {
-  return Math.round(Number(insuranceAmount) * INSURANCE_FEE * 100) / 100;
+  return (
+    Math.round(
+      Number(insuranceAmount) * (INSURANCE_FEE_PERCENTAGE / 100) * 100
+    ) / 100
+  );
 };

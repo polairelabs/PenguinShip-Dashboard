@@ -1,17 +1,12 @@
-// ** MUI Imports
 import MuiChip from "@mui/material/Chip";
 
-// ** Types
 import { CustomChipProps } from "./types";
 
-// ** Hooks Imports
 import useBgColor, { UseBgColorType } from "src/@core/hooks/useBgColor";
+import { Tooltip } from "@mui/material";
 
 const Chip = (props: CustomChipProps) => {
-  // ** Props
   const { sx, skin, color } = props;
-
-  // ** Hook
   const bgColors = useBgColor();
 
   const colors: UseBgColorType = {
@@ -24,12 +19,14 @@ const Chip = (props: CustomChipProps) => {
   };
 
   return (
-    <MuiChip
-      {...props}
-      variant="filled"
-      {...(skin === "light" && { className: "MuiChip-light" })}
-      sx={skin === "light" && color ? Object.assign(colors[color], sx) : sx}
-    />
+    <Tooltip title={props.title ? props.title : ""}>
+      <MuiChip
+        {...props}
+        variant="filled"
+        {...(skin === "light" && { className: "MuiChip-light" })}
+        sx={skin === "light" && color ? Object.assign(colors[color], sx) : sx}
+      />
+    </Tooltip>
   );
 };
 

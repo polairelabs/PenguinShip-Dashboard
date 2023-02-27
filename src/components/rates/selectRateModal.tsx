@@ -74,7 +74,7 @@ const SelectRateModal = ({
       easypostShipmentId: shipment?.easypostShipmentId,
       easypostRateId: selectedRate?.id,
       isInsured: shipmentInsurance.isInsured,
-      insuranceAmount: shipmentInsurance.insuranceAmount,
+      insuranceAmount: shipmentInsurance.insuranceAmount
     };
 
     setSelectRateLoading(true);
@@ -91,12 +91,9 @@ const SelectRateModal = ({
       });
       handleDialogToggle();
     } else if (shipmentStore.buyShipmentRateStatus === "ERROR") {
-      toast.error(
-        `Error: ${shipmentStore.buyShipmentError ?? "Error buying label"}`,
-        {
-          position: "top-center"
-        }
-      );
+      toast.error(`${shipmentStore.buyShipmentError ?? "Error buying label"}`, {
+        position: "top-center"
+      });
       handleDialogToggle();
       dispatch(clearBuyShipmentError());
     }

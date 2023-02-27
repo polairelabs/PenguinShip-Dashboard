@@ -524,7 +524,7 @@ const CreateShipmentWizard = () => {
       easypostShipmentId: shipmentStore.createdShipment?.id,
       easypostRateId: selectedRate?.id,
       isInsured: shipmentInsurance.isInsured,
-      insuranceAmount: shipmentInsurance.insuranceAmount,
+      insuranceAmount: shipmentInsurance.insuranceAmount
     };
 
     // If no rate selected, return and don't submit the form yet

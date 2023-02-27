@@ -50,6 +50,8 @@ export interface Shipment {
   postageLabelUrl: string;
   publicTrackingUrl: string;
   persons: Person[];
+  insured: boolean;
+  insuranceAmount?: string;
 }
 
 // Response from Shipment buy endpoint

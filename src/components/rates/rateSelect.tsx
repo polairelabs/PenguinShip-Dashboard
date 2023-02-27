@@ -158,7 +158,7 @@ const RateSelect = ({
         </Grid>
       </Box>
       <Typography mt={6} variant="body2">
-        Insurance
+        Insurance (optional)
       </Typography>
       <Grid item sm={8} xs={12} mt={2}>
         <Grid sx={{ display: "flex", flexDirection: "column" }}>
@@ -180,7 +180,7 @@ const RateSelect = ({
               type="number"
               onChange={handleInsuranceAmountChange}
               value={insuranceAmount}
-              label="Insurance coverage"
+              label="Parcel value"
               InputLabelProps={{ shrink: true }}
               InputProps={{
                 startAdornment: (
