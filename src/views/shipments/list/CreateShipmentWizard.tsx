@@ -1029,27 +1029,6 @@ const CreateShipmentWizard = () => {
                         Download
                       </Button>
                     </Box>
-                    <Divider
-                      orientation="horizontal"
-                      sx={{ width: "50%", display: "flex", my: 4 }}
-                    />
-                    <Box>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
-                      >
-                        Made a mistake?
-                      </Typography>
-                    </Box>
-                    <Box my={3}>
-                      <Button
-                        sx={{ padding: 2 }}
-                        variant="outlined"
-                        color="info"
-                      >
-                        Return Label
-                      </Button>
-                    </Box>
                   </Box>
                 </Grid>
               </SecondColumnGridStyle>

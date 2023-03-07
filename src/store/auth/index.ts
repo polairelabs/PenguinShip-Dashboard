@@ -1,6 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import BaseApi from "../../api/api";
-import { Membership } from "../../types/apps/NavashipTypes";
+import {
+  DashboardStatistics,
+  Membership
+} from "../../types/apps/NavashipTypes";
 import { Status } from "../index";
 
 export const createAccount = createAsyncThunk(
@@ -24,11 +27,19 @@ export const fetchMemberships = createAsyncThunk(
   }
 );
 
+export const fetchDashboardStatistics = createAsyncThunk(
+  "auth/fetchDashboardStatistics",
+  async () => {
+    return await BaseApi.get("/dashboard/statistics");
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState: {
     memberships: [] as Membership[],
-    accountCreationStatus: "" as Status
+    accountCreationStatus: "" as Status,
+    dashboardStatistics: {} as DashboardStatistics
   },
   reducers: {
     clearAccountCreationStatus: (state) => {
@@ -45,6 +56,9 @@ export const authSlice = createSlice({
       })
       .addCase(fetchMemberships.fulfilled, (state, action) => {
         state.memberships = action.payload;
+      })
+      .addCase(fetchDashboardStatistics.fulfilled, (state, action) => {
+        state.dashboardStatistics = action.payload;
       });
   }
 });

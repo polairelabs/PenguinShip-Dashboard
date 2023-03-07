@@ -1,4 +1,6 @@
 // Api response interfaces and whatever else
+import { fetchDashboardStatistics } from "../../store/auth";
+
 export interface Package {
   id: number;
   name: string;
@@ -130,9 +132,36 @@ export interface SubscriptionPlan {
   maxLimit: number;
 }
 
+export interface DashboardStatistics {
+  totalShipmentsCreatedCount: number;
+  totalShipmentsDeliveredCount: number;
+  totalShipmentsInTransitCount: number;
+  totalShipmentsDraftCount: number;
+  totalPackagesCount: number;
+  totalMoneySaved: number;
+  currentMonthShipmentCreated: number;
+  maxShipmentCreatedLimit: number;
+  logs: ActivityLog[];
+}
+
+export interface ActivityLog {
+  message: string;
+  messageType: ActivityMessageType;
+  createdAt: Date;
+  shipment: Shipment;
+}
+
 export enum ShipmentStatus {
   DRAFT = "DRAFT",
   PURCHASED = "PURCHASED"
+}
+
+export enum ActivityMessageType {
+  NEW = "NEW",
+  STATUS_UPDATE = "STATUS_UPDATE",
+  PURCHASE = "PURCHASE",
+  RETURN = "RETURN",
+  NONE = "NONE"
 }
 
 export enum PersonType {

@@ -1,4 +1,11 @@
 import jsPDF from "jspdf";
+import {
+  Person,
+  PersonType,
+  Shipment,
+  ShipmentAddress,
+  ShipmentAddressType
+} from "./types/apps/NavashipTypes";
 
 const INSURANCE_FEE_PERCENTAGE = 0.5;
 
@@ -57,6 +64,19 @@ export const capitalizeFirstLetterOnly = (str: string) => {
 
 export const dateToHumanReadableFormat = (date: Date) => {
   const dateObj = new Date(date);
+  return (
+    dateObj.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    }) +
+    ", " +
+    dateObj.toLocaleTimeString()
+  );
+};
+
+export const dateToHumanReadableFormatWithDayOfWeek = (date: Date) => {
+  const dateObj = new Date(date);
   return dateObj.toDateString() + ", " + dateObj.toLocaleTimeString();
 };
 
@@ -66,4 +86,33 @@ export const calculateInsuranceFee = (insuranceAmount: string) => {
       Number(insuranceAmount) * (INSURANCE_FEE_PERCENTAGE / 100) * 100
     ) / 100
   );
+};
+
+export const splitStringByCapitalCase = (input: string) => {
+  return input?.match(/[A-Z][a-z]+/g)?.join(" ");
+};
+
+export const getRecipientInfo = (shipment: Shipment) => {
+  const found = shipment.persons.find(
+    (person) => person.type === PersonType.RECEIVER
+  );
+  let receiverName;
+  if (found) {
+    const receiver: Person = found;
+    receiverName =
+      capitalizeFirstLetterOnly(receiver.name) ??
+      capitalizeFirstLetterOnly(receiver.company);
+  }
+  const deliveryAddress = getRecipientAddress(shipment);
+  return receiverName
+    ? capitalizeFirstLetterOnly(receiverName) +
+        ", " +
+        capitalizeFirstLetterOnly(deliveryAddress.city)
+    : capitalizeFirstLetterOnly(deliveryAddress.city);
+};
+
+export const getRecipientAddress = (shipment: Shipment) => {
+  return shipment.addresses.find(
+    (address) => address.type === ShipmentAddressType.DESTINATION
+  ) as ShipmentAddress;
 };

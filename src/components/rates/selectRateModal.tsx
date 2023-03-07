@@ -91,7 +91,6 @@ const SelectRateModal = ({
       toast.error(`${shipmentStore.buyShipmentError ?? "Error buying label"}`, {
         position: "top-center"
       });
-      handleDialogToggle();
       dispatch(clearBuyShipmentError());
     }
     dispatch(clearBuyShipmentRateStatus());

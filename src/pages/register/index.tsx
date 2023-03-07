@@ -1,21 +1,15 @@
-// ** React Imports
 import { ReactNode } from "react";
 
-// ** MUI Components
 import Box, { BoxProps } from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { styled, useTheme } from "@mui/material/styles";
 
-// ** Layout Import
 import BlankLayout from "src/@core/layouts/BlankLayout";
 
-// ** Hooks
 import { useSettings } from "src/@core/hooks/useSettings";
 
-// ** Demo Components Imports
 import RegisterMultiStepsWizard from "src/views/pages/auth/register-multi-steps";
 
-// ** Styled Components
 const RegisterMultiStepsIllustration = styled("img")({
   height: "auto",
   maxHeight: 650,
@@ -60,12 +54,10 @@ const WizardWrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const Register = () => {
-  // ** Hooks
   const theme = useTheme();
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("lg"));
 
-  // ** Var
   const { skin } = settings;
 
   return (

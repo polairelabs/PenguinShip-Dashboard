@@ -17,7 +17,7 @@ import {
 } from "../../types/apps/NavashipTypes";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import { calculateInsuranceFee } from "../../utils";
+import { calculateInsuranceFee, splitStringByCapitalCase } from "../../utils";
 
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderWidth: 1,
@@ -82,10 +82,6 @@ const RateSelect = ({
       return;
     }
     setInsuranceAmount(event.target.value.slice(0, 5));
-  };
-
-  const splitStringByCapitalCase = (input: string) => {
-    return input.match(/[A-Z][a-z]+/g)?.join(" ");
   };
 
   return (

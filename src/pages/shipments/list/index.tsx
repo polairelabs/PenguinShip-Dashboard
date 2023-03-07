@@ -29,8 +29,9 @@ import {
 import Box from "@mui/material/Box";
 import { Link, Tooltip } from "@mui/material";
 import {
-  capitalizeFirstLetterOnly,
-  dateToHumanReadableFormat
+  dateToHumanReadableFormatWithDayOfWeek,
+  getRecipientAddress,
+  getRecipientInfo
 } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
 import { Close, CurrencyUsd } from "mdi-material-ui";
@@ -77,29 +78,6 @@ const ShipmentsList = () => {
 
   const getCarrierImageSrc = (shipment: Shipment) => {
     return `/images/carriers/${shipment?.rate?.carrier?.toLowerCase()}_logo.svg`;
-  };
-
-  const getRecipientInfo = (shipment: Shipment) => {
-    const found = shipment.persons.find(
-      (person) => person.type === PersonType.RECEIVER
-    );
-    let receiverName;
-    if (found) {
-      const receiver: Person = found;
-      receiverName = receiver.name ?? receiver.company;
-    }
-    const deliveryAddress = getRecipientAddress(shipment);
-    return receiverName
-      ? capitalizeFirstLetterOnly(receiverName) +
-          ", " +
-          capitalizeFirstLetterOnly(deliveryAddress.city)
-      : capitalizeFirstLetterOnly(deliveryAddress.city);
-  };
-
-  const getRecipientAddress = (shipment: Shipment) => {
-    return shipment.addresses.find(
-      (address) => address.type === ShipmentAddressType.DESTINATION
-    ) as ShipmentAddress;
   };
 
   const onPageSizeChange = (size: number) => {
@@ -297,7 +275,7 @@ const ShipmentsList = () => {
               variant="body2"
               sx={{ color: "text.primary", fontWeight: 600 }}
             >
-              {dateToHumanReadableFormat(row?.updatedAt)}
+              {dateToHumanReadableFormatWithDayOfWeek(row?.createdAt)}
             </Typography>
           </Box>
         );
@@ -324,7 +302,7 @@ const ShipmentsList = () => {
               }}
             >
               {row.status == ShipmentStatus.PURCHASED && (
-                <Tooltip title="Return label">
+                <Tooltip title="Return label" disableInteractive={true}>
                   <IconButton
                     onClick={() => {
                       handleReturnLabel();
@@ -335,14 +313,14 @@ const ShipmentsList = () => {
                 </Tooltip>
               )}
               {row.status === ShipmentStatus.DRAFT && (
-                <Tooltip title="Buy rate">
+                <Tooltip title="Buy rate" disableInteractive={true}>
                   <IconButton onClick={() => handleBuyRate(row)}>
                     <CurrencyUsd />
                   </IconButton>
                 </Tooltip>
               )}
               {row.status === ShipmentStatus.DRAFT && (
-                <Tooltip title="Delete">
+                <Tooltip title="Delete" disableInteractive={true}>
                   <IconButton onClick={() => handleDelete(row.id)}>
                     <DeleteOutline />
                   </IconButton>
