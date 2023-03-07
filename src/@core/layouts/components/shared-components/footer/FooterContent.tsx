@@ -1,21 +1,15 @@
-// ** MUI Imports
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
-import { Theme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 const FooterContent = () => {
-  // ** Var
-  const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
-
   return (
     <Box
       sx={{
         display: "flex",
         flexWrap: "wrap",
         alignItems: "center",
-        justifyContent: "space-between"
+        justifyContent: "flex-end"
       }}
     >
       <Typography sx={{ mr: 2 }}>
@@ -28,32 +22,6 @@ const FooterContent = () => {
           Polairelabs
         </Link>
       </Typography>
-      {hidden ? null : (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            "& :not(:last-child)": { mr: 4 }
-          }}
-        >
-          <Link target="_blank" href="https://themeselection.com/license/">
-            Terms & Conditions
-          </Link>
-          <Link target="_blank" href="https://polairelabs.com/">
-            About Us
-          </Link>
-          <Link
-            target="_blank"
-            href="https://demos.themeselection.com/materio-mui-react-nextjs-admin-template/documentation"
-          >
-            Documentation
-          </Link>
-          <Link target="_blank" href="https://polairelabs.com/support/">
-            Support
-          </Link>
-        </Box>
-      )}
     </Box>
   );
 };
