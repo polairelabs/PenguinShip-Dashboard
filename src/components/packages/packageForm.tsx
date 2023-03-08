@@ -75,7 +75,13 @@ const PackageForm = ({
         /^[\d]*\.?[\d]*$/,
         "Incorrect format. Must be an integer or a decimal"
       )
-      .max(6, "Must be less than or equal to 6 digits");
+      .max(6, "Must be less than or equal to 6 digits")
+      .test("greaterThanZero", "Number must be greater than zero", (value) => {
+        if (!value || isNaN(parseFloat(value))) {
+          return true; // Skip validation if value is not a number
+        }
+        return parseFloat(value) > 0;
+      });
   };
 
   const schema = yup.object().shape(

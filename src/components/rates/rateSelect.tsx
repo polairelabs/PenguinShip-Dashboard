@@ -53,7 +53,9 @@ const RateSelect = ({
   parcel,
   showRateError
 }: RateSelectProps) => {
-  const [insuranceAmount, setInsuranceAmount] = useState<string | undefined>();
+  const [insuranceAmount, setInsuranceAmount] = useState<string | undefined>(
+    undefined
+  );
   const [isInsured, setInsured] = useState<boolean>(false);
 
   useEffect(() => {

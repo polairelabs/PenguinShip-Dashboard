@@ -46,11 +46,12 @@ import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 import { fetchPackages } from "../../../store/apps/packages";
-import { Box, Hidden } from "@mui/material";
+import { Box, Hidden, IconButton } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
 import { convertAndDownloadImageToPdf, printPdf } from "../../../utils";
 import PurchaseLabelMessage from "../../../components/rates/purchaseLabelMessage";
+import { InformationOutline } from "mdi-material-ui";
 
 const steps = [
   {
@@ -203,6 +204,7 @@ const CreateShipmentWizard = () => {
   const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
   const [openPackageModal, setOpenPackageModal] = useState<boolean>(false);
 
+  // PDF
   const [postageImageWidth, setPostageImageWidth] = useState<number>();
   const [postageImageHeight, setPostageImageHeight] = useState<number>();
   const [postageImageLoaded, setPostageImageLoaded] = useState<boolean>(false);
@@ -993,11 +995,11 @@ const CreateShipmentWizard = () => {
                 <Grid item xs={12} sm={12}>
                   <Box>
                     <Box>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontWeight: 600, color: "text.primary", mb: 4 }}
-                      >
-                        Label actions
+                      <Typography variant="body2">
+                        <IconButton aria-label="info">
+                          <InformationOutline color="info" />
+                        </IconButton>
+                        Your label is ready to print
                       </Typography>
                     </Box>
                     <Box my={3}>

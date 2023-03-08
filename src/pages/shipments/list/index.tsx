@@ -34,7 +34,7 @@ import {
   getRecipientInfo
 } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
-import { Close, CurrencyUsd } from "mdi-material-ui";
+import { Close, CurrencyUsd, Delete } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
 import ReturnConfirmationDialog from "../../../components/confirmationdialog/returnConfirmationDialog";
@@ -322,7 +322,7 @@ const ShipmentsList = () => {
               {row.status === ShipmentStatus.DRAFT && (
                 <Tooltip title="Delete" disableInteractive={true}>
                   <IconButton onClick={() => handleDelete(row.id)}>
-                    <DeleteOutline />
+                    <Delete />
                   </IconButton>
                 </Tooltip>
               )}

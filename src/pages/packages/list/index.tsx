@@ -25,6 +25,7 @@ import TableHeader from "src/views/table/TableHeader";
 import PackageModal from "../../../components/packages/packagesModal";
 import { Box, Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
+import { Delete, Pencil } from "mdi-material-ui";
 
 interface CellType {
   row: Package;
@@ -36,7 +37,6 @@ const PackagesList = () => {
   const [packageToEdit, setPackageToEdit] = useState<Package | undefined>(
     undefined
   );
-  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(() => {
     const storedPageSize = localStorage.getItem("packagesDataGridSize");
@@ -46,15 +46,6 @@ const PackagesList = () => {
   const totalCount = useSelector((state: RootState) => state.packages.total);
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const onMouseEnterRow = (event) => {
-    const id = Number(event.currentTarget.getAttribute("data-id"));
-    setHoveredRow(id);
-  };
-
-  const onMouseLeaveRow = (event) => {
-    setHoveredRow(null);
-  };
 
   const handleDialogToggle = () => {
     setOpen(!open);
@@ -153,30 +144,28 @@ const PackagesList = () => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: ({ row }: CellType) => {
-        if (hoveredRow === row.id) {
-          return (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Tooltip title="Edit">
-                <IconButton onClick={() => handleUpdate(row)}>
-                  <PencilOutline />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton onClick={() => handleDelete(row.id)}>
-                  <DeleteOutline />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          );
-        } else return null;
+        return (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Tooltip title="Edit" disableInteractive={true}>
+              <IconButton onClick={() => handleUpdate(row)}>
+                <Pencil />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete" disableInteractive={true}>
+              <IconButton onClick={() => handleDelete(row.id)}>
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        );
       }
     }
   ];
@@ -216,7 +205,6 @@ const PackagesList = () => {
           <TableHeader
             toggle={handleDialogToggle}
             toggleLabel="Create parcel"
-            informationAlertMessage="Hover over a row to reveal the edit and delete options"
           />
           <PackageModal
             open={open}
@@ -236,12 +224,6 @@ const PackagesList = () => {
             onPageSizeChange={(count) => onPageSizeChange(count)}
             onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
-            componentsProps={{
-              row: {
-                onMouseEnter: onMouseEnterRow,
-                onMouseLeave: onMouseLeaveRow
-              }
-            }}
             sx={{
               "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-of-type(2) .MuiDataGrid-columnSeparator":
                 {

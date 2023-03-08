@@ -1,11 +1,12 @@
 import Grid from "@mui/material/Grid";
 import FormControl from "@mui/material/FormControl";
 import { Controller } from "react-hook-form";
-import { Autocomplete, Box, Typography } from "@mui/material";
+import { Autocomplete, Box, IconButton, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Address } from "../../types/apps/NavashipTypes";
 import { ChangeEvent } from "react";
+import { InformationOutline } from "mdi-material-ui";
 
 export enum AddressType {
   SOURCE = "source",
@@ -58,7 +59,7 @@ const SelectAddressFormController = ({
 
   return (
     <Box>
-      <Grid item xs={12} sm={12} mb={7}>
+      <Grid item xs={12} sm={12} mb={12}>
         <FormControl fullWidth>
           <Controller
             name={fieldName}
@@ -89,6 +90,9 @@ const SelectAddressFormController = ({
         </FormControl>
         {errors[fieldName] && (
           <FormHelperText sx={{ color: "error.main", position: "absolute" }}>
+            <IconButton aria-label="error">
+              <InformationOutline color="error" />
+            </IconButton>
             {errors[fieldName].message}
           </FormHelperText>
         )}

@@ -5,6 +5,7 @@ import {
   Autocomplete,
   Box,
   FormControlLabel,
+  IconButton,
   InputAdornment,
   Switch,
   Typography
@@ -13,6 +14,7 @@ import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Package, ShipmentInsurance } from "../../types/apps/NavashipTypes";
 import { ChangeEvent, useEffect, useState } from "react";
+import { InformationOutline } from "mdi-material-ui";
 
 interface PackageSelectProps {
   currentParcel: Package | null | undefined;
@@ -71,6 +73,9 @@ const SelectPackageFormController = ({
         </FormControl>
         {errors.parcel && (
           <FormHelperText sx={{ color: "error.main", position: "absolute" }}>
+            <IconButton aria-label="error">
+              <InformationOutline color="error" />
+            </IconButton>
             {errors.parcel.message}
           </FormHelperText>
         )}

@@ -27,6 +27,7 @@ import TableHeader from "../../../views/table/TableHeader";
 import { Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
 import CustomChip from "../../../@core/components/mui/chip";
+import { Delete, Pencil } from "mdi-material-ui";
 
 interface CellType {
   row: Address;
@@ -38,7 +39,6 @@ const AddressesList = () => {
   const [addressToEdit, setAddressToEdit] = useState<Address | undefined>(
     undefined
   );
-  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(() => {
     const storedPageSize = localStorage.getItem("addressesDataGridSize");
@@ -48,15 +48,6 @@ const AddressesList = () => {
   const totalCount = useSelector((state: RootState) => state.addresses.total);
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const onMouseEnterRow = (event) => {
-    const id = Number(event.currentTarget.getAttribute("data-id"));
-    setHoveredRow(id);
-  };
-
-  const onMouseLeaveRow = (event) => {
-    setHoveredRow(null);
-  };
 
   const handleDialogToggle = () => {
     setOpen(!open);
@@ -161,30 +152,28 @@ const AddressesList = () => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: ({ row }: CellType) => {
-        if (hoveredRow === row.id) {
-          return (
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Tooltip title="Edit">
-                <IconButton onClick={() => handleUpdate(row)}>
-                  <PencilOutline />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete">
-                <IconButton onClick={() => handleDelete(row.id)}>
-                  <DeleteOutline />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          );
-        } else return null;
+        return (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Tooltip title="Edit">
+              <IconButton onClick={() => handleUpdate(row)}>
+                <Pencil />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton onClick={() => handleDelete(row.id)}>
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        );
       }
     }
   ];
@@ -224,7 +213,6 @@ const AddressesList = () => {
           <TableHeader
             toggle={handleDialogToggle}
             toggleLabel="Create address"
-            informationAlertMessage="Hover over a row to reveal the edit and delete options"
           />
           <AddressModal
             open={open}
@@ -244,12 +232,6 @@ const AddressesList = () => {
             onPageSizeChange={(count) => onPageSizeChange(count)}
             onPageChange={(newPage) => setCurrentPage(newPage + 1)}
             disableColumnSelector
-            componentsProps={{
-              row: {
-                onMouseEnter: onMouseEnterRow,
-                onMouseLeave: onMouseLeaveRow
-              }
-            }}
             sx={{
               "& .MuiDataGrid-columnHeadersInner .MuiDataGrid-columnHeader:nth-last-of-type(2) .MuiDataGrid-columnSeparator":
                 {

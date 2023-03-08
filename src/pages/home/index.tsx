@@ -33,8 +33,9 @@ const Home = () => {
   }));
 
   const Img = styled("img")(({ theme }) => ({
-    right: 13,
+    right: 0,
     bottom: 0,
+    height: 180,
     position: "absolute",
     [theme.breakpoints.down("sm")]: {
       visibility: "hidden"
@@ -73,7 +74,9 @@ const Home = () => {
                   </IconButton>
                   {statistics.currentMonthShipmentCreated > 0
                     ? `You have created ${statistics.currentMonthShipmentCreated} out of ${statistics.maxShipmentCreatedLimit} allowed shipments for this month`
-                    : `You can create up to ${statistics.maxShipmentCreatedLimit} shipments per month`}
+                    : `You can create up to ${
+                        statistics.maxShipmentCreatedLimit ?? 0
+                      } shipments per month`}
                 </Typography>
                 <Typography variant="body2">
                   <IconButton aria-label="info">
@@ -83,12 +86,14 @@ const Home = () => {
                     ? "No shipments in draft"
                     : statistics.totalShipmentsDraftCount === 1
                     ? `You have ${statistics.totalShipmentsDraftCount} shipment in draft`
-                    : `You have ${statistics.totalShipmentsDraftCount} shipments that are still in draft`}
+                    : `You have ${
+                        statistics.totalShipmentsDraftCount ?? 0
+                      } shipments that are still in draft`}
                 </Typography>
                 <StyledGrid item xs={12} sm={6}>
                   <Img
                     alt="Congratulations John"
-                    src="/images/misc/graph-bar.png"
+                    src="/images/misc/triangle-dark.png"
                   />
                 </StyledGrid>
               </Grid>
@@ -98,7 +103,9 @@ const Home = () => {
       </Grid>
       <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
         <CardStatsVertical
-          stats={`$${statistics.totalMoneySaved}`}
+          stats={
+            statistics.totalMoneySaved ? `$${statistics.totalMoneySaved}` : "$0"
+          }
           color="success"
           title="Money saved"
           icon={<CurrencyUsd />}
