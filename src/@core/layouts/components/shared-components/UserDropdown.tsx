@@ -196,15 +196,6 @@ const UserDropdown = (props: Props) => {
         </MenuItem>
         <MenuItem
           sx={{ p: 0 }}
-          onClick={() => handleDropdownClose("/pages/pricing")}
-        >
-          <Box sx={styles}>
-            <CurrencyUsd sx={{ mr: 2 }} />
-            Pricing
-          </Box>
-        </MenuItem>
-        <MenuItem
-          sx={{ p: 0 }}
           onClick={() => handleDropdownClose("/pages/faq")}
         >
           <Box sx={styles}>

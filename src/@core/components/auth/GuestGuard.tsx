@@ -1,11 +1,7 @@
-// ** React Imports
 import { ReactNode, ReactElement, useEffect } from "react";
-
-// ** Next Imports
 import { useRouter } from "next/router";
-
-// ** Hooks Import
 import { useAuth } from "src/hooks/useAuth";
+import authConfig from "../../../configs/auth";
 
 interface GuestGuardProps {
   children: ReactNode;
@@ -22,7 +18,8 @@ const GuestGuard = (props: GuestGuardProps) => {
       return;
     }
 
-    if (window.localStorage.getItem("userData")) {
+    // If user exists, disallow him from accessing pages guest pages
+    if (window.localStorage.getItem(authConfig.storageUserDataKey)) {
       router.replace("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

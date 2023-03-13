@@ -13,7 +13,7 @@ import StepBillingDetails from "src/views/pages/auth/register-multi-steps/StepBi
 import StepperCustomDot from "src/views/forms/form-wizard/StepperCustomDot";
 
 import StepperWrapper from "src/@core/styles/mui/stepper";
-import { createAccount, fetchMemberships } from "../../../../store/auth";
+import { createAccount } from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store";
 import { AccountData } from "../../../../types/apps/NavashipTypes";
@@ -52,20 +52,20 @@ const RegisterMultiSteps = () => {
     password: "",
     confirmPassword: "",
     membershipProductLink: "",
-    stripePriceId: ""
+    subscriptionId: ""
   });
   const store = useSelector((state: RootState) => state.auth);
   const [successOpen, setSuccessOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const [selectedMembershipId, setSelectedMembershipId] = useState("");
 
   const handleNext = async (selectedMembershipId?: string) => {
     if (activeStep === 2 && selectedMembershipId) {
       // TODO: If registration doesn't work we need to handle the error and not go to checkout
+      console.log("on yaa", "subscribing to", selectedMembershipId);
       dispatch(
-        createAccount({ ...formData, stripePriceId: selectedMembershipId })
+        createAccount({ ...formData, subscriptionId: selectedMembershipId })
       ).then((response) => {
         BaseApi.createCheckoutSession(
           selectedMembershipId,
@@ -131,13 +131,7 @@ const RegisterMultiSteps = () => {
         );
       case 2:
         return (
-          <StepBillingDetails
-            handleChange={handleChange}
-            formData={formData}
-            handlePrev={handlePrev}
-            handleNext={handleNext}
-            membershipId={setSelectedMembershipId}
-          />
+          <StepBillingDetails handlePrev={handlePrev} handleNext={handleNext} />
         );
 
       default:

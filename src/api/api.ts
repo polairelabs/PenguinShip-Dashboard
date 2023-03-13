@@ -79,7 +79,7 @@ export const BaseApi = {
   async createCheckoutSession(priceId: string, stripeCustomerId: string) {
     try {
       const response = await httpRequest.post(
-        "/subscriptions/create-checkout-session/?price=" +
+        "/subscriptions/create-checkout-session/?subscriptionId=" +
           priceId +
           "&customerId=" +
           stripeCustomerId

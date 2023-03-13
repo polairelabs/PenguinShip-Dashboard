@@ -1,24 +1,16 @@
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridValueGetterParams } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import DeleteOutline from "mdi-material-ui/DeleteOutline";
 import CustomChip from "src/@core/components/mui/chip";
 
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "src/store";
-import {
-  Person,
-  PersonType,
-  Shipment,
-  ShipmentAddress,
-  ShipmentAddressType,
-  ShipmentStatus
-} from "src/types/apps/NavashipTypes";
+import { Shipment, ShipmentStatus } from "src/types/apps/NavashipTypes";
 import {
   clearDeleteStatus,
   deleteShipment,
@@ -37,7 +29,7 @@ import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolba
 import { Close, CurrencyUsd, Delete } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
-import ReturnConfirmationDialog from "../../../components/confirmationdialog/returnConfirmationDialog";
+import ReturnConfirmationDialog from "../../../components/dialog/returnConfirmationDialog";
 
 interface CellType {
   row: Shipment;
@@ -421,9 +413,7 @@ const ShipmentsList = () => {
             open={returnConfirmationDialog}
             handleDialogToggle={handleConfirmationReturnDialogToggle}
             title={"Do you want to return this label?"}
-            confirmButtonCallback={() => {
-              console.log("hehe");
-            }}
+            confirmButtonCallback={() => {}}
             shipment={selectedShipment}
           />
         </Card>

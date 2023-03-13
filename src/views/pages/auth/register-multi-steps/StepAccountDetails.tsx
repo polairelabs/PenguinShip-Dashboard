@@ -1,8 +1,6 @@
-// ** React Imports
 import { useState, MouseEvent, ChangeEvent } from "react";
 import * as yup from "yup";
 
-// ** MUI Components
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -14,11 +12,9 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 
-// ** Icon Imports
 import Icon from "src/@core/components/icon";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AddressDetails } from "../../../../components/addresses/addressForm";
 import { FormHelperText } from "@mui/material";
 
 interface State {

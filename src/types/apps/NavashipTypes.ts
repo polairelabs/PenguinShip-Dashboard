@@ -99,11 +99,20 @@ export interface Person {
 }
 
 export interface Membership {
+  id: string;
   name: string;
   description: string;
-  stripePriceId: string;
   currency: string;
   unitAmount: number;
+  maxLimit: number;
+  // Populated when admin request
+  stripePriceId: string;
+  shipmentHandlingFee: number;
+}
+
+export interface MembershipAdminResponse extends Membership {
+  stripePriceId: string;
+  handlingFee: number;
 }
 
 export interface AccountData {
@@ -117,7 +126,7 @@ export interface AccountData {
   password: string;
   confirmPassword: string;
   membershipProductLink: string;
-  stripePriceId: string;
+  subscriptionId: string;
 }
 
 export interface SubscriptionDetail {

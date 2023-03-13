@@ -118,7 +118,7 @@ const Home = () => {
       </Grid>
       <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
         <CardStatsVertical
-          stats={statistics.totalPackagesCount}
+          stats={statistics.totalPackagesCount ?? 0}
           color="info"
           title="Parcels created"
           icon={<PackageVariantClosed />}
