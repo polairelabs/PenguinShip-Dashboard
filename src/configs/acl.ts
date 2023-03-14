@@ -18,11 +18,6 @@ enum Role {
   NEW_USER = "NEW_USER"
 }
 
-/**
- * Please define your own Ability rules according to your app requirements.
- * We have just shown Admin and Client rules for demo purpose where
- * admin can manage everything and client can just visit ACL page
- */
 const defineRulesFor = (role: string, subject: string) => {
   const { can, cannot, rules } = new AbilityBuilder(AppAbility);
 
@@ -31,10 +26,16 @@ const defineRulesFor = (role: string, subject: string) => {
   } else if (role === Role.USER) {
     can("manage", "all");
     cannot(["read"], "admin");
+  } else if (role === Role.UNPAID_USER) {
+    can("manage", "all");
+    cannot(["read"], "admin");
+    cannot(["read"], "shipment-add");
+    // entity is equal to shipment, address and package
+    cannot(["create", "delete", "update"], "entity");
+  } else {
+    // NEW_USER
+    cannot(["read", "create", "update", "delete"], subject);
   }
-  // else {
-  //   can(["read", "create", "update", "delete"], subject);
-  // }
 
   return rules;
 };

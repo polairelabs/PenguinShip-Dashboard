@@ -1,11 +1,9 @@
-// ** MUI Imports
 import { styled } from "@mui/material/styles";
 import Box, { BoxProps } from "@mui/material/Box";
 
 // ** Types
 import { BlankLayoutWithAppBarProps } from "./types";
 
-// ** AppBar Imports
 import AppBar from "src/@core/layouts/components/blank-layout-with-appBar";
 
 // Styled component for Blank Layout with AppBar component

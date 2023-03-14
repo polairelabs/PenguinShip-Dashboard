@@ -21,7 +21,6 @@ const Home = () => {
   const statistics = useSelector(
     (state: RootState) => state.auth.dashboardStatistics
   );
-
   const auth = useAuth();
 
   const StyledGrid = styled(Grid)(({ theme }) => ({

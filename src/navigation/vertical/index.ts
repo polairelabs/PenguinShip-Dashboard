@@ -22,7 +22,9 @@ const navigation = (): VerticalNavItemsType => {
         },
         {
           title: "Create Label",
-          path: "/shipments/add"
+          path: "/shipments/add",
+          action: "read",
+          subject: "shipment-add"
         }
       ]
     },

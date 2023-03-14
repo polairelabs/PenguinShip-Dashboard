@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -30,14 +30,17 @@ import { Close, CurrencyUsd, Delete } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
 import ReturnConfirmationDialog from "../../../components/dialog/returnConfirmationDialog";
+import { AbilityContext } from "../../../layouts/components/acl/Can";
 
 interface CellType {
   row: Shipment;
 }
 
 const ShipmentsList = () => {
+  const ability = useContext(AbilityContext);
+  const enableDeleteButton = ability?.can("delete", "entity");
+
   const [searchText, setSearchText] = useState("");
-  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(() => {
     const storedPageSize = localStorage.getItem("shipmentsDataGridSize");
@@ -54,15 +57,6 @@ const ShipmentsList = () => {
   const store = useSelector((state: RootState) => state.shipments);
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const onMouseEnterRow = (event) => {
-    const id = Number(event.currentTarget.getAttribute("data-id"));
-    setHoveredRow(id);
-  };
-
-  const onMouseLeaveRow = (event) => {
-    setHoveredRow(null);
-  };
 
   const handleDialogToggleRateSelect = () => {
     setOpenRateSelect(!openRateSelect);
@@ -313,7 +307,10 @@ const ShipmentsList = () => {
               )}
               {row.status === ShipmentStatus.DRAFT && (
                 <Tooltip title="Delete" disableInteractive={true}>
-                  <IconButton onClick={() => handleDelete(row.id)}>
+                  <IconButton
+                    disabled={!enableDeleteButton}
+                    onClick={() => handleDelete(row.id)}
+                  >
                     <Delete />
                   </IconButton>
                 </Tooltip>
@@ -396,10 +393,6 @@ const ShipmentsList = () => {
                 clearSearch: () => handleSearch(""),
                 onChange: (event) => handleSearch(event.target.value),
                 searchTxtPlaceHolder: "Search labels..."
-              },
-              row: {
-                onMouseEnter: onMouseEnterRow,
-                onMouseLeave: onMouseLeaveRow
               }
             }}
             sx={{
