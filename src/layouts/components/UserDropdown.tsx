@@ -87,6 +87,10 @@ const UserDropdown = (props: Props) => {
     handleDropdownClose();
   };
 
+  const handleSettings = () => {
+    router.push("/account-settings/security/");
+  };
+
   return (
     <Fragment>
       <Badge
@@ -179,7 +183,7 @@ const UserDropdown = (props: Props) => {
         {/*  </Box>*/}
         {/*</MenuItem>*/}
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
+          <Box sx={styles} onClick={() => handleSettings()}>
             <CogOutline sx={{ mr: 2 }} />
             Settings
           </Box>
