@@ -1,5 +1,5 @@
 // Api response interfaces and whatever else
-import { fetchDashboardStatistics } from "../../store/auth";
+import { fetchDashboardStats } from "../../store/auth";
 
 export interface Package {
   id: number;
@@ -126,7 +126,6 @@ export interface AccountData {
   password: string;
   confirmPassword: string;
   membershipProductLink: string;
-  subscriptionId: string;
 }
 
 export interface SubscriptionDetail {

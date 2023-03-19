@@ -15,19 +15,17 @@ import CogOutline from "mdi-material-ui/CogOutline";
 import LogoutVariant from "mdi-material-ui/LogoutVariant";
 import HelpCircleOutline from "mdi-material-ui/HelpCircleOutline";
 
-// ** Context
 import { useAuth } from "src/hooks/useAuth";
 
 import { Settings } from "src/@core/context/settingsContext";
 import { capitalizeFirstLetterOnly } from "../../utils";
-import { ShieldOutline } from "mdi-material-ui";
+import { ShieldAccountOutline } from "mdi-material-ui";
 import { AbilityContext } from "./acl/Can";
 
 interface Props {
   settings: Settings;
 }
 
-// ** Styled Components
 const BadgeContentSpan = styled("span")(({ theme }) => ({
   width: 8,
   height: 8,
@@ -165,7 +163,7 @@ const UserDropdown = (props: Props) => {
             onClick={() => handleDropdownClose("/admin/edit-memberships")}
           >
             <Box sx={styles}>
-              <ShieldOutline sx={{ mr: 2 }} />
+              <ShieldAccountOutline sx={{ mr: 2 }} />
               Admin Panel
             </Box>
           </MenuItem>

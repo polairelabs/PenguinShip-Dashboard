@@ -15,16 +15,16 @@ export type RegisterParams = {
 };
 
 export type User = {
-  id: number;
+  id: string;
   role: string;
   email: string;
   firstName: string;
   lastName: string;
-  enabled: boolean;
   subscriptionDetail: SubscriptionDetail;
 };
 
 export type AuthValuesType = {
+  accessToken: string | undefined;
   loading: boolean;
   setLoading: (value: boolean) => void;
   logout: () => void;
@@ -34,4 +34,5 @@ export type AuthValuesType = {
   setIsInitialized: (value: boolean) => void;
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void;
+  updateUser: (errorCallback?: ErrCallbackType) => void;
 };

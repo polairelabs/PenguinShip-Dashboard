@@ -2,9 +2,8 @@ import { ReactNode, useState } from "react";
 
 import { useRouter } from "next/router";
 import type { ACLObj, AppAbility } from "src/configs/acl";
+import { buildAbilityFor, Role } from "src/configs/acl";
 import { AbilityContext } from "src/layouts/components/acl/Can";
-
-import { buildAbilityFor } from "src/configs/acl";
 import NotAuthorized from "src/pages/401";
 import BlankLayout from "src/@core/layouts/BlankLayout";
 
@@ -46,6 +45,11 @@ const AclGuard = (props: AclGuardProps) => {
         {children}
       </AbilityContext.Provider>
     );
+  }
+
+  if (auth.user && auth.user.role == Role.NEW_USER && router.pathname !== "/init") {
+    router.push("/init");
+    return;
   }
 
   // Render Not Authorized component if the current packages has limited access

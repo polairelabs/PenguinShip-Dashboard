@@ -18,7 +18,7 @@ const GuestGuard = (props: GuestGuardProps) => {
       return;
     }
 
-    // If user exists, disallow him from accessing pages guest pages
+    // If user exists, disallow him from accessing pages guest pages (e.g login and register) TODO see this
     if (window.localStorage.getItem(authConfig.storageUserDataKey)) {
       router.replace("/");
     }

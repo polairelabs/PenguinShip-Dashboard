@@ -6,7 +6,7 @@ import ShipmentStatisticsCard from "../../views/dashboard/ShipmentStatisticsCard
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
-import { fetchDashboardStatistics } from "../../store/auth";
+import { fetchDashboardStats } from "../../store/auth";
 import ActivityTimeline from "../../views/dashboard/ActivityTimeline";
 import { useAuth } from "../../hooks/useAuth";
 import { CurrencyUsd, InformationOutline } from "mdi-material-ui";
@@ -42,7 +42,7 @@ const Home = () => {
   }));
 
   useEffect(() => {
-    dispatch(fetchDashboardStatistics());
+    dispatch(fetchDashboardStats());
   }, []);
 
   return (

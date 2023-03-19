@@ -14,12 +14,13 @@ import StepperCustomDot from "src/views/forms/form-wizard/StepperCustomDot";
 
 import StepperWrapper from "src/@core/styles/mui/stepper";
 import { createAccount } from "../../../../store/auth";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../store";
 import { AccountData } from "../../../../types/apps/NavashipTypes";
 import BaseApi from "../../../../api/api";
 import { Link } from "@mui/material";
 import VerificationModal from "../../../../components/verificationToken/verificationModal";
+import toast from "react-hot-toast";
 
 const steps = [
   {
@@ -51,10 +52,8 @@ const RegisterMultiSteps = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    membershipProductLink: "",
-    subscriptionId: ""
+    membershipProductLink: ""
   });
-  const store = useSelector((state: RootState) => state.auth);
   const [successOpen, setSuccessOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
@@ -62,18 +61,18 @@ const RegisterMultiSteps = () => {
 
   const handleNext = async (selectedMembershipId?: string) => {
     if (activeStep === 2 && selectedMembershipId) {
-      // TODO: If registration doesn't work we need to handle the error and not go to checkout
-      console.log("on yaa", "subscribing to", selectedMembershipId);
-      dispatch(
-        createAccount({ ...formData, subscriptionId: selectedMembershipId })
-      ).then((response) => {
-        BaseApi.createCheckoutSession(
-          selectedMembershipId,
-          response?.payload.stripeCustomerId
-        ).then((data) => {
-          router.push(data.checkout_url);
+      try {
+        const createAccountAction = createAccount({ ...formData });
+        const { payload } = await dispatch(createAccountAction);
+        const checkoutSessionResponse = await BaseApi.createCheckoutSession(selectedMembershipId, payload?.user?.id);
+        await router.push(checkoutSessionResponse.checkout_url);
+      } catch (error) {
+        // TODO: If registration doesn't work we need to handle the error and not go to checkout
+        console.log('Error in registration process', error);
+        toast.error("Error", {
+          position: "top-center"
         });
-      });
+      }
     }
     setActiveStep(activeStep + 1);
   };
@@ -88,14 +87,6 @@ const RegisterMultiSteps = () => {
       setCanceledOpen(true);
     }
   }, [router.query]);
-
-  const handleSuccessClose = () => {
-    setSuccessOpen(false);
-  };
-
-  const handleCanceledClose = () => {
-    setCanceledOpen(false);
-  };
 
   const handlePrev = () => {
     if (activeStep !== 0) {
@@ -142,6 +133,7 @@ const RegisterMultiSteps = () => {
   const renderContent = () => {
     return getStepContent(activeStep);
   };
+
   return (
     <>
       {successOpen && (

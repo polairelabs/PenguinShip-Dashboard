@@ -1,17 +1,12 @@
-import { createContext, useEffect, useState, ReactNode } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios, { AxiosError } from "axios";
 import authConfig from "src/configs/auth";
-import {
-  AuthValuesType,
-  RegisterParams,
-  LoginParams,
-  ErrCallbackType,
-  User
-} from "./types";
+import { AuthValuesType, ErrCallbackType, LoginParams, RegisterParams, User } from "./types";
 import { httpRequest } from "../api/api";
 
 const defaultProvider: AuthValuesType = {
+  accessToken: undefined,
   user: null,
   loading: true,
   setUser: () => null,
@@ -20,7 +15,8 @@ const defaultProvider: AuthValuesType = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   setIsInitialized: () => Boolean,
-  register: () => Promise.resolve()
+  register: () => Promise.resolve(),
+  updateUser: () => Promise.resolve()
 };
 
 const AuthContext = createContext(defaultProvider);
@@ -30,6 +26,7 @@ type Props = {
 };
 
 const AuthProvider = ({ children }: Props) => {
+  const [accessToken, setAccessToken] = useState<string | undefined>(defaultProvider.accessToken);
   const [user, setUser] = useState<User | null>(defaultProvider.user);
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
   const [isInitialized, setIsInitialized] = useState<boolean>(
@@ -39,16 +36,24 @@ const AuthProvider = ({ children }: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    // SETTING AXIOS INTERCEPTORS HERE
+    console.log("accessToken is", accessToken);
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
+    // SETTING AXIOS INTERCEPTORS HERE (once access token is present)
     const reqInterceptor = httpRequest.interceptors.request.use(
       async (config) => {
-        const accessToken = localStorage.getItem(
-          authConfig.storageAccessTokenKey
-        );
         if (accessToken) {
           // @ts-ignore
           config.headers.Authorization = `Bearer ${accessToken}`;
         }
+        // config.withCredentials = true;
+        console.log("Refresh token baby!!");
+        handleRefreshTokenRefresh();
         return config;
       },
       (error) => {
@@ -63,6 +68,9 @@ const AuthProvider = ({ children }: Props) => {
       (error) => {
         let axiosError = error as AxiosError;
         if (axiosError.response?.status == 401) {
+          // TODO Time to use the refresh token
+          // console.log("Refresh token baby!!");
+          // handleRefreshTokenRefresh();
           handleLogout();
         }
         return Promise.reject(error);
@@ -74,16 +82,16 @@ const AuthProvider = ({ children }: Props) => {
       httpRequest.interceptors.request.eject(reqInterceptor);
       httpRequest.interceptors.response.eject(resInterceptor);
     };
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
       setIsInitialized(true);
-      const userData = window.localStorage.getItem(
+      const userInfo = window.localStorage.getItem(
         authConfig.storageUserDataKey
       );
-      if (userData) {
-        const user: User = JSON.parse(userData);
+      if (userInfo) {
+        const user: User = JSON.parse(userInfo);
         setUser({ ...user });
         setLoading(false);
       } else {
@@ -101,19 +109,13 @@ const AuthProvider = ({ children }: Props) => {
     axios
       .post(authConfig.loginEndpoint, params)
       .then(async (res) => {
-        window.localStorage.setItem(
-          authConfig.storageAccessTokenKey,
-          res.data.access_token
-        );
-        window.localStorage.setItem(
-          authConfig.storageRefreshTokenKey,
-          res.data.refresh_token
-        );
+        // Set the access token in memory
+        setAccessToken(res.data.access_token);
+        setUser({ ...res.data.user });
         window.localStorage.setItem(
           authConfig.storageUserDataKey,
           JSON.stringify(res.data.user)
         );
-        setUser({ ...res.data.user });
         const returnUrl = router.query.returnUrl;
         const redirectURL = returnUrl && returnUrl !== "/" ? returnUrl : "/";
         await router.replace(redirectURL as string);
@@ -128,14 +130,7 @@ const AuthProvider = ({ children }: Props) => {
     router.push("/login");
   };
 
-  const resetAuthValues = () => {
-    setUser(null);
-    setIsInitialized(false);
-    window.localStorage.removeItem(authConfig.storageUserDataKey);
-    window.localStorage.removeItem(authConfig.storageAccessTokenKey);
-    window.localStorage.removeItem(authConfig.storageRefreshTokenKey);
-  };
-
+  // TODO check if this method is used, should probably use it
   const handleRegister = (
     params: RegisterParams,
     errorCallback?: ErrCallbackType
@@ -157,7 +152,54 @@ const AuthProvider = ({ children }: Props) => {
       );
   };
 
+  const updateUserInformation = (
+    errorCallback?: ErrCallbackType
+  ) => {
+    httpRequest
+      .get(authConfig.userInformationEndpoint)
+      .then(async (res) => {
+        setUser({ ...res.data.user });
+      })
+      .catch((err) => {
+        if (errorCallback) errorCallback(err);
+      });
+  };
+
+  const handleRefreshTokenRefresh = () => {
+    console.log("Calling endpoint");
+
+    // axios(authConfig.refreshTokenEndpoint, {
+    //   method: "GET",
+    //   withCredentials: true
+    // }).then(res => {
+    //   console.log(res);
+    // }).catch(err => {
+    //   console.log(err.response);
+    // });
+    axios
+      .get(authConfig.refreshTokenEndpoint, { withCredentials: true })
+      .then((res) => {
+        console.log("Response", res.headers);
+        if (res.data.error) {
+          console.log("error", res.data.error);
+        } else {
+          console.log("We got a new refresh token token bruv");
+        }
+      })
+      .catch((err: { [key: string]: string }) =>
+        console.log("error", err)
+      );
+  };
+
+  const resetAuthValues = () => {
+    setUser(null);
+    setIsInitialized(false);
+    setAccessToken(undefined);
+    window.localStorage.removeItem(authConfig.storageUserDataKey);
+  };
+
   const values = {
+    accessToken,
     user,
     loading,
     setUser,
@@ -166,7 +208,8 @@ const AuthProvider = ({ children }: Props) => {
     setIsInitialized,
     login: handleLogin,
     logout: handleLogout,
-    register: handleRegister
+    register: handleRegister,
+    updateUser: updateUserInformation
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

@@ -43,6 +43,7 @@ function handleError(error: unknown): ApiError {
       messages: [axiosResponse.data.message]
     };
   }
+
   const { data: errorResponse } = (error as any).response;
   if (instanceOfApiErrorResponse(errorResponse)) {
     return {
@@ -76,20 +77,6 @@ export const BaseApi = {
     }
   },
 
-  async createCheckoutSession(priceId: string, stripeCustomerId: string) {
-    try {
-      const response = await httpRequest.post(
-        "/subscriptions/create-checkout-session/?subscriptionId=" +
-          priceId +
-          "&customerId=" +
-          stripeCustomerId
-      );
-      return Promise.resolve(response.data);
-    } catch (error) {
-      return Promise.reject(handleError(error));
-    }
-  },
-
   async put(url: string, body: object) {
     try {
       const response = await httpRequest.put(url, body);
@@ -106,7 +93,24 @@ export const BaseApi = {
     } catch (error) {
       return Promise.reject(handleError(error));
     }
-  }
+  },
+
+  async createCheckoutSession(priceId: string, stripeCustomerId: string) {
+    try {
+      const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+      const response = await httpRequest.post(
+        "/subscriptions/create-checkout-session/?subscriptionId=" +
+        priceId +
+        "&userId=" +
+        stripeCustomerId +
+        "&baseUrl=" +
+        baseUrl
+      );
+      return Promise.resolve(response.data);
+    } catch (error) {
+      return Promise.reject(handleError(error));
+    }
+  },
 };
 
 export default BaseApi;

@@ -11,7 +11,7 @@ export type ACLObj = {
   subject: string;
 };
 
-enum Role {
+export enum Role {
   ADMIN = "ADMIN",
   USER = "USER",
   UNPAID_USER = "UNPAID_USER",
@@ -32,9 +32,9 @@ const defineRulesFor = (role: string, subject: string) => {
     cannot(["read"], "shipment-add");
     // entity is equal to shipment, address and package
     cannot(["create", "delete", "update"], "entity");
-  } else {
-    // NEW_USER
+  } else if (role === Role.NEW_USER) {
     cannot(["read", "create", "update", "delete"], subject);
+    can(["read"], "init");
   }
 
   return rules;

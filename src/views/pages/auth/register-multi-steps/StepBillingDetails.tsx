@@ -1,13 +1,9 @@
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-import Icon from "src/@core/components/icon";
-
-import "react-credit-cards/es/styles-compiled.css";
 import { Membership } from "../../../../types/apps/NavashipTypes";
 import MembershipSelect from "../../../../components/memberships/membershipSelect";
 
@@ -17,9 +13,7 @@ interface Props {
 }
 
 const StepBillingDetails = ({ handlePrev, handleNext }: Props) => {
-  const [selectedMembership, setSelectedMembership] = useState<
-    Membership | undefined
-  >();
+  const [selectedMembership, setSelectedMembership] = useState<Membership | undefined>();
 
   const submit = () => {
     handleNext(selectedMembership?.id);
@@ -30,17 +24,15 @@ const StepBillingDetails = ({ handlePrev, handleNext }: Props) => {
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5">Select Plan</Typography>
         <Typography sx={{ color: "text.secondary" }}>
-          Select plan as per your requirement
+          Choose the plan that best fits your needs
         </Typography>
       </Box>
 
-      <Grid spacing={5}>
-        <MembershipSelect
-          setSelectedMembership={setSelectedMembership}
-          handleSubmit={submit}
-          handlePrev={handlePrev}
-        />
-      </Grid>
+      <MembershipSelect
+        setSelectedMembership={setSelectedMembership}
+        handleSubmit={submit}
+        handlePrev={handlePrev}
+      />
     </Grid>
   );
 };

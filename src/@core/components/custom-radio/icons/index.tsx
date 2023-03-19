@@ -7,18 +7,16 @@ import { CustomRadioIconsProps } from "src/@core/components/custom-radio/types";
 
 import Icon from "src/@core/components/icon";
 
-const CustomRadioIcons = (props: CustomRadioIconsProps) => {
-  const {
-    data,
-    icon,
-    name,
-    selected,
-    gridProps,
-    iconProps,
-    handleChange,
-    color = "primary"
-  } = props;
-
+const CustomRadioIcons = ({
+  data,
+  icon,
+  name,
+  selected,
+  gridProps,
+  iconProps,
+  handleChange,
+  color = "primary"
+}: CustomRadioIconsProps) => {
   const { title, value, content } = data;
 
   const renderComponent = () => {

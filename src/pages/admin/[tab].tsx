@@ -8,9 +8,9 @@ import AdminSettings from "src/views/pages/admin-panel/AdminSettings";
 
 const AdminSettingsTab = ({
   tab,
-  apiPricingPlanData
+  // apiPricingPlanData
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  return <AdminSettings tab={tab} apiPricingPlanData={apiPricingPlanData} />;
+  return <AdminSettings tab={tab} /* apiPricingPlanData={apiPricingPlanData} */ />;
 };
 
 export const getStaticPaths: GetStaticPaths = () => {

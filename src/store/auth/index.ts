@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import BaseApi from "../../api/api";
+import BaseApi, { ApiError } from "../../api/api";
 import {
   DashboardStatistics,
   Membership
@@ -19,17 +19,18 @@ export const createAccount = createAsyncThunk(
     { getState, dispatch, rejectWithValue }
   ) => {
     try {
-      return await BaseApi.post("/register", data);
+      return await BaseApi.post("/auth/register", data);
     } catch (error) {
-      return rejectWithValue(error);
+      let apiError = error as ApiError;
+      return rejectWithValue(apiError.messages?.[0] ?? "Server error");
     }
   }
 );
 
-export const fetchDashboardStatistics = createAsyncThunk(
-  "auth/fetchDashboardStatistics",
+export const fetchDashboardStats = createAsyncThunk(
+  "auth/fetchDashboardStats",
   async () => {
-    return await BaseApi.get("/dashboard/statistics");
+    return await BaseApi.get("/dashboard/stats");
   }
 );
 
@@ -121,7 +122,7 @@ export const authSlice = createSlice({
       .addCase(updateMembership.rejected, (state, action) => {
         state.updateMembershipStatus = "ERROR";
       })
-      .addCase(fetchDashboardStatistics.fulfilled, (state, action) => {
+      .addCase(fetchDashboardStats.fulfilled, (state, action) => {
         state.dashboardStatistics = action.payload;
       });
   }
