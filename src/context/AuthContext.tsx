@@ -2,7 +2,13 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios, { AxiosError } from "axios";
 import authConfig from "src/configs/auth";
-import { AuthValuesType, ErrCallbackType, LoginParams, RegisterParams, User } from "./types";
+import {
+  AuthValuesType,
+  ErrCallbackType,
+  LoginParams,
+  RegisterParams,
+  User
+} from "./types";
 import { httpRequest } from "../api/api";
 
 const defaultProvider: AuthValuesType = {
@@ -26,7 +32,9 @@ type Props = {
 };
 
 const AuthProvider = ({ children }: Props) => {
-  const [accessToken, setAccessToken] = useState<string | undefined>(defaultProvider.accessToken);
+  const [accessToken, setAccessToken] = useState<string | undefined>(
+    defaultProvider.accessToken
+  );
   const [user, setUser] = useState<User | null>(defaultProvider.user);
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading);
   const [isInitialized, setIsInitialized] = useState<boolean>(
@@ -152,9 +160,7 @@ const AuthProvider = ({ children }: Props) => {
       );
   };
 
-  const updateUserInformation = (
-    errorCallback?: ErrCallbackType
-  ) => {
+  const updateUserInformation = (errorCallback?: ErrCallbackType) => {
     httpRequest
       .get(authConfig.userInformationEndpoint)
       .then(async (res) => {
@@ -186,9 +192,7 @@ const AuthProvider = ({ children }: Props) => {
           console.log("We got a new refresh token token bruv");
         }
       })
-      .catch((err: { [key: string]: string }) =>
-        console.log("error", err)
-      );
+      .catch((err: { [key: string]: string }) => console.log("error", err));
   };
 
   const resetAuthValues = () => {

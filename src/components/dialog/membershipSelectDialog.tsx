@@ -15,7 +15,9 @@ import toast from "react-hot-toast";
 const MembershipSelectDialog = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [selectedMembership, setSelectedMembership] = useState<Membership | undefined>();
+  const [selectedMembership, setSelectedMembership] = useState<
+    Membership | undefined
+  >();
   const [successOpen, setSuccessOpen] = useState(false);
 
   const submit = async () => {
@@ -25,7 +27,10 @@ const MembershipSelectDialog = () => {
       });
       return;
     }
-    const checkoutSessionResponse = await BaseApi.createCheckoutSession(selectedMembership.id, auth.user.id);
+    const checkoutSessionResponse = await BaseApi.createCheckoutSession(
+      selectedMembership.id,
+      auth.user.id
+    );
     await router.push(checkoutSessionResponse.checkout_url);
   };
 
@@ -39,12 +44,9 @@ const MembershipSelectDialog = () => {
       auth.updateUser();
       router.replace("/");
     } else if (query.canceled === "true") {
-      toast.error(
-        "Payment was cancelled",
-        {
-          position: "top-center"
-        }
-      );
+      toast.error("Payment was cancelled", {
+        position: "top-center"
+      });
     }
   }, [router.query]);
 

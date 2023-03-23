@@ -40,9 +40,9 @@ const TabList = styled(MuiTabList)<TabListProps>(({ theme }) => ({
 }));
 
 const AdminSettings = ({
-  tab,
-  // apiPricingPlanData
-}: {
+  tab
+}: // apiPricingPlanData
+{
   tab: string;
   // apiPricingPlanData: PricingPlanType[];
 }) => {

@@ -13,7 +13,9 @@ interface Props {
 }
 
 const StepBillingDetails = ({ handlePrev, handleNext }: Props) => {
-  const [selectedMembership, setSelectedMembership] = useState<Membership | undefined>();
+  const [selectedMembership, setSelectedMembership] = useState<
+    Membership | undefined
+  >();
 
   const submit = () => {
     handleNext(selectedMembership?.id);

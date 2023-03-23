@@ -47,7 +47,11 @@ const AclGuard = (props: AclGuardProps) => {
     );
   }
 
-  if (auth.user && auth.user.role == Role.NEW_USER && router.pathname !== "/init") {
+  if (
+    auth.user &&
+    auth.user.role == Role.NEW_USER &&
+    router.pathname !== "/init"
+  ) {
     router.push("/init");
     return;
   }

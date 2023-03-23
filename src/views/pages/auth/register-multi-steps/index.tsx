@@ -64,11 +64,14 @@ const RegisterMultiSteps = () => {
       try {
         const createAccountAction = createAccount({ ...formData });
         const { payload } = await dispatch(createAccountAction);
-        const checkoutSessionResponse = await BaseApi.createCheckoutSession(selectedMembershipId, payload?.user?.id);
+        const checkoutSessionResponse = await BaseApi.createCheckoutSession(
+          selectedMembershipId,
+          payload?.user?.id
+        );
         await router.push(checkoutSessionResponse.checkout_url);
       } catch (error) {
         // TODO: If registration doesn't work we need to handle the error and not go to checkout
-        console.log('Error in registration process', error);
+        console.log("Error in registration process", error);
         toast.error("Error", {
           position: "top-center"
         });

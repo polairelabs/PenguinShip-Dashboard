@@ -1,5 +1,11 @@
 import jsPDF from "jspdf";
-import { Person, PersonType, Shipment, ShipmentAddress, ShipmentAddressType } from "./types/apps/NavashipTypes";
+import {
+  Person,
+  PersonType,
+  Shipment,
+  ShipmentAddress,
+  ShipmentAddressType
+} from "./types/apps/NavashipTypes";
 import { deleteCookie, setCookie } from "cookies-next";
 
 const INSURANCE_FEE_PERCENTAGE = 0.5;
@@ -101,8 +107,8 @@ export const getRecipientInfo = (shipment: Shipment) => {
   const deliveryAddress = getRecipientAddress(shipment);
   return receiverName
     ? capitalizeFirstLetterOnly(receiverName) +
-    ", " +
-    capitalizeFirstLetterOnly(deliveryAddress.city)
+        ", " +
+        capitalizeFirstLetterOnly(deliveryAddress.city)
     : capitalizeFirstLetterOnly(deliveryAddress.city);
 };
 

@@ -22,11 +22,11 @@ interface MembershipSelectProp {
 }
 
 const MembershipSelect = ({
-                            setSelectedMembership,
-                            isAdminEditForm,
-                            handleSubmit,
-                            handlePrev
-                          }: MembershipSelectProp) => {
+  setSelectedMembership,
+  isAdminEditForm,
+  handleSubmit,
+  handlePrev
+}: MembershipSelectProp) => {
   const [selectedRadio, setSelectedRadio] = useState<string>();
   const memberships = useSelector((state: RootState) => state.auth.memberships);
   const fetchMembershipsStatus = useSelector(
@@ -47,7 +47,11 @@ const MembershipSelect = ({
     (membership) => {
       return {
         value: membership.id,
-        title: <Typography variant="h5" mb={1.2}>{membership.name}</Typography>,
+        title: (
+          <Typography variant="h5" mb={1.2}>
+            {membership.name}
+          </Typography>
+        ),
         content: (
           <Box
             sx={{
@@ -128,14 +132,25 @@ const MembershipSelect = ({
               handleChange={handleRadioChange}
             />
           ))}
-          {!isAdminEditForm && (<Grid item>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Box component="span" sx={{ display: "inline-flex", color: "text.secondary", mr: 2 }}>
-                <Icon icon="mdi:circle-outline" fontSize="0.75rem" />
+          {!isAdminEditForm && (
+            <Grid item>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box
+                  component="span"
+                  sx={{
+                    display: "inline-flex",
+                    color: "text.secondary",
+                    mr: 2
+                  }}
+                >
+                  <Icon icon="mdi:circle-outline" fontSize="0.75rem" />
+                </Box>
+                <Typography variant="body2">
+                  All plans come with a <b>free 14-day trial</b>
+                </Typography>
               </Box>
-              <Typography variant="body2">All plans come with a <b>free 14-day trial</b></Typography>
-            </Box>
-          </Grid>)}
+            </Grid>
+          )}
           <Grid item xs={12}>
             <Box
               sx={{
