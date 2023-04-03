@@ -46,12 +46,10 @@ import { LoadingButton } from "@mui/lab";
 import AddressModal from "../../../components/addresses/addressModal";
 import PackageModal from "../../../components/packages/packagesModal";
 import { fetchPackages } from "../../../store/apps/packages";
-import { Box, Hidden, IconButton } from "@mui/material";
+import { Box, Hidden } from "@mui/material";
 import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
-import { convertAndDownloadImageToPdf, printPdf } from "../../../utils";
 import PurchaseLabelMessage from "../../../components/rates/purchaseLabelMessage";
-import { InformationOutline } from "mdi-material-ui";
 import PrintShippingLabel from "../../../components/shipments/printShippingLabel";
 
 const steps = [

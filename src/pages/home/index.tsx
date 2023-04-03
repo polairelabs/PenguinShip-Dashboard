@@ -79,7 +79,7 @@ const Home = () => {
                 </Typography>
                 <Typography variant="body2">
                   <IconButton aria-label="info">
-                    <InformationOutline color="warning" />
+                    <InformationOutline color="info" />
                   </IconButton>
                   {statistics.totalShipmentsDraftCount === 0
                     ? "No shipments in draft"
@@ -118,7 +118,7 @@ const Home = () => {
       <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
         <CardStatsVertical
           stats={statistics.totalPackagesCount ?? 0}
-          color="info"
+          color="secondary"
           title="Parcels created"
           icon={<PackageVariantClosed />}
           subtitle={"Total parcels created"}

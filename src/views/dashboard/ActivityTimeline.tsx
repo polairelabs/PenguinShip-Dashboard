@@ -50,31 +50,41 @@ const ActivityTimeline = ({ activityLogs }: ActivityTimeLineProps) => {
     return color;
   };
 
-  const getSubMessage = (
+  const getSubMessageComponent = (
     shipment: Shipment,
     messageType: ActivityMessageType
   ) => {
-    let subMessage = "";
-    if (messageType == ActivityMessageType.NEW) {
-      const recipientAddress = getRecipientAddress(shipment);
-      subMessage = `Shipping to: ${
-        recipientAddress.street1
-      }, ${getRecipientInfo(shipment)}, ${recipientAddress.zip}, ${
-        recipientAddress.country
-      }`;
+    const recipientAddress = getRecipientAddress(shipment);
+
+    if (messageType === ActivityMessageType.NEW) {
+      return (
+        <span>
+          Shipping to: {recipientAddress.street1}, {getRecipientInfo(shipment)},{" "}
+          {recipientAddress.zip}, {recipientAddress.country}
+        </span>
+      );
     }
 
-    if (messageType == ActivityMessageType.PURCHASE) {
-      subMessage = `Rate was purchased from ${shipment?.rate?.carrier} for $${shipment?.rate?.rate}`;
+    if (messageType === ActivityMessageType.PURCHASE) {
+      return (
+        <span>
+          Purchased{" "}
+          <strong>
+            {shipment?.rate?.carrier}{" "}
+            {splitStringByCapitalCase(shipment?.rate?.service)}
+          </strong>{" "}
+          rate for <strong>${shipment?.rate?.rate}</strong>
+        </span>
+      );
     }
 
-    if (messageType == ActivityMessageType.STATUS_UPDATE) {
-      if (shipment.easyPostStatus == "IN_TRANSIT") {
+    if (messageType === ActivityMessageType.STATUS_UPDATE) {
+      if (shipment.easyPostStatus === "IN_TRANSIT") {
         // TODO once status gets done in easypost webhook
       }
     }
 
-    return subMessage;
+    return null;
   };
 
   return (
@@ -122,7 +132,10 @@ const ActivityTimeline = ({ activityLogs }: ActivityTimeLineProps) => {
                   </Typography>
                 </Box>
                 <Typography variant="body2">
-                  {getSubMessage(activityLog.shipment, activityLog.messageType)}
+                  {getSubMessageComponent(
+                    activityLog.shipment,
+                    activityLog.messageType
+                  )}
                 </Typography>
               </TimelineContent>
             </TimelineItem>

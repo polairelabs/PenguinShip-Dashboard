@@ -118,12 +118,15 @@ export const BaseApi = {
 
   async retrieveImageFromProxy(shipmentId: number) {
     try {
-      const response = await httpRequest.get(`/proxy/${shipmentId}`, {
-        responseType: "arraybuffer",
-        headers: {
-          "Content-Type": "image/png"
+      const response = await httpRequest.get(
+        `/image-proxy/postage-label/${shipmentId}`,
+        {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "image/png"
+          }
         }
-      });
+      );
       return Promise.resolve(response.data);
     } catch (error) {
       return Promise.reject(handleError(error));

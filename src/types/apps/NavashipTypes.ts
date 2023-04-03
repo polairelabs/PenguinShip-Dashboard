@@ -54,6 +54,7 @@ export interface Shipment {
   persons: Person[];
   insured: boolean;
   insuranceAmount?: string;
+  shipmentNumber: number;
 }
 
 // Response from Shipment buy endpoint

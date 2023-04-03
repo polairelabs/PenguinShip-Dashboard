@@ -111,6 +111,18 @@ const ShipmentsList = () => {
 
   const columns = [
     {
+      flex: 0.15,
+      field: "id",
+      minWidth: 80,
+      headerName: "ID",
+      disableColumnMenu: true,
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2" sx={{ letterSpacing: "0.25px" }}>
+          {`#${row.shipmentNumber}`}
+        </Typography>
+      )
+    },
+    {
       minWidth: 160,
       field: "carrier",
       headerName: "Carrier",

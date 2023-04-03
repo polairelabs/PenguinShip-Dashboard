@@ -29,14 +29,14 @@ const ShipmentStatisticsCard = ({
   const salesData = [
     {
       stats: totalShipmentsCreatedCount,
-      color: "secondary",
+      color: "primary",
       title: "Created",
       icon: <TruckOutline sx={{ fontSize: "1.75rem" }} />
     },
     {
       stats: totalShipmentsInTransitCount,
       title: "In transit",
-      color: "info",
+      color: "secondary",
       icon: <TruckFastOutline sx={{ fontSize: "1.75rem" }} />
     },
     {
