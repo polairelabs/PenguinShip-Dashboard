@@ -26,12 +26,13 @@ import {
   getRecipientInfo
 } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
-import { CurrencyUsd, Delete, Printer, Undo } from "mdi-material-ui";
+import { Close, CurrencyUsd, Delete, Printer, Undo } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
 import ReturnConfirmationDialog from "../../../components/dialog/returnConfirmationDialog";
 import { AbilityContext } from "../../../layouts/components/acl/Can";
 import PrintShippingLabel from "../../../components/shipments/printShippingLabel";
+import DialogTitle from "@mui/material/DialogTitle";
 
 interface CellType {
   row: Shipment;
@@ -58,7 +59,8 @@ const ShipmentsList = () => {
   const [returnConfirmationDialog, setReturnConfirmationDialog] =
     useState<boolean>(false);
 
-  const [printLabelDialogOpen, setPrintLabelDialogOpen] = useState<boolean>(false);
+  const [printLabelDialogOpen, setPrintLabelDialogOpen] =
+    useState<boolean>(false);
 
   const store = useSelector((state: RootState) => state.shipments);
   const dispatch = useDispatch<AppDispatch>();
@@ -439,6 +441,15 @@ const ShipmentsList = () => {
               onBackdropClick={handlePrintLabelDialogToggle}
               key={"print-shipping-label"}
             >
+              <DialogTitle>
+                <IconButton
+                  size="small"
+                  onClick={handlePrintLabelDialogToggle}
+                  sx={{ position: "absolute", right: "1rem", top: "1rem" }}
+                >
+                  <Close />
+                </IconButton>
+              </DialogTitle>
               <DialogContent>
                 <PrintShippingLabel shipment={selectedShipment} />
               </DialogContent>

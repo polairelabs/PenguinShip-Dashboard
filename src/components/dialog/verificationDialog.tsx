@@ -8,7 +8,7 @@ interface Props {
   onValidate: (token: string) => void;
 }
 
-const VerificationModal = ({ open, onClose, onValidate }: Props) => {
+const VerificationDialog = ({ open, onClose, onValidate }: Props) => {
   const [token, setToken] = useState("");
 
   return (
@@ -54,4 +54,4 @@ const VerificationModal = ({ open, onClose, onValidate }: Props) => {
   );
 };
 
-export default VerificationModal;
+export default VerificationDialog;

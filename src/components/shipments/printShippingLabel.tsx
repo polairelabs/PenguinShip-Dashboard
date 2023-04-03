@@ -8,7 +8,9 @@ import styled from "@emotion/styled";
 import { useTheme } from "@mui/material/styles";
 import { BoughtShipment, Shipment } from "../../types/apps/NavashipTypes";
 import { convertAndDownloadImageToPdf, printPdf } from "../../utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import BaseApi from "../../api/api";
+import toast from "react-hot-toast";
 
 interface PrintShippingLabelProps {
   shipment: Shipment | BoughtShipment;
@@ -16,12 +18,42 @@ interface PrintShippingLabelProps {
   handleBack?: () => void;
 }
 
-const PrintShippingLabel = ({description, shipment, handleBack}: PrintShippingLabelProps) => {
+const PrintShippingLabel = ({
+  description,
+  shipment,
+  handleBack
+}: PrintShippingLabelProps) => {
   const [postageImageWidth, setPostageImageWidth] = useState<number>();
   const [postageImageHeight, setPostageImageHeight] = useState<number>();
+
   const [postageImageLoaded, setPostageImageLoaded] = useState<boolean>(false);
+  const [imageDataUrl, setImageDataUrl] = useState<string>();
 
   const theme = useTheme();
+
+  useEffect(() => {
+    retrieveImageBytesFromProxy().then((byteArray) =>
+      convertBytesToDataUrl(byteArray)
+    );
+  }, []);
+
+  const retrieveImageBytesFromProxy = async () => {
+    return await BaseApi.retrieveImageFromProxy(shipment.id);
+  };
+
+  const convertBytesToDataUrl = (byteArray: Uint8Array | undefined) => {
+    if (!byteArray) {
+      return;
+    }
+    const blob = new Blob([byteArray], { type: "image/png" });
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(blob);
+    fileReader.onload = () => {
+      const dataUrl = fileReader.result as string;
+      setImageDataUrl(dataUrl);
+      setPostageImageLoaded(true);
+    };
+  };
 
   // Style to be applied on the grid that contains the vertical divider between the two columns
   const GridDividerStyle = styled(Grid)(() => ({
@@ -41,26 +73,25 @@ const PrintShippingLabel = ({description, shipment, handleBack}: PrintShippingLa
     const imgElement = event.target;
     setPostageImageWidth(imgElement.width);
     setPostageImageHeight(imgElement.height);
-    setPostageImageLoaded(true);
   };
 
-  const handleDownloadPdf = (imageUrl: string, trackingNumber: string) => {
-    if (!postageImageWidth || !postageImageHeight) {
+  const handleDownloadPdf = (trackingNumber: string) => {
+    if (!imageDataUrl || !postageImageWidth || !postageImageHeight) {
       return;
     }
     convertAndDownloadImageToPdf(
-      imageUrl,
+      imageDataUrl,
       postageImageWidth,
       postageImageHeight,
       `shipping-label-${trackingNumber}`
     );
   };
 
-  const handlePrintPdf = (imageUrl: string) => {
-    if (!postageImageWidth || !postageImageHeight) {
+  const handlePrintPdf = () => {
+    if (!imageDataUrl || !postageImageWidth || !postageImageHeight) {
       return;
     }
-    printPdf(imageUrl, postageImageWidth, postageImageHeight);
+    printPdf(imageDataUrl, postageImageWidth, postageImageHeight);
   };
 
   return (
@@ -113,10 +144,7 @@ const PrintShippingLabel = ({description, shipment, handleBack}: PrintShippingLa
       </GridDividerStyle>
       <SecondColumnGridStyle item xs={12} sm={5}>
         <Hidden smUp>
-          <Divider
-            orientation="horizontal"
-            sx={{ width: "50%", my: 4 }}
-          />
+          <Divider orientation="horizontal" sx={{ width: "50%", my: 4 }} />
         </Hidden>
         <Grid item xs={12} sm={12}>
           <Box>
@@ -133,9 +161,7 @@ const PrintShippingLabel = ({description, shipment, handleBack}: PrintShippingLa
                 sx={{ padding: 2 }}
                 variant="outlined"
                 color="info"
-                onClick={() =>
-                  handlePrintPdf(shipment.postageLabelUrl)
-                }
+                onClick={() => handlePrintPdf()}
                 disabled={!postageImageLoaded}
               >
                 Print
@@ -146,12 +172,7 @@ const PrintShippingLabel = ({description, shipment, handleBack}: PrintShippingLa
                 sx={{ padding: 2 }}
                 variant="outlined"
                 color="info"
-                onClick={() =>
-                  handleDownloadPdf(
-                    shipment.postageLabelUrl,
-                    shipment.trackingCode
-                  )
-                }
+                onClick={() => handleDownloadPdf(shipment.trackingCode)}
                 disabled={!postageImageLoaded}
               >
                 Download
@@ -160,19 +181,12 @@ const PrintShippingLabel = ({description, shipment, handleBack}: PrintShippingLa
           </Box>
         </Grid>
       </SecondColumnGridStyle>
-      {handleBack && (<Grid
-        item
-        xs={12}
-        sx={{ display: "flex", justifyContent: "end" }}
-      >
-        <Button
-          size="large"
-          variant="contained"
-          onClick={handleBack}
-        >
-          Back To Start
-        </Button>
-      </Grid>
+      {handleBack && (
+        <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
+          <Button size="large" variant="contained" onClick={handleBack}>
+            Back To Start
+          </Button>
+        </Grid>
       )}
     </Grid>
   );

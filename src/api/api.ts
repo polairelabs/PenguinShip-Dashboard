@@ -114,6 +114,20 @@ export const BaseApi = {
     } catch (error) {
       return Promise.reject(handleError(error));
     }
+  },
+
+  async retrieveImageFromProxy(shipmentId: number) {
+    try {
+      const response = await httpRequest.get(`/proxy/${shipmentId}`, {
+        responseType: "arraybuffer",
+        headers: {
+          "Content-Type": "image/png"
+        }
+      });
+      return Promise.resolve(response.data);
+    } catch (error) {
+      return Promise.reject(handleError(error));
+    }
   }
 };
 

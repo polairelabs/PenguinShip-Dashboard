@@ -906,7 +906,13 @@ const CreateShipmentWizard = () => {
         );
       case 4:
         return (
-          <PrintShippingLabel description={"Success! The shipping label was successfully purchased"} shipment={boughtShipment} handleBack={handleBackToStart} />
+          <PrintShippingLabel
+            description={
+              "Success! The shipping label was successfully purchased"
+            }
+            shipment={boughtShipment}
+            handleBack={handleBackToStart}
+          />
         );
       default:
         return null;

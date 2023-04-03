@@ -10,7 +10,7 @@ import {
 const INSURANCE_FEE_PERCENTAGE = 0.5;
 
 const convertToPdf = (
-  imageUrl: string,
+  dataUrl: string,
   imageWidth: number,
   imageHeight: number
 ) => {
@@ -26,26 +26,26 @@ const convertToPdf = (
   const x = (pageWidth - imgWidthOnPage) / 2;
   const y = (pageHeight - imgHeightOnPage) / 2;
 
-  pdf.addImage(imageUrl, "PNG", x, y, imgWidthOnPage, imgHeightOnPage);
+  pdf.addImage(dataUrl, "PNG", x, y, imgWidthOnPage, imgHeightOnPage);
   return pdf;
 };
 
 export const convertAndDownloadImageToPdf = (
-  imageUrl: string,
+  dataUrl: string,
   imageWidth: number,
   imageHeight: number,
   filename: string
 ) => {
-  const pdf = convertToPdf(imageUrl, imageWidth, imageHeight);
+  const pdf = convertToPdf(dataUrl, imageWidth, imageHeight);
   pdf.save(`${filename}.pdf`);
 };
 
 export const printPdf = (
-  imageUrl: string,
+  dataUrl: string,
   imageWidth: number,
   imageHeight: number
 ) => {
-  const pdf = convertToPdf(imageUrl, imageWidth, imageHeight);
+  const pdf = convertToPdf(dataUrl, imageWidth, imageHeight);
   const pdfData = pdf.output("arraybuffer");
   const blob = new Blob([pdfData], { type: "application/pdf" });
   const url = URL.createObjectURL(blob);

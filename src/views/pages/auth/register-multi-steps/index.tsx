@@ -19,7 +19,7 @@ import { AppDispatch } from "../../../../store";
 import { AccountData } from "../../../../types/apps/NavashipTypes";
 import BaseApi from "../../../../api/api";
 import { Link } from "@mui/material";
-import VerificationModal from "../../../../components/verificationToken/verificationModal";
+import VerificationDialog from "../../../../components/dialog/verificationDialog";
 import toast from "react-hot-toast";
 
 const steps = [
@@ -173,7 +173,7 @@ const RegisterMultiSteps = () => {
                       </div>
                     </div>
                   </StepLabel>
-                  <VerificationModal
+                  <VerificationDialog
                     open={false}
                     onClose={() => alert("cool")}
                     onValidate={() => alert("validate")}
