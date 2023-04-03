@@ -6,7 +6,6 @@ import {
   ShipmentAddress,
   ShipmentAddressType
 } from "./types/apps/NavashipTypes";
-import { deleteCookie, setCookie } from "cookies-next";
 
 const INSURANCE_FEE_PERCENTAGE = 0.5;
 

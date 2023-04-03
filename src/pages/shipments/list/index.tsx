@@ -19,18 +19,19 @@ import {
   setSize
 } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
-import { Link, Tooltip } from "@mui/material";
+import { Dialog, DialogContent, Link, Tooltip } from "@mui/material";
 import {
   dateToHumanReadableFormatWithDayOfWeek,
   getRecipientAddress,
   getRecipientInfo
 } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
-import { Close, CurrencyUsd, Delete } from "mdi-material-ui";
+import { CurrencyUsd, Delete, Printer, Undo } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
 import ReturnConfirmationDialog from "../../../components/dialog/returnConfirmationDialog";
 import { AbilityContext } from "../../../layouts/components/acl/Can";
+import PrintShippingLabel from "../../../components/shipments/printShippingLabel";
 
 interface CellType {
   row: Shipment;
@@ -46,16 +47,20 @@ const ShipmentsList = () => {
     const storedPageSize = localStorage.getItem("shipmentsDataGridSize");
     return storedPageSize ? Number(storedPageSize) : 100;
   });
+
   const [openRateSelect, setOpenRateSelect] = useState<boolean>(false);
   const [selectedShipment, setSelectedShipment] = useState<
     Shipment | undefined
   >(undefined);
+
   const [searchResult, setSearchResult] = useState<Shipment[]>([]);
+
   const [returnConfirmationDialog, setReturnConfirmationDialog] =
     useState<boolean>(false);
 
-  const store = useSelector((state: RootState) => state.shipments);
+  const [printLabelDialogOpen, setPrintLabelDialogOpen] = useState<boolean>(false);
 
+  const store = useSelector((state: RootState) => state.shipments);
   const dispatch = useDispatch<AppDispatch>();
 
   const handleDialogToggleRateSelect = () => {
@@ -96,6 +101,10 @@ const ShipmentsList = () => {
     } else {
       setSearchResult([]);
     }
+  };
+
+  const handlePrintLabelDialogToggle = () => {
+    setPrintLabelDialogOpen(!printLabelDialogOpen);
   };
 
   const columns = [
@@ -288,13 +297,25 @@ const ShipmentsList = () => {
               }}
             >
               {row.status == ShipmentStatus.PURCHASED && (
+                <Tooltip title="Print label" disableInteractive={true}>
+                  <IconButton
+                    onClick={() => {
+                      setSelectedShipment(row);
+                      setPrintLabelDialogOpen(true);
+                    }}
+                  >
+                    <Printer />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {row.status == ShipmentStatus.PURCHASED && (
                 <Tooltip title="Return label" disableInteractive={true}>
                   <IconButton
                     onClick={() => {
                       handleReturnLabel();
                     }}
                   >
-                    <Close />
+                    <Undo />
                   </IconButton>
                 </Tooltip>
               )}
@@ -409,6 +430,20 @@ const ShipmentsList = () => {
             confirmButtonCallback={() => {}}
             shipment={selectedShipment}
           />
+          {selectedShipment && (
+            <Dialog
+              fullWidth
+              open={printLabelDialogOpen}
+              maxWidth="md"
+              onClose={handlePrintLabelDialogToggle}
+              onBackdropClick={handlePrintLabelDialogToggle}
+              key={"print-shipping-label"}
+            >
+              <DialogContent>
+                <PrintShippingLabel shipment={selectedShipment} />
+              </DialogContent>
+            </Dialog>
+          )}
         </Card>
       </Grid>
     </Grid>

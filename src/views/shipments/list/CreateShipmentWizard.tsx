@@ -38,7 +38,7 @@ import {
   Rate,
   ShipmentInsurance
 } from "../../../types/apps/NavashipTypes";
-import ShippingLabel from "../../../components/shippingLabel/ShippingLabel";
+import ShippingLabelPreview from "../../../components/shipments/shippingLabelPreview";
 import SelectPackageFormController from "../../../components/packages/selectPackageFormController";
 import { fetchAddresses } from "../../../store/apps/addresses";
 import RateSelect from "../../../components/rates/rateSelect";
@@ -52,6 +52,7 @@ import { useTheme } from "@mui/material/styles";
 import { convertAndDownloadImageToPdf, printPdf } from "../../../utils";
 import PurchaseLabelMessage from "../../../components/rates/purchaseLabelMessage";
 import { InformationOutline } from "mdi-material-ui";
+import PrintShippingLabel from "../../../components/shipments/printShippingLabel";
 
 const steps = [
   {
@@ -78,8 +79,7 @@ const steps = [
     description: "Select one of these following rates"
   },
   {
-    title: "Success!",
-    description: "Success! The shipping label was successfully purchased"
+    title: "Success!"
   }
 ];
 
@@ -203,37 +203,6 @@ const CreateShipmentWizard = () => {
   // Modals
   const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
   const [openPackageModal, setOpenPackageModal] = useState<boolean>(false);
-
-  // PDF
-  const [postageImageWidth, setPostageImageWidth] = useState<number>();
-  const [postageImageHeight, setPostageImageHeight] = useState<number>();
-  const [postageImageLoaded, setPostageImageLoaded] = useState<boolean>(false);
-
-  const handleImageLoad = (event) => {
-    const imgElement = event.target;
-    setPostageImageWidth(imgElement.width);
-    setPostageImageHeight(imgElement.height);
-    setPostageImageLoaded(true);
-  };
-
-  const handleDownloadPdf = (imageUrl: string, trackingNumber: string) => {
-    if (!postageImageWidth || !postageImageHeight) {
-      return;
-    }
-    convertAndDownloadImageToPdf(
-      imageUrl,
-      postageImageWidth,
-      postageImageHeight,
-      `shipping-label-${trackingNumber}`
-    );
-  };
-
-  const handlePrintPdf = (imageUrl: string) => {
-    if (!postageImageWidth || !postageImageHeight) {
-      return;
-    }
-    printPdf(imageUrl, postageImageWidth, postageImageHeight);
-  };
 
   const handleAddressModalToggle = () => {
     setOpenAddressModal(!openAddressModal);
@@ -623,7 +592,7 @@ const CreateShipmentWizard = () => {
                   orientation="horizontal"
                   sx={{ width: "50%", display: "flex", my: 4 }}
                 />
-                <ShippingLabel
+                <ShippingLabelPreview
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
@@ -718,7 +687,7 @@ const CreateShipmentWizard = () => {
                   orientation="horizontal"
                   sx={{ width: "50%", display: "flex", my: 4 }}
                 />
-                <ShippingLabel
+                <ShippingLabelPreview
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
@@ -809,7 +778,7 @@ const CreateShipmentWizard = () => {
                   orientation="horizontal"
                   sx={{ width: "50%", display: "flex", my: 4 }}
                 />
-                <ShippingLabel
+                <ShippingLabelPreview
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
@@ -889,7 +858,7 @@ const CreateShipmentWizard = () => {
                     sx={{ width: "50%", my: 4 }}
                   />
                 </Hidden>
-                <ShippingLabel
+                <ShippingLabelPreview
                   sourceAddress={sourceAddress}
                   deliveryAddress={deliveryAddress}
                   parcel={selectedPackage}
@@ -937,118 +906,7 @@ const CreateShipmentWizard = () => {
         );
       case 4:
         return (
-          <form key={4} onSubmit={handleRateSubmit(onSubmitSelectRate)}>
-            <Grid container>
-              <Grid item xs={12} sm={6}>
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                      color: "text.primary",
-                      mb: 4,
-                      display: "flex",
-                      justifyContent: "center"
-                    }}
-                  >
-                    {steps[activeStep].description}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    p: 2,
-                    mb: 4
-                  }}
-                >
-                  <Box
-                    component="img"
-                    sx={{
-                      maxHeight: { xs: "400px", md: "630px" },
-                      maxWidth: { xs: "300px", md: "400px" },
-                      border: "1px dashed black"
-                    }}
-                    alt="Shipping label"
-                    src={`${boughtShipment.postageLabelUrl}`}
-                    onLoad={handleImageLoad}
-                  />
-                </Box>
-              </Grid>
-              <GridDividerStyle
-                item
-                container
-                sm={1}
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Divider orientation="vertical" />
-              </GridDividerStyle>
-              <SecondColumnGridStyle item xs={12} sm={5}>
-                <Hidden smUp>
-                  <Divider
-                    orientation="horizontal"
-                    sx={{ width: "50%", my: 4 }}
-                  />
-                </Hidden>
-                <Grid item xs={12} sm={12}>
-                  <Box>
-                    <Box>
-                      <Typography variant="body2">
-                        <IconButton aria-label="info">
-                          <InformationOutline color="info" />
-                        </IconButton>
-                        Your label is ready to print
-                      </Typography>
-                    </Box>
-                    <Box my={3}>
-                      <Button
-                        sx={{ padding: 2 }}
-                        variant="outlined"
-                        color="info"
-                        onClick={() =>
-                          handlePrintPdf(boughtShipment.postageLabelUrl)
-                        }
-                        disabled={!postageImageLoaded}
-                      >
-                        Print
-                      </Button>
-                    </Box>
-                    <Box my={3}>
-                      <Button
-                        sx={{ padding: 2 }}
-                        variant="outlined"
-                        color="info"
-                        onClick={() =>
-                          handleDownloadPdf(
-                            boughtShipment.postageLabelUrl,
-                            boughtShipment.trackingCode
-                          )
-                        }
-                        disabled={!postageImageLoaded}
-                      >
-                        Download
-                      </Button>
-                    </Box>
-                  </Box>
-                </Grid>
-              </SecondColumnGridStyle>
-              <Grid
-                item
-                xs={12}
-                sx={{ display: "flex", justifyContent: "end" }}
-              >
-                <Button
-                  size="large"
-                  variant="contained"
-                  onClick={handleBackToStart}
-                >
-                  Back To Start
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
+          <PrintShippingLabel description={"Success! The shipping label was successfully purchased"} shipment={boughtShipment} handleBack={handleBackToStart} />
         );
       default:
         return null;

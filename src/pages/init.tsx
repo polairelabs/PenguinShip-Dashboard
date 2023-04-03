@@ -1,9 +1,6 @@
-import { useEffect } from "react";
 import MembershipSelectDialog from "../components/dialog/membershipSelectDialog";
 
 const InitPage = () => {
-  useEffect(() => {}, []);
-
   return <MembershipSelectDialog />;
 };
 
