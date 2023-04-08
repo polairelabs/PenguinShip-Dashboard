@@ -9,7 +9,11 @@ import {
 
 const INSURANCE_FEE_PERCENTAGE = 0.5;
 
-const convertToPdf = (dataUrl: string, imageWidth: number, imageHeight: number) => {
+const convertToPdf = (
+  dataUrl: string,
+  imageWidth: number,
+  imageHeight: number
+) => {
   const inchesToPt = (inches: number) => inches * 72;
   const pageWidth = inchesToPt(4);
   const pageHeight = inchesToPt(6);

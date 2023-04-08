@@ -286,10 +286,7 @@ const StepPersonalDetails = ({
               >
                 Previous
               </Button>
-              <Button
-                type="submit"
-                variant="contained"
-              >
+              <Button type="submit" variant="contained">
                 Create Account
               </Button>
             </Box>

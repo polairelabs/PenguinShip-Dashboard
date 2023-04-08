@@ -614,7 +614,12 @@ const CreateShipmentWizard = () => {
                 >
                   Back
                 </Button>
-                <Button size="large" type="submit" variant="contained" endIcon={<Icon icon="mdi:chevron-right" fontSize={20} />}>
+                <Button
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  endIcon={<Icon icon="mdi:chevron-right" fontSize={20} />}
+                >
                   Next
                 </Button>
               </Grid>
@@ -709,7 +714,12 @@ const CreateShipmentWizard = () => {
                 >
                   Back
                 </Button>
-                <Button size="large" type="submit" variant="contained" endIcon={<Icon icon="mdi:chevron-right" fontSize={20} />}>
+                <Button
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  endIcon={<Icon icon="mdi:chevron-right" fontSize={20} />}
+                >
                   Next
                 </Button>
               </Grid>
@@ -806,7 +816,11 @@ const CreateShipmentWizard = () => {
                   loading={createShipmentLoading}
                   loadingIndicator="Loading..."
                   variant="contained"
-                  endIcon={createNewShipment ? null : <Icon icon="mdi:chevron-right" fontSize={20} />}
+                  endIcon={
+                    createNewShipment ? null : (
+                      <Icon icon="mdi:chevron-right" fontSize={20} />
+                    )
+                  }
                 >
                   {createNewShipment ? "Create shipment" : "Next"}
                 </LoadingButton>
