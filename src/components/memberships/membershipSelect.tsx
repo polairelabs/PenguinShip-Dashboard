@@ -146,7 +146,7 @@ const MembershipSelect = ({
                   <Icon icon="mdi:circle-outline" fontSize="0.75rem" />
                 </Box>
                 <Typography variant="body2">
-                  All plans come with a <b>free 14-day trial</b>
+                  All plans come with a <b>free 7-day trial</b>
                 </Typography>
               </Box>
             </Grid>
