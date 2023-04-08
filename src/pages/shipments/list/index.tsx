@@ -113,8 +113,8 @@ const ShipmentsList = () => {
     {
       flex: 0.15,
       field: "id",
-      minWidth: 80,
-      headerName: "ID",
+      minWidth: 75,
+      headerName: "#",
       disableColumnMenu: true,
       renderCell: ({ row }: CellType) => (
         <Typography variant="body2" sx={{ letterSpacing: "0.25px" }}>

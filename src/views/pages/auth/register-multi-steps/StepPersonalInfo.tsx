@@ -289,9 +289,8 @@ const StepPersonalDetails = ({
               <Button
                 type="submit"
                 variant="contained"
-                endIcon={<Icon icon="mdi:chevron-right" fontSize={20} />}
               >
-                Next
+                Create Account
               </Button>
             </Box>
           </Grid>

@@ -19,7 +19,7 @@ import { useAuth } from "src/hooks/useAuth";
 
 import { Settings } from "src/@core/context/settingsContext";
 import { capitalizeFirstLetterOnly } from "../../utils";
-import { ShieldAccountOutline } from "mdi-material-ui";
+import { FileDocumentEditOutline, ShieldAccountOutline } from "mdi-material-ui";
 import { AbilityContext } from "./acl/Can";
 
 interface Props {
@@ -171,7 +171,13 @@ const UserDropdown = (props: Props) => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <CogOutline sx={{ mr: 2 }} />
-            Settings
+            User Settings
+          </Box>
+        </MenuItem>
+        <MenuItem sx={{ p: 0 }} onClick={() => {}}>
+          <Box sx={styles}>
+            <FileDocumentEditOutline sx={{ mr: 2 }} />
+            Submit a claim
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose("/faq")}>
