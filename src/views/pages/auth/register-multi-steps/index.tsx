@@ -51,8 +51,7 @@ const RegisterMultiSteps = () => {
     phoneNumber: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    membershipProductLink: ""
+    confirmPassword: ""
   });
   const [successOpen, setSuccessOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);

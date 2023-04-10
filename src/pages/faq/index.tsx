@@ -8,7 +8,6 @@ import Icon from "src/@core/components/icon";
 
 import axios from "axios";
 
-import FAQS from "src/views/pages/faq/Faqs";
 import FaqHeader from "src/views/pages/faq/FaqHeader";
 import FaqFooter from "src/views/pages/faq/FaqFooter";
 

@@ -77,11 +77,9 @@ const LinkStyled = styled("a")(({ theme }) => ({
 }));
 
 const ForgotPassword = () => {
-  // ** Hooks
   const theme = useTheme();
   const { settings } = useSettings();
 
-  // ** Vars
   const { skin } = settings;
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
 

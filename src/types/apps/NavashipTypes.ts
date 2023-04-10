@@ -126,7 +126,6 @@ export interface AccountData {
   email: string;
   password: string;
   confirmPassword: string;
-  membershipProductLink: string;
 }
 
 export interface SubscriptionDetail {

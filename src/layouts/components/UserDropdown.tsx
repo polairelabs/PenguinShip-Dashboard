@@ -180,12 +180,12 @@ const UserDropdown = (props: Props) => {
             Submit a claim
           </Box>
         </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose("/faq")}>
-          <Box sx={styles}>
-            <HelpCircleOutline sx={{ mr: 2 }} />
-            FAQ
-          </Box>
-        </MenuItem>
+        {/*<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose("/faq")}>*/}
+        {/*  <Box sx={styles}>*/}
+        {/*    <HelpCircleOutline sx={{ mr: 2 }} />*/}
+        {/*    FAQ*/}
+        {/*  </Box>*/}
+        {/*</MenuItem>*/}
         <Divider />
         <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
           <LogoutVariant

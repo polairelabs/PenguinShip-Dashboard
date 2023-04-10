@@ -53,7 +53,7 @@ const AclGuard = (props: AclGuardProps) => {
     router.pathname !== "/init"
   ) {
     router.push("/init");
-    return;
+    return null;
   }
 
   // Render Not Authorized component if the current packages has limited access

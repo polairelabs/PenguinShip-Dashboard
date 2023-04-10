@@ -27,6 +27,21 @@ export const createAccount = createAsyncThunk(
   }
 );
 
+export const confirmEmail = createAsyncThunk(
+  "auth/confirmEmail",
+  async (
+    emailVerificationJwt: string,
+    { getState, dispatch, rejectWithValue }
+  ) => {
+    try {
+      return await BaseApi.get(`/auth/verify-email/${emailVerificationJwt}`);
+    } catch (error) {
+      let apiError = error as ApiError;
+      return rejectWithValue(apiError.messages?.[0] ?? "Server error");
+    }
+  }
+);
+
 export const fetchDashboardStats = createAsyncThunk(
   "auth/fetchDashboardStats",
   async () => {
@@ -75,6 +90,7 @@ export const authSlice = createSlice({
     fetchMembershipsStatus: "" as Status,
     accountCreationStatus: "" as Status,
     updateMembershipStatus: "" as Status,
+    confirmEmailStatus: "" as Status,
     dashboardStatistics: {} as DashboardStatistics
   },
   reducers: {
@@ -83,6 +99,9 @@ export const authSlice = createSlice({
     },
     clearUpdateMembershipStatus: (state) => {
       state.updateMembershipStatus = "";
+    },
+    clearConfirmEmailStatus: (state) => {
+      state.confirmEmailStatus = "";
     }
   },
   extraReducers: (builder) => {
@@ -92,6 +111,12 @@ export const authSlice = createSlice({
       })
       .addCase(createAccount.fulfilled, (state, action) => {
         state.accountCreationStatus = "SUCCESS";
+      })
+      .addCase(confirmEmail.rejected, (state, action) => {
+        state.confirmEmailStatus = "ERROR";
+      })
+      .addCase(confirmEmail.fulfilled, (state, action) => {
+        state.confirmEmailStatus = "SUCCESS";
       })
       .addCase(fetchMemberships.pending, (state, action) => {
         state.fetchMembershipsStatus = "LOADING";
@@ -128,6 +153,6 @@ export const authSlice = createSlice({
   }
 });
 
-export const { clearAccountCreationStatus, clearUpdateMembershipStatus } =
+export const { clearAccountCreationStatus, clearUpdateMembershipStatus, clearConfirmEmailStatus } =
   authSlice.actions;
 export default authSlice.reducer;

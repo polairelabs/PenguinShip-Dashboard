@@ -2,13 +2,7 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios, { AxiosError } from "axios";
 import authConfig from "src/configs/auth";
-import {
-  AuthValuesType,
-  ErrCallbackType,
-  LoginParams,
-  RegisterParams,
-  User
-} from "./types";
+import { AuthValuesType, ErrCallbackType, LoginParams, User } from "./types";
 import { httpRequest } from "../api/api";
 
 const defaultProvider: AuthValuesType = {
@@ -21,7 +15,6 @@ const defaultProvider: AuthValuesType = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   setIsInitialized: () => Boolean,
-  register: () => Promise.resolve(),
   updateUser: () => Promise.resolve()
 };
 
@@ -138,28 +131,6 @@ const AuthProvider = ({ children }: Props) => {
     router.push("/login");
   };
 
-  // TODO check if this method is used, should probably use it
-  const handleRegister = (
-    params: RegisterParams,
-    errorCallback?: ErrCallbackType
-  ) => {
-    axios
-      .post(authConfig.registerEndpoint, params)
-      .then((res) => {
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error);
-        } else {
-          handleLogin({
-            email: params.email,
-            password: params.password
-          });
-        }
-      })
-      .catch((err: { [key: string]: string }) =>
-        errorCallback ? errorCallback(err) : null
-      );
-  };
-
   const updateUserInformation = (errorCallback?: ErrCallbackType) => {
     httpRequest
       .get(authConfig.userInformationEndpoint)
@@ -172,8 +143,6 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const handleRefreshTokenRefresh = () => {
-    console.log("Calling endpoint");
-
     // axios(authConfig.refreshTokenEndpoint, {
     //   method: "GET",
     //   withCredentials: true
@@ -212,7 +181,6 @@ const AuthProvider = ({ children }: Props) => {
     setIsInitialized,
     login: handleLogin,
     logout: handleLogout,
-    register: handleRegister,
     updateUser: updateUserInformation
   };
 
