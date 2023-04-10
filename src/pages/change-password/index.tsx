@@ -1,12 +1,18 @@
 // ** React Imports
-import { ReactNode, SyntheticEvent, useRef } from "react";
+import {
+  MouseEvent,
+  ReactNode,
+  SyntheticEvent,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 
 // ** Next Imports
 import Link from "next/link";
 
 // ** MUI Components
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Box, { BoxProps } from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { styled, useTheme } from "@mui/material/styles";
@@ -26,10 +32,23 @@ import { useSettings } from "src/@core/hooks/useSettings";
 
 // ** Demo Imports
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2";
-import { forgotPassword } from "../../store/auth";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store";
+import { changePassword, clearChangePasswordStatus } from "../../store/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
 import { toast } from "react-hot-toast";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import { Controller, useForm } from "react-hook-form";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Icon from "../../@core/components/icon";
+import { FormHelperText } from "@mui/material";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { PasswordReset } from "../../types/apps/NavashipTypes";
+import { PasswordFieldsVisibility } from "../../views/pages/auth/register-multi-steps/StepAccountDetails";
+import { useRouter } from "next/router";
+import * as yup from "yup";
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(
@@ -80,31 +99,115 @@ const LinkStyled = styled("a")(({ theme }) => ({
   color: theme.palette.primary.main
 }));
 
-const ForgotPassword = () => {
+const schema = yup.object().shape({
+  token: yup.string().required(),
+  password: yup
+    .string()
+    .min(8)
+    .max(128)
+    .required()
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      "Must Contain at least 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+    ),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+});
+
+const ChangePassword = () => {
   const theme = useTheme();
+  const router = useRouter();
   const { settings } = useSettings();
 
   const { skin } = settings;
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
+  const [formData, setFormData] = useState<PasswordReset>({
+    token: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [values, setValues] = useState<PasswordFieldsVisibility>({
+    showPassword: false,
+    showConfirmPassword: false
+  });
 
-  const emailRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSubmit = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    const email = emailRef?.current?.value ?? "";
-    const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
-    const isEmailValid = emailRegex.test(email);
-    if (isEmailValid) {
-      await dispatch(forgotPassword(email));
-      toast.success("A password reset link was sent to your email", {
-        position: "top-center"
-      });
-    } else {
-      toast.error("Please enter a valid email address", {
-        position: "top-center"
-      });
+  const defaultValues = {
+    password: "",
+    confirmPassword: ""
+  };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    defaultValues,
+    mode: "onChange",
+    resolver: async (data, context, options) => {
+      console.log("formData", formData);
+      // @ts-ignore
+      return yupResolver(schema)(formData, context, options);
     }
+  });
+
+  const changePasswordStatus = useSelector(
+    (state: RootState) => state.auth.changePasswordStatus
+  );
+
+  useEffect(() => {
+    const { query } = router;
+    if (query.token) {
+      setFormData({ ...formData, token: query.token as string });
+    }
+  }, [router.query]);
+
+  useEffect(() => {
+    if (changePasswordStatus === "SUCCESS") {
+      toast.success("Password updated successfully", {
+        position: "top-center"
+      });
+      router.push("/login");
+    } else if (changePasswordStatus === "ERROR") {
+      toast.error(
+        "Expired / Invalid password reset link. Please request a new one",
+        {
+          position: "top-center"
+        }
+      );
+    }
+    dispatch(clearChangePasswordStatus());
+  }, [changePasswordStatus]);
+
+  const handleChange = (event: any) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => {
+      return { ...prevData, [name]: value };
+    });
+  };
+
+  const onSubmit = async () => {
+    await dispatch(changePassword({ ...formData }));
+  };
+
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
+
+  const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setValues({ ...values, showConfirmPassword: !values.showConfirmPassword });
+  };
+
+  const handleMouseDownConfirmPassword = (
+    event: MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
   };
 
   const imageSource =
@@ -238,21 +341,98 @@ const ForgotPassword = () => {
             </Box>
             <Box sx={{ mb: 6 }}>
               <TypographyStyled variant="h5">
-                Forgot Password? 🔒
+                Change your password 🔒
               </TypographyStyled>
-              <Typography variant="body2">
-                Enter your email and we&prime;ll send you instructions to reset
-                your password
-              </Typography>
             </Box>
-            <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-              <TextField
-                autoFocus
-                inputRef={emailRef}
-                type="email"
-                label="Email"
-                sx={{ display: "flex", mb: 4 }}
-              />
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <InputLabel htmlFor="input-password">Password</InputLabel>
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <OutlinedInput
+                      name="password"
+                      label="Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      id="input-password"
+                      type={values.showPassword ? "text" : "password"}
+                      error={Boolean(errors.password)}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                          >
+                            <Icon
+                              icon={
+                                values.showPassword
+                                  ? "mdi:eye-outline"
+                                  : "mdi:eye-off-outline"
+                              }
+                            />
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                  )}
+                />
+                {errors.password && (
+                  <FormHelperText sx={{ color: "error.main" }}>
+                    {errors.password.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <InputLabel htmlFor="input-confirm-password">
+                  Confirm Password
+                </InputLabel>
+                <Controller
+                  name="confirmPassword"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <OutlinedInput
+                      label="Confirm Password"
+                      id="input-confirm-password"
+                      type={values.showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      name="confirmPassword"
+                      error={Boolean(errors.confirmPassword)}
+                      onChange={handleChange}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onClick={handleClickShowConfirmPassword}
+                            onMouseDown={handleMouseDownConfirmPassword}
+                          >
+                            <Icon
+                              icon={
+                                values.showConfirmPassword
+                                  ? "mdi:eye-outline"
+                                  : "mdi:eye-off-outline"
+                              }
+                            />
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                  )}
+                />
+                {errors.confirmPassword && (
+                  <FormHelperText sx={{ color: "error.main" }}>
+                    {errors.confirmPassword.message}
+                  </FormHelperText>
+                )}
+              </FormControl>
               <Button
                 fullWidth
                 size="large"
@@ -260,7 +440,7 @@ const ForgotPassword = () => {
                 variant="contained"
                 sx={{ mb: 5.25 }}
               >
-                Send reset link
+                Change Password
               </Button>
               <Typography
                 variant="body2"
@@ -285,10 +465,10 @@ const ForgotPassword = () => {
   );
 };
 
-ForgotPassword.getLayout = (page: ReactNode) => (
+ChangePassword.getLayout = (page: ReactNode) => (
   <BlankLayout>{page}</BlankLayout>
 );
 
-ForgotPassword.guestGuard = true;
+ChangePassword.guestGuard = true;
 
-export default ForgotPassword;
+export default ChangePassword;

@@ -42,6 +42,33 @@ export const confirmEmail = createAsyncThunk(
   }
 );
 
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email: string, { getState, dispatch, rejectWithValue }) => {
+    try {
+      return await BaseApi.post("/auth/password-reset/", { email: email });
+    } catch (error) {
+      let apiError = error as ApiError;
+      return rejectWithValue(apiError.messages?.[0] ?? "Server error");
+    }
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (
+    data: { [key: string]: number | string | undefined },
+    { getState, dispatch, rejectWithValue }
+  ) => {
+    try {
+      return await BaseApi.post("/auth/change-password", data);
+    } catch (error) {
+      let apiError = error as ApiError;
+      return rejectWithValue(apiError.messages?.[0] ?? "Server error");
+    }
+  }
+);
+
 export const fetchDashboardStats = createAsyncThunk(
   "auth/fetchDashboardStats",
   async () => {
@@ -91,6 +118,7 @@ export const authSlice = createSlice({
     accountCreationStatus: "" as Status,
     updateMembershipStatus: "" as Status,
     confirmEmailStatus: "" as Status,
+    changePasswordStatus: "" as Status,
     dashboardStatistics: {} as DashboardStatistics
   },
   reducers: {
@@ -102,6 +130,9 @@ export const authSlice = createSlice({
     },
     clearConfirmEmailStatus: (state) => {
       state.confirmEmailStatus = "";
+    },
+    clearChangePasswordStatus: (state) => {
+      state.changePasswordStatus = "";
     }
   },
   extraReducers: (builder) => {
@@ -117,6 +148,12 @@ export const authSlice = createSlice({
       })
       .addCase(confirmEmail.fulfilled, (state, action) => {
         state.confirmEmailStatus = "SUCCESS";
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.changePasswordStatus = "ERROR";
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.changePasswordStatus = "SUCCESS";
       })
       .addCase(fetchMemberships.pending, (state, action) => {
         state.fetchMembershipsStatus = "LOADING";
@@ -153,6 +190,10 @@ export const authSlice = createSlice({
   }
 });
 
-export const { clearAccountCreationStatus, clearUpdateMembershipStatus, clearConfirmEmailStatus } =
-  authSlice.actions;
+export const {
+  clearAccountCreationStatus,
+  clearUpdateMembershipStatus,
+  clearConfirmEmailStatus,
+  clearChangePasswordStatus
+} = authSlice.actions;
 export default authSlice.reducer;

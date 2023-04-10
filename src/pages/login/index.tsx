@@ -340,6 +340,7 @@ const LoginPage = () => {
               </FormControl>
               <Box
                 sx={{
+                  mt: 2,
                   mb: 4,
                   display: "flex",
                   alignItems: "center",
@@ -347,7 +348,6 @@ const LoginPage = () => {
                   justifyContent: "space-between"
                 }}
               >
-                <FormControlLabel control={<Checkbox />} label="Remember Me" />
                 <Link passHref href="/forgot-password">
                   <LinkStyled>Forgot Password?</LinkStyled>
                 </Link>

@@ -36,9 +36,9 @@ const AuthProvider = ({ children }: Props) => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("accessToken is", accessToken);
-  }, [accessToken]);
+  // useEffect(() => {
+  //   console.log("accessToken is", accessToken);
+  // }, [accessToken]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -72,7 +72,7 @@ const AuthProvider = ({ children }: Props) => {
           // TODO Time to use the refresh token
           // console.log("Refresh token baby!!");
           // handleRefreshTokenRefresh();
-          handleLogout();
+          // handleLogout();
         }
         return Promise.reject(error);
       }
@@ -92,12 +92,30 @@ const AuthProvider = ({ children }: Props) => {
         authConfig.storageUserDataKey
       );
       if (userInfo) {
+        // Get from the endpoint and not the local storage
+        // setLoading(true);
+        // await axios
+        //   .get(authConfig.meEndpoint, {
+        //     headers: {
+        //       Authorization: storedToken
+        //     }
+        //   })
+        //   .then(async response => {
+        //     setLoading(false)
+        //     setUser({ ...response.data.userData })
+        //   })
+        //   .catch(() => {
+        //     localStorage.removeItem('userData')
+        //     localStorage.removeItem('refreshToken')
+        //     localStorage.removeItem('accessToken')
+        //     setUser(null)
+        //     setLoading(false)
+        //   })
         const user: User = JSON.parse(userInfo);
         setUser({ ...user });
         setLoading(false);
       } else {
         setLoading(false);
-        handleLogout();
       }
     };
     initAuth();
@@ -127,8 +145,10 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const handleLogout = () => {
-    resetAuthValues();
-    router.push("/login");
+    axios.post(authConfig.logoutEndpoint).then(async (res) => {
+      resetAuthValues();
+      router.push("/login");
+    });
   };
 
   const updateUserInformation = (errorCallback?: ErrCallbackType) => {
@@ -158,7 +178,7 @@ const AuthProvider = ({ children }: Props) => {
         if (res.data.error) {
           console.log("error", res.data.error);
         } else {
-          console.log("We got a new refresh token token bruv");
+          console.log("We got a new refresh token token!!");
         }
       })
       .catch((err: { [key: string]: string }) => console.log("error", err));

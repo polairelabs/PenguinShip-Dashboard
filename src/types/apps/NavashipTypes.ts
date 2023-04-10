@@ -128,6 +128,12 @@ export interface AccountData {
   confirmPassword: string;
 }
 
+export interface PasswordReset {
+  password: string;
+  confirmPassword: string;
+  token: string; // passwordResetJWt
+}
+
 export interface SubscriptionDetail {
   currentLimit: number;
   cardLastFourDigits?: string;

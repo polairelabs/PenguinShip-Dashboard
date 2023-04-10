@@ -95,7 +95,7 @@ export const BaseApi = {
     }
   },
 
-  async createCheckoutSession(priceId: string, stripeCustomerId: string) {
+  async createCheckoutSession(priceId: string, userId: string) {
     try {
       const baseUrl =
         window.location.protocol +
@@ -106,7 +106,7 @@ export const BaseApi = {
         "/subscriptions/create-checkout-session/?subscriptionId=" +
           priceId +
           "&userId=" +
-          stripeCustomerId +
+          userId +
           "&baseUrl=" +
           baseUrl
       );

@@ -6,7 +6,7 @@ import { Membership } from "../../types/apps/NavashipTypes";
 import MembershipSelect from "../memberships/membershipSelect";
 import { useEffect, useState } from "react";
 import { IconButton, Typography } from "@mui/material";
-import { InformationOutline } from "mdi-material-ui";
+import { Close, InformationOutline } from "mdi-material-ui";
 import BaseApi from "../../api/api";
 import { useRouter } from "next/router";
 import { useAuth } from "../../hooks/useAuth";
@@ -52,7 +52,16 @@ const MembershipSelectDialog = () => {
 
   return (
     <Dialog fullWidth open={true} maxWidth="md">
-      <DialogTitle>Choose the plan that best fits your needs</DialogTitle>
+      <DialogTitle>
+        Choose the plan that best fits your needs
+        <IconButton
+          size="small"
+          onClick={() => auth.logout()}
+          sx={{ position: "absolute", right: "1rem", top: "1rem" }}
+        >
+          <Close />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <Box mb={4}>
           <Typography variant="body2">

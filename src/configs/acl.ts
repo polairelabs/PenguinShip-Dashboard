@@ -20,7 +20,6 @@ export enum Role {
 
 const defineRulesFor = (role: string, subject: string) => {
   const { can, cannot, rules } = new AbilityBuilder(AppAbility);
-
   if (role === Role.ADMIN) {
     can("manage", "all");
   } else if (role === Role.USER) {

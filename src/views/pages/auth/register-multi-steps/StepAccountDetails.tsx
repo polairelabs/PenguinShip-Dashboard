@@ -17,23 +17,20 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormHelperText } from "@mui/material";
 
-interface State {
+export interface PasswordFieldsVisibility {
   showPassword: boolean;
   showConfirmPassword: boolean;
 }
 
 const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Email must be in a valid format")
-    .required("Email is required"),
   password: yup
     .string()
-    .min(6)
+    .min(8)
+    .max(128)
     .required()
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-      "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+      "Must Contain at least 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
     ),
   confirmPassword: yup
     .string()
@@ -55,8 +52,7 @@ const StepAccountDetails = ({
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleNext: () => void;
 }) => {
-  // ** States
-  const [values, setValues] = useState<State>({
+  const [values, setValues] = useState<PasswordFieldsVisibility>({
     showPassword: false,
     showConfirmPassword: false
   });
@@ -83,6 +79,7 @@ const StepAccountDetails = ({
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
   };
+
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -90,6 +87,7 @@ const StepAccountDetails = ({
   const handleClickShowConfirmPassword = () => {
     setValues({ ...values, showConfirmPassword: !values.showConfirmPassword });
   };
+
   const handleMouseDownConfirmPassword = (
     event: MouseEvent<HTMLButtonElement>
   ) => {

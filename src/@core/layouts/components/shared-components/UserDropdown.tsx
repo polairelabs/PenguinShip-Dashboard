@@ -43,17 +43,13 @@ const BadgeContentSpan = styled("span")(({ theme }) => ({
 }));
 
 const UserDropdown = (props: Props) => {
-  // ** Props
   const { settings } = props;
 
-  // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
-  // ** Hooks
   const router = useRouter();
   const { logout } = useAuth();
 
-  // ** Vars
   const { direction } = settings;
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
