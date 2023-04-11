@@ -69,9 +69,8 @@ const AuthProvider = ({ children }: Props) => {
       (error) => {
         let axiosError = error as AxiosError;
         if (axiosError.response?.status == 401) {
-          // TODO Time to use the refresh token
-          // console.log("Refresh token baby!!");
-          // handleRefreshTokenRefresh();
+          // Time to use the refresh token
+          handleRefreshTokenRefresh();
           // handleLogout();
         }
         return Promise.reject(error);
@@ -163,25 +162,16 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const handleRefreshTokenRefresh = () => {
-    // axios(authConfig.refreshTokenEndpoint, {
-    //   method: "GET",
-    //   withCredentials: true
-    // }).then(res => {
-    //   console.log(res);
-    // }).catch(err => {
-    //   console.log(err.response);
-    // });
+    // Sends refresh token in cookie to get new access token
+    if (process.env.NEXT_PUBLIC_STAGE === "dev") {
+      return;
+    }
     axios
       .get(authConfig.refreshTokenEndpoint, { withCredentials: true })
       .then((res) => {
-        console.log("Response", res.headers);
-        if (res.data.error) {
-          console.log("error", res.data.error);
-        } else {
-          console.log("We got a new refresh token token!!");
-        }
-      })
-      .catch((err: { [key: string]: string }) => console.log("error", err));
+        console.log("Got to access token", res.data);
+        setAccessToken(res.data.access_token);
+      });
   };
 
   const resetAuthValues = () => {

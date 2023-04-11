@@ -23,11 +23,15 @@ export interface PasswordFieldsVisibility {
 }
 
 const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Email must be in a valid format")
+    .required("Email is required"),
   password: yup
     .string()
-    .min(8)
-    .max(128)
-    .required()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password can a have a maximum of 128 characters")
+    .required("Password is required")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
       "Must Contain at least 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"

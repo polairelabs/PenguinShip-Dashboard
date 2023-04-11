@@ -28,18 +28,20 @@ const phoneRegExp =
 const schema = yup.object().shape({
   firstName: yup
     .string()
-    .required()
+    .required("First name is required")
     .max(30, "Last name must be at most 30 characters"),
   lastName: yup
     .string()
-    .required()
+    .required("Last name is required")
     .max(30, "Last name must be at most 30 characters"),
-  city: yup.string().required(),
-  state: yup.string().required(),
-  address: yup.string().required(),
+  city: yup.string().required("City is required"),
+  state: yup.string().required("State is required"),
+  address: yup.string().required("Address is required"),
   phoneNumber: yup
     .string()
-    .required()
+    .min(10, "Phone number is not valid")
+    .max(20, "Phone number is not valid")
+    .required("Phone number is required")
     .transform((v, o) => (o === "" ? null : v))
     .matches(phoneRegExp, "Phone number is not valid")
 });
@@ -218,6 +220,39 @@ const StepPersonalDetails = ({
                     <MenuItem value="Nevada">Nevada</MenuItem>
                     <MenuItem value="New Hampshire">New Hampshire</MenuItem>
                     <MenuItem value="New Jersey">New Jersey</MenuItem>
+                    <MenuItem value="New Mexico">New Mexico</MenuItem>
+                    <MenuItem value="New York">New York</MenuItem>
+                    <MenuItem value="North Carolina">North Carolina</MenuItem>
+                    <MenuItem value="North Dakota">North Dakota</MenuItem>
+                    <MenuItem value="Ohio">Ohio</MenuItem>
+                    <MenuItem value="Oklahoma">Oklahoma</MenuItem>
+                    <MenuItem value="Oregon">Oregon</MenuItem>
+                    <MenuItem value="Pennsylvania">Pennsylvania</MenuItem>
+                    <MenuItem value="Rhode Island">Rhode Island</MenuItem>
+                    <MenuItem value="South Carolina">South Carolina</MenuItem>
+                    <MenuItem value="South Dakota">South Dakota</MenuItem>
+                    <MenuItem value="Tennessee">Tennessee</MenuItem>
+                    <MenuItem value="Texas">Texas</MenuItem>
+                    <MenuItem value="Utah">Utah</MenuItem>
+                    <MenuItem value="Vermont">Vermont</MenuItem>
+                    <MenuItem value="Virginia">Virginia</MenuItem>
+                    <MenuItem value="Washington">Washington</MenuItem>
+                    <MenuItem value="West Virginia">West Virginia</MenuItem>
+                    <MenuItem value="Wisconsin">Wisconsin</MenuItem>
+                    <MenuItem value="Wyoming">Wyoming</MenuItem>
+                    {/* Canadian Provinces */}
+                    <MenuItem value="Alberta">Alberta</MenuItem>
+                    <MenuItem value="British Columbia">British Columbia</MenuItem>
+                    <MenuItem value="Manitoba">Manitoba</MenuItem>
+                    <MenuItem value="New Brunswick">New Brunswick</MenuItem>
+                    <MenuItem value="Newfoundland and Labrador">Newfoundland and Labrador</MenuItem>
+                    <MenuItem value="Northwest Territories">Northwest Territories</MenuItem>
+                    <MenuItem value="Nova Scotia">Nova Scotia</MenuItem>
+                    <MenuItem value="Nunavut">Nunavut</MenuItem>
+                    <MenuItem value="Ontario">Ontario</MenuItem>
+                    <MenuItem value="Prince Edward Island">Prince Edward Island</MenuItem>
+                    <MenuItem value="Quebec">Quebec</MenuItem>
+                    <MenuItem value="Saskatchewan">Saskatchewan</MenuItem>
                   </Select>
                 )}
               />
@@ -286,8 +321,12 @@ const StepPersonalDetails = ({
               >
                 Previous
               </Button>
-              <Button type="submit" variant="contained">
-                Create Account
+              <Button
+                type="submit"
+                variant="contained"
+                endIcon={<Icon icon="mdi:chevron-right" fontSize={20} />}
+              >
+                Next
               </Button>
             </Box>
           </Grid>

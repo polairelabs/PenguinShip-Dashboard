@@ -95,7 +95,7 @@ export const BaseApi = {
     }
   },
 
-  async createCheckoutSession(priceId: string, userId: string) {
+  async createCheckoutSession(subscriptionId: string, userId: string) {
     try {
       const baseUrl =
         window.location.protocol +
@@ -104,7 +104,7 @@ export const BaseApi = {
         window.location.pathname;
       const response = await httpRequest.post(
         "/subscriptions/create-checkout-session/?subscriptionId=" +
-          priceId +
+          subscriptionId +
           "&userId=" +
           userId +
           "&baseUrl=" +

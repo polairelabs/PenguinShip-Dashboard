@@ -173,12 +173,12 @@ const MembershipSelect = ({
                 <Box>
                   <Button
                     disabled={!selectedRadio}
-                    color={isAdminEditForm ? "primary" : "success"}
+                    color={isAdminEditForm ? "primary" : "info"}
                     variant="contained"
                     onClick={handleSubmit}
                     sx={{ justifyContent: "flex-end" }}
                   >
-                    {isAdminEditForm ? "Edit" : "Submit"}
+                    {isAdminEditForm ? "Edit" : "Create Account"}
                   </Button>
                 </Box>
               )}

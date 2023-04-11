@@ -119,7 +119,9 @@ export const authSlice = createSlice({
     updateMembershipStatus: "" as Status,
     confirmEmailStatus: "" as Status,
     changePasswordStatus: "" as Status,
-    dashboardStatistics: {} as DashboardStatistics
+    dashboardStatistics: {} as DashboardStatistics,
+    createAccountError: "",
+    createAccountPayload: {} as any,
   },
   reducers: {
     clearAccountCreationStatus: (state) => {
@@ -133,15 +135,20 @@ export const authSlice = createSlice({
     },
     clearChangePasswordStatus: (state) => {
       state.changePasswordStatus = "";
-    }
+    },
+    clearCreateAccountError: (state) => {
+      state.createAccountError = "";
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(createAccount.rejected, (state, action) => {
         state.accountCreationStatus = "ERROR";
+        state.createAccountError = action.payload as string;
       })
       .addCase(createAccount.fulfilled, (state, action) => {
         state.accountCreationStatus = "SUCCESS";
+        state.createAccountPayload = action.payload.user;
       })
       .addCase(confirmEmail.rejected, (state, action) => {
         state.confirmEmailStatus = "ERROR";
@@ -194,6 +201,7 @@ export const {
   clearAccountCreationStatus,
   clearUpdateMembershipStatus,
   clearConfirmEmailStatus,
-  clearChangePasswordStatus
+  clearChangePasswordStatus,
+  clearCreateAccountError
 } = authSlice.actions;
 export default authSlice.reducer;

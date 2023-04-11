@@ -40,7 +40,6 @@ const MembershipSelectDialog = () => {
       // Show success message
       setSuccessOpen(true);
       // Update user information
-      console.log("updating user bruv");
       auth.updateUser();
       router.replace("/");
     } else if (query.canceled === "true") {

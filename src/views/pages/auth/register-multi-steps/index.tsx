@@ -13,9 +13,9 @@ import StepBillingDetails from "src/views/pages/auth/register-multi-steps/StepBi
 import StepperCustomDot from "src/views/forms/form-wizard/StepperCustomDot";
 
 import StepperWrapper from "src/@core/styles/mui/stepper";
-import { createAccount } from "../../../../store/auth";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../store";
+import { clearAccountCreationStatus, clearCreateAccountError, createAccount } from "../../../../store/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../store";
 import { AccountData } from "../../../../types/apps/NavashipTypes";
 import BaseApi from "../../../../api/api";
 import { Link } from "@mui/material";
@@ -37,9 +37,6 @@ const steps = [
   }
 ];
 
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-
 const RegisterMultiSteps = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [formData, setFormData] = useState<AccountData>({
@@ -55,29 +52,55 @@ const RegisterMultiSteps = () => {
   });
   const [successOpen, setSuccessOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
+  const [selectedMembershipId, setSelectedMembershipId] = useState("");
+
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
+  const authStore = useSelector((state: RootState) => state.auth);
+
   const handleNext = async (selectedMembershipId?: string) => {
     if (activeStep === 2 && selectedMembershipId) {
-      try {
-        const createAccountAction = createAccount({ ...formData });
-        const { payload } = await dispatch(createAccountAction);
-        const checkoutSessionResponse = await BaseApi.createCheckoutSession(
-          selectedMembershipId,
-          payload?.user?.id
-        );
-        await router.push(checkoutSessionResponse.checkout_url);
-      } catch (error) {
-        // TODO: If registration doesn't work we need to handle the error and not go to checkout
-        console.log("Error in registration process", error);
-        toast.error("Error", {
-          position: "top-center"
-        });
-      }
+      setSelectedMembershipId(selectedMembershipId);
+      const createAccountAction = createAccount({ ...formData });
+      await dispatch(createAccountAction);
+      return; // Next page handled by useEffect
     }
     setActiveStep(activeStep + 1);
   };
+
+  useEffect(() => {
+    // Handle next page from shipment to rates (Once shipment object in the store changes)
+    if (authStore.accountCreationStatus === "SUCCESS") {
+      toast.success("Success! A verification email has been sent to your email address ", {
+        position: "top-center"
+      });
+      BaseApi.createCheckoutSession(
+        selectedMembershipId,
+        authStore.createAccountPayload.id
+      ).then((checkoutSessionResponse) => {
+        router.push(checkoutSessionResponse.checkout_url);
+      }).catch((e) => {
+        toast.error(
+          `Error generating payment link`,
+          {
+            position: "top-center"
+          }
+        );
+      });
+      setActiveStep(activeStep + 1);
+    } else if (authStore.accountCreationStatus === "ERROR") {
+      toast.error(
+        `${authStore.createAccountError ?? "Error creating account"}`,
+        {
+          position: "top-center"
+        }
+      );
+      dispatch(clearCreateAccountError());
+    }
+
+    dispatch(clearAccountCreationStatus());
+  }, [authStore.accountCreationStatus, selectedMembershipId]);
 
   useEffect(() => {
     const { query } = router;
@@ -146,8 +169,8 @@ const RegisterMultiSteps = () => {
       {canceledOpen && (
         <div>
           Payment cancelled.{" "}
-          <Link href="/register">
-            Click here if you would like to register again.
+          <Link href="/login">
+            Click here if you would like to login.
           </Link>
         </div>
       )}
@@ -183,7 +206,7 @@ const RegisterMultiSteps = () => {
           </StepperWrapper>
 
           {renderContent()}
-          <Typography variant="body2" sx={{ mr: 2, mt: 2 }}>
+          <Typography variant="body2" sx={{ mr: 2, mt: 8 }}>
             Already have an account ? <Link href="/login">Go to login</Link>
           </Typography>
         </>
