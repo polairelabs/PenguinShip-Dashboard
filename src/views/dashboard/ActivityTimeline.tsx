@@ -101,7 +101,7 @@ const ActivityTimeline = ({ activityLogs }: ActivityTimeLineProps) => {
       <CardContent>
         <Timeline sx={{ my: 0, py: 0 }}>
           {activityLogs?.map((activityLog) => (
-            <TimelineItem>
+            <TimelineItem key={activityLog.shipment.id + "_" + activityLog.createdAt}>
               <TimelineSeparator>
                 <TimelineDot color={getDotColor(activityLog.messageType)} />
                 <TimelineConnector />

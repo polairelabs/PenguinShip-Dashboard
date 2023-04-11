@@ -52,9 +52,6 @@ const AuthProvider = ({ children }: Props) => {
           // @ts-ignore
           config.headers.Authorization = `Bearer ${accessToken}`;
         }
-        // config.withCredentials = true;
-        console.log("Refresh token baby!!");
-        handleRefreshTokenRefresh();
         return config;
       },
       (error) => {
@@ -164,14 +161,17 @@ const AuthProvider = ({ children }: Props) => {
   const handleRefreshTokenRefresh = () => {
     // Sends refresh token in cookie to get new access token
     if (process.env.NEXT_PUBLIC_STAGE === "dev") {
+      console.log("Dev mode - Don't request new access token. Logging out");
+      handleLogout();
       return;
     }
+
     axios
       .get(authConfig.refreshTokenEndpoint, { withCredentials: true })
       .then((res) => {
-        console.log("Got to access token", res.data);
+        console.log("Got new access token", res.data);
         setAccessToken(res.data.access_token);
-      });
+      }).catch(() => handleLogout());
   };
 
   const resetAuthValues = () => {
