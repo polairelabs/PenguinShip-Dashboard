@@ -1,7 +1,7 @@
 export default {
   meEndpoint: "/auth/me",
-  loginEndpoint: "http://localhost:8080/api/v1/auth/login",
-  registerEndpoint: "http://localhost:8080/api/v1/register",
+  loginEndpoint: process.env.NEXT_PUBLIC_API_BASE_LOGIN_ENDPOINT,
+  registerEndpoint: process.env.NEXT_PUBLIC_API_REGISTER_ENDPOINT,
   storageAccessTokenKey: "accessToken",
   storageRefreshTokenKey: "refreshToken",
   storageUserDataKey: "userData"
