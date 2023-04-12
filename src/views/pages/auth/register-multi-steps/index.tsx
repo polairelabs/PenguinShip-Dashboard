@@ -13,7 +13,11 @@ import StepBillingDetails from "src/views/pages/auth/register-multi-steps/StepBi
 import StepperCustomDot from "src/views/forms/form-wizard/StepperCustomDot";
 
 import StepperWrapper from "src/@core/styles/mui/stepper";
-import { clearAccountCreationStatus, clearCreateAccountError, createAccount } from "../../../../store/auth";
+import {
+  clearAccountCreationStatus,
+  clearCreateAccountError,
+  createAccount
+} from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store";
 import { AccountData } from "../../../../types/apps/NavashipTypes";
@@ -72,22 +76,24 @@ const RegisterMultiSteps = () => {
   useEffect(() => {
     // Handle next page from shipment to rates (Once shipment object in the store changes)
     if (authStore.accountCreationStatus === "SUCCESS") {
-      toast.success("Success! A verification email has been sent to your email address ", {
-        position: "top-center"
-      });
+      toast.success(
+        "Success! A verification email has been sent to your email address ",
+        {
+          position: "top-center"
+        }
+      );
       BaseApi.createCheckoutSession(
         selectedMembershipId,
         authStore.createAccountPayload.id
-      ).then((checkoutSessionResponse) => {
-        router.push(checkoutSessionResponse.checkout_url);
-      }).catch((e) => {
-        toast.error(
-          `Error generating payment link`,
-          {
+      )
+        .then((checkoutSessionResponse) => {
+          router.push(checkoutSessionResponse.checkout_url);
+        })
+        .catch((e) => {
+          toast.error(`Error generating payment link`, {
             position: "top-center"
-          }
-        );
-      });
+          });
+        });
       setActiveStep(activeStep + 1);
     } else if (authStore.accountCreationStatus === "ERROR") {
       toast.error(
@@ -169,9 +175,7 @@ const RegisterMultiSteps = () => {
       {canceledOpen && (
         <div>
           Payment cancelled.{" "}
-          <Link href="/login">
-            Click here if you would like to login.
-          </Link>
+          <Link href="/login">Click here if you would like to login.</Link>
         </div>
       )}
       {!successOpen && !canceledOpen && (

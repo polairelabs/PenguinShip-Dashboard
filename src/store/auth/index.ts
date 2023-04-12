@@ -121,7 +121,7 @@ export const authSlice = createSlice({
     changePasswordStatus: "" as Status,
     dashboardStatistics: {} as DashboardStatistics,
     createAccountError: "",
-    createAccountPayload: {} as any,
+    createAccountPayload: {} as any
   },
   reducers: {
     clearAccountCreationStatus: (state) => {
@@ -138,7 +138,7 @@ export const authSlice = createSlice({
     },
     clearCreateAccountError: (state) => {
       state.createAccountError = "";
-    },
+    }
   },
   extraReducers: (builder) => {
     builder

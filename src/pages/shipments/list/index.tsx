@@ -203,13 +203,23 @@ const ShipmentsList = () => {
         const statusColor = statusColors[status?.toLowerCase()];
 
         return (
-          <CustomChip
-            size="small"
-            skin="light"
-            color={statusColor}
-            label={status}
-            sx={{ "& .MuiChip-label": { textTransform: "capitalize" } }}
-          />
+          <Link
+            href={row?.publicTrackingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="body2"
+          >
+            <CustomChip
+              size="small"
+              skin="light"
+              color={statusColor}
+              label={status}
+              sx={{
+                "& .MuiChip-label": { textTransform: "capitalize" },
+                cursor: "pointer"
+              }}
+            />
+          </Link>
         );
       }
     },

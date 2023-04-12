@@ -242,15 +242,23 @@ const StepPersonalDetails = ({
                     <MenuItem value="Wyoming">Wyoming</MenuItem>
                     {/* Canadian Provinces */}
                     <MenuItem value="Alberta">Alberta</MenuItem>
-                    <MenuItem value="British Columbia">British Columbia</MenuItem>
+                    <MenuItem value="British Columbia">
+                      British Columbia
+                    </MenuItem>
                     <MenuItem value="Manitoba">Manitoba</MenuItem>
                     <MenuItem value="New Brunswick">New Brunswick</MenuItem>
-                    <MenuItem value="Newfoundland and Labrador">Newfoundland and Labrador</MenuItem>
-                    <MenuItem value="Northwest Territories">Northwest Territories</MenuItem>
+                    <MenuItem value="Newfoundland and Labrador">
+                      Newfoundland and Labrador
+                    </MenuItem>
+                    <MenuItem value="Northwest Territories">
+                      Northwest Territories
+                    </MenuItem>
                     <MenuItem value="Nova Scotia">Nova Scotia</MenuItem>
                     <MenuItem value="Nunavut">Nunavut</MenuItem>
                     <MenuItem value="Ontario">Ontario</MenuItem>
-                    <MenuItem value="Prince Edward Island">Prince Edward Island</MenuItem>
+                    <MenuItem value="Prince Edward Island">
+                      Prince Edward Island
+                    </MenuItem>
                     <MenuItem value="Quebec">Quebec</MenuItem>
                     <MenuItem value="Saskatchewan">Saskatchewan</MenuItem>
                   </Select>

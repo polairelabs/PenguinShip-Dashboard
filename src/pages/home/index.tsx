@@ -15,6 +15,7 @@ import PackageVariantClosed from "mdi-material-ui/PackageVariantClosed";
 import { IconButton } from "@mui/material";
 import { capitalizeFirstLetterOnly } from "../../utils";
 import { styled } from "@mui/material/styles";
+import { Role } from "../../configs/acl";
 
 const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,17 +70,28 @@ const Home = () => {
                 </Typography>
                 <Typography variant="body2">
                   <IconButton aria-label="info">
-                    <InformationOutline color="info" />
+                    <InformationOutline
+                      color={auth?.user?.role === Role.USER ? "info" : "error"}
+                    />
                   </IconButton>
-                  {statistics.currentMonthShipmentCreated > 0
-                    ? `You have created ${statistics.currentMonthShipmentCreated} out of ${statistics.maxShipmentCreatedLimit} allowed shipments for this month`
-                    : `You can create up to ${
-                        statistics.maxShipmentCreatedLimit ?? 0
-                      } shipments per month`}
+                  {auth.user?.role === Role.USER
+                    ? statistics.currentMonthShipmentCreated > 0
+                      ? `You have created ${statistics.currentMonthShipmentCreated} out of ${statistics.maxShipmentCreatedLimit} allowed shipments for this month`
+                      : `You can create up to ${
+                          statistics.maxShipmentCreatedLimit ?? 0
+                        } shipments per month`
+                    : auth.user?.role === Role.UNPAID_USER &&
+                      "No subscription active. Go to user settings to choose a new plan"}
                 </Typography>
                 <Typography variant="body2">
                   <IconButton aria-label="info">
-                    <InformationOutline color="info" />
+                    <InformationOutline
+                      color={
+                        statistics.totalShipmentsDraftCount === 0
+                          ? "info"
+                          : "warning"
+                      }
+                    />
                   </IconButton>
                   {statistics.totalShipmentsDraftCount === 0
                     ? "No shipments in draft"

@@ -171,7 +171,8 @@ const AuthProvider = ({ children }: Props) => {
       .then((res) => {
         console.log("Got new access token", res.data);
         setAccessToken(res.data.access_token);
-      }).catch(() => handleLogout());
+      })
+      .catch(() => handleLogout());
   };
 
   const resetAuthValues = () => {
