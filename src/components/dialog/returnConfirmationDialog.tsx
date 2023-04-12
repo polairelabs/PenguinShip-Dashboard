@@ -38,7 +38,9 @@ const ReturnConfirmationDialog = ({
         <DialogContent>
           <DialogContentText>{description ?? ""}</DialogContentText>
           <Typography variant={"body2"}>
-            {`Label is currently being ${shipment?.easyPostStatus}`}
+            {
+              "Please note that the refund process may vary depending on the carrier, and there might be a slight waiting period for the refund to be approved and processed"
+            }
           </Typography>
         </DialogContent>
         <DialogActions>

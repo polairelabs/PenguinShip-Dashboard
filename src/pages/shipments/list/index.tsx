@@ -15,6 +15,7 @@ import {
   clearDeleteStatus,
   deleteShipment,
   fetchShipments,
+  refundShipment,
   setOffset,
   setSize
 } from "../../../store/apps/shipments";
@@ -336,7 +337,7 @@ const ShipmentsList = () => {
                 <Tooltip title="Return label" disableInteractive={true}>
                   <IconButton
                     onClick={() => {
-                      handleReturnLabel();
+                      handleReturnLabel(row);
                     }}
                   >
                     <Undo />
@@ -373,13 +374,14 @@ const ShipmentsList = () => {
     setReturnConfirmationDialog(!returnConfirmationDialog);
   };
 
-  const handleReturnLabel = () => {
+  const handleReturnLabel = (shipment: Shipment) => {
+    setSelectedShipment(shipment);
     setReturnConfirmationDialog(true);
   };
 
   const handleBuyRate = (shipment: Shipment) => {
-    setOpenRateSelect(true);
     setSelectedShipment(shipment);
+    setOpenRateSelect(true);
   };
 
   const handleDelete = (id) => {
@@ -408,6 +410,14 @@ const ShipmentsList = () => {
     }
     dispatch(clearDeleteStatus());
   }, [store.deleteStatus]);
+
+  // Return/refund shipment
+  const returnShipment = () => {
+    if (!selectedShipment) {
+      return;
+    }
+    dispatch(refundShipment(selectedShipment?.id));
+  };
 
   return (
     <Grid container spacing={6}>
@@ -450,8 +460,10 @@ const ShipmentsList = () => {
           <ReturnConfirmationDialog
             open={returnConfirmationDialog}
             handleDialogToggle={handleConfirmationReturnDialogToggle}
-            title={"Do you want to return this label?"}
-            confirmButtonCallback={() => {}}
+            title={`Do you want to return the label of Shipment #${selectedShipment?.shipmentNumber}?`}
+            confirmButtonCallback={() => {
+              returnShipment();
+            }}
             shipment={selectedShipment}
           />
           {selectedShipment && (

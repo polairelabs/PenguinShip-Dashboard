@@ -71,10 +71,16 @@ const Home = () => {
                 <Typography variant="body2">
                   <IconButton aria-label="info">
                     <InformationOutline
-                      color={(auth?.user?.role === Role.USER || auth.user?.role === Role.ADMIN) ? "info" : "error"}
+                      color={
+                        auth?.user?.role === Role.USER ||
+                        auth.user?.role === Role.ADMIN
+                          ? "info"
+                          : "error"
+                      }
                     />
                   </IconButton>
-                  {auth.user?.role === Role.USER || auth.user?.role === Role.ADMIN
+                  {auth.user?.role === Role.USER ||
+                  auth.user?.role === Role.ADMIN
                     ? statistics.currentMonthShipmentCreated > 0
                       ? `You have created ${statistics.currentMonthShipmentCreated} out of ${statistics.maxShipmentCreatedLimit} allowed shipments for this month`
                       : `You can create up to ${
@@ -134,7 +140,8 @@ const Home = () => {
           title="Parcels created"
           icon={<PackageVariantClosed />}
           subtitle={"Total parcels created"}
-          infoIcon={false}
+          infoIcon={true}
+          tooltip={"Current amount of parcels in inventory"}
         />
       </Grid>
       <Grid item sm={6} xs={12}>

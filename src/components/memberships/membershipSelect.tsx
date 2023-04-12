@@ -178,7 +178,7 @@ const MembershipSelect = ({
                     onClick={handleSubmit}
                     sx={{ justifyContent: "flex-end" }}
                   >
-                    {isAdminEditForm ? "Edit" : "Create Account"}
+                    {isAdminEditForm ? "Edit" : "Submit"}
                   </Button>
                 </Box>
               )}

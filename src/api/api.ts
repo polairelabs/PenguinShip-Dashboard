@@ -68,7 +68,7 @@ export const BaseApi = {
     }
   },
 
-  async post(url: string, body: object) {
+  async post(url: string, body: object | null) {
     try {
       const response = await httpRequest.post(url, body);
       return Promise.resolve(response.data);
