@@ -7,11 +7,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import { Shipment, ShipmentAddressType } from "../../types/apps/NavashipTypes";
 import { Typography } from "@mui/material";
+import { toast } from "react-hot-toast";
 
 interface ReturnConfirmationDialogProps {
   open: boolean;
   handleDialogToggle: () => void;
-  shipment: Shipment | undefined;
   title: string;
   description?: string;
   confirmButtonLabel?: string;
@@ -23,7 +23,6 @@ interface ReturnConfirmationDialogProps {
 const ReturnConfirmationDialog = ({
   open,
   handleDialogToggle,
-  shipment,
   title,
   description,
   confirmButtonLabel,
@@ -38,7 +37,9 @@ const ReturnConfirmationDialog = ({
         <DialogContent>
           <DialogContentText>{description ?? ""}</DialogContentText>
           <Typography variant={"body2"}>
-            {`Label is currently being ${shipment?.easyPostStatus}`}
+            {
+              "Please note that the refund process may vary depending on the carrier, and there might be a slight waiting period for the refund to be approved and processed"
+            }
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -50,6 +51,10 @@ const ReturnConfirmationDialog = ({
           <Button
             onClick={() => {
               confirmButtonCallback();
+              handleDialogToggle();
+              toast.success("Your refund request was submitted", {
+                position: "top-center"
+              });
             }}
           >
             {confirmButtonLabel ?? "Confirm"}

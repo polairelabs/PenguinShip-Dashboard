@@ -1,76 +1,70 @@
-import { memo, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridValueGetterParams } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import DeleteOutline from "mdi-material-ui/DeleteOutline";
 import CustomChip from "src/@core/components/mui/chip";
 
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppDispatch, RootState } from "src/store";
-import {
-  Person,
-  PersonType,
-  Shipment,
-  ShipmentAddress,
-  ShipmentAddressType,
-  ShipmentStatus
-} from "src/types/apps/NavashipTypes";
+import { Shipment, ShipmentStatus } from "src/types/apps/NavashipTypes";
 import {
   clearDeleteStatus,
   deleteShipment,
   fetchShipments,
+  refundShipment,
   setOffset,
   setSize
 } from "../../../store/apps/shipments";
 import Box from "@mui/material/Box";
-import { Link, Tooltip } from "@mui/material";
+import { Dialog, DialogContent, Link, Tooltip } from "@mui/material";
 import {
   dateToHumanReadableFormatWithDayOfWeek,
   getRecipientAddress,
   getRecipientInfo
 } from "../../../utils";
 import QuickSearchToolbar from "../../../views/table/data-grid/QuickSearchToolbar";
-import { Close, CurrencyUsd, Delete } from "mdi-material-ui";
+import { Close, CurrencyUsd, Delete, Printer, Undo } from "mdi-material-ui";
 import SelectRateModal from "../../../components/rates/selectRateModal";
 import toast from "react-hot-toast";
-import ReturnConfirmationDialog from "../../../components/confirmationdialog/returnConfirmationDialog";
+import ReturnConfirmationDialog from "../../../components/dialog/returnConfirmationDialog";
+import { AbilityContext } from "../../../layouts/components/acl/Can";
+import PrintShippingLabel from "../../../components/shipments/printShippingLabel";
+import DialogTitle from "@mui/material/DialogTitle";
 
 interface CellType {
   row: Shipment;
 }
 
 const ShipmentsList = () => {
+  const ability = useContext(AbilityContext);
+  const enableDeleteButton = ability?.can("delete", "entity");
+
   const [searchText, setSearchText] = useState("");
-  const [hoveredRow, setHoveredRow] = useState<Number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(() => {
     const storedPageSize = localStorage.getItem("shipmentsDataGridSize");
     return storedPageSize ? Number(storedPageSize) : 100;
   });
+
   const [openRateSelect, setOpenRateSelect] = useState<boolean>(false);
   const [selectedShipment, setSelectedShipment] = useState<
     Shipment | undefined
   >(undefined);
+
   const [searchResult, setSearchResult] = useState<Shipment[]>([]);
+
   const [returnConfirmationDialog, setReturnConfirmationDialog] =
     useState<boolean>(false);
 
+  const [printLabelDialogOpen, setPrintLabelDialogOpen] =
+    useState<boolean>(false);
+
   const store = useSelector((state: RootState) => state.shipments);
-
   const dispatch = useDispatch<AppDispatch>();
-
-  const onMouseEnterRow = (event) => {
-    const id = Number(event.currentTarget.getAttribute("data-id"));
-    setHoveredRow(id);
-  };
-
-  const onMouseLeaveRow = (event) => {
-    setHoveredRow(null);
-  };
 
   const handleDialogToggleRateSelect = () => {
     setOpenRateSelect(!openRateSelect);
@@ -112,7 +106,23 @@ const ShipmentsList = () => {
     }
   };
 
+  const handlePrintLabelDialogToggle = () => {
+    setPrintLabelDialogOpen(!printLabelDialogOpen);
+  };
+
   const columns = [
+    {
+      flex: 0.15,
+      field: "id",
+      minWidth: 75,
+      headerName: "#",
+      disableColumnMenu: true,
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2" sx={{ letterSpacing: "0.25px" }}>
+          {`#${row.shipmentNumber}`}
+        </Typography>
+      )
+    },
     {
       minWidth: 160,
       field: "carrier",
@@ -172,35 +182,38 @@ const ShipmentsList = () => {
       }
     },
     {
-      minWidth: 150,
+      minWidth: 170,
       field: "status",
       headerName: "Status",
       renderCell: ({ row }: CellType) => {
-        // status can either come from easypost or navaship api (if easypost status is unknown use the navaship status)
-        // Status in easypost is unknown until it is scanned by the carrier
-        // const status =
-        //   row?.navashipShipmentStatus !== "DRAFT"
-        //     ? row?.easypostShipmentStatus === "unknown"
-        //       ? row?.navashipShipmentStatus
-        //       : row?.easypostShipmentStatus
-        //     : row?.navashipShipmentStatus;
-        const status = row.status;
+        // status can either come from easypost or api (if easypost status is unknown use the api status)
+        const status = row?.easypostStatus ?? row.status;
         const statusColors = {
           purchased: "primary",
           delivered: "success",
           draft: "info",
           unknown: "info"
         };
-        const statusColor = statusColors[status?.toLowerCase()];
+        const statusColor = statusColors[status?.toLowerCase()] ?? "warning";
 
         return (
-          <CustomChip
-            size="small"
-            skin="light"
-            color={statusColor}
-            label={status}
-            sx={{ "& .MuiChip-label": { textTransform: "capitalize" } }}
-          />
+          <Link
+            href={row?.publicTrackingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="body2"
+          >
+            <CustomChip
+              size="small"
+              skin="light"
+              color={statusColor}
+              label={status}
+              sx={{
+                "& .MuiChip-label": { textTransform: "capitalize" },
+                cursor: "pointer"
+              }}
+            />
+          </Link>
         );
       }
     },
@@ -275,7 +288,9 @@ const ShipmentsList = () => {
               variant="body2"
               sx={{ color: "text.primary", fontWeight: 600 }}
             >
-              {dateToHumanReadableFormatWithDayOfWeek(row?.createdAt)}
+              {dateToHumanReadableFormatWithDayOfWeek(
+                row?.deliveryDate ?? row?.createdAt
+              )}
             </Typography>
           </Box>
         );
@@ -301,17 +316,45 @@ const ShipmentsList = () => {
                 // visibility: hoveredRow == row.id ? "visible" : "hidden"
               }}
             >
-              {row.status == ShipmentStatus.PURCHASED && (
-                <Tooltip title="Return label" disableInteractive={true}>
-                  <IconButton
-                    onClick={() => {
-                      handleReturnLabel();
-                    }}
-                  >
-                    <Close />
-                  </IconButton>
-                </Tooltip>
-              )}
+              {row.status !== ShipmentStatus.DRAFT &&
+                row.status !== ShipmentStatus.REFUND_PROCESSED && (
+                  <Tooltip title="Print label" disableInteractive={true}>
+                    <IconButton
+                      onClick={() => {
+                        setSelectedShipment(row);
+                        setPrintLabelDialogOpen(true);
+                      }}
+                    >
+                      <Printer />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              {row.easypostStatus
+                ? (row.easypostStatus === "PRE_TRANSIT" ||
+                    row.easypostStatus === "CANCELLED" ||
+                    row.easypostStatus === "FAILED" ||
+                    row.easypostStatus === "FAILURE") && (
+                    <Tooltip title="Return label" disableInteractive={true}>
+                      <IconButton
+                        onClick={() => {
+                          handleReturnLabel(row);
+                        }}
+                      >
+                        <Undo />
+                      </IconButton>
+                    </Tooltip>
+                  )
+                : row.status === ShipmentStatus.PURCHASED && (
+                    <Tooltip title="Return label" disableInteractive={true}>
+                      <IconButton
+                        onClick={() => {
+                          handleReturnLabel(row);
+                        }}
+                      >
+                        <Undo />
+                      </IconButton>
+                    </Tooltip>
+                  )}
               {row.status === ShipmentStatus.DRAFT && (
                 <Tooltip title="Buy rate" disableInteractive={true}>
                   <IconButton onClick={() => handleBuyRate(row)}>
@@ -321,7 +364,10 @@ const ShipmentsList = () => {
               )}
               {row.status === ShipmentStatus.DRAFT && (
                 <Tooltip title="Delete" disableInteractive={true}>
-                  <IconButton onClick={() => handleDelete(row.id)}>
+                  <IconButton
+                    disabled={!enableDeleteButton}
+                    onClick={() => handleDelete(row.id)}
+                  >
                     <Delete />
                   </IconButton>
                 </Tooltip>
@@ -339,13 +385,14 @@ const ShipmentsList = () => {
     setReturnConfirmationDialog(!returnConfirmationDialog);
   };
 
-  const handleReturnLabel = () => {
+  const handleReturnLabel = (shipment: Shipment) => {
+    setSelectedShipment(shipment);
     setReturnConfirmationDialog(true);
   };
 
   const handleBuyRate = (shipment: Shipment) => {
-    setOpenRateSelect(true);
     setSelectedShipment(shipment);
+    setOpenRateSelect(true);
   };
 
   const handleDelete = (id) => {
@@ -374,6 +421,14 @@ const ShipmentsList = () => {
     }
     dispatch(clearDeleteStatus());
   }, [store.deleteStatus]);
+
+  // Return/refund shipment
+  const returnShipment = () => {
+    if (!selectedShipment) {
+      return;
+    }
+    dispatch(refundShipment(selectedShipment?.id));
+  };
 
   return (
     <Grid container spacing={6}>
@@ -404,10 +459,6 @@ const ShipmentsList = () => {
                 clearSearch: () => handleSearch(""),
                 onChange: (event) => handleSearch(event.target.value),
                 searchTxtPlaceHolder: "Search labels..."
-              },
-              row: {
-                onMouseEnter: onMouseEnterRow,
-                onMouseLeave: onMouseLeaveRow
               }
             }}
             sx={{
@@ -420,12 +471,34 @@ const ShipmentsList = () => {
           <ReturnConfirmationDialog
             open={returnConfirmationDialog}
             handleDialogToggle={handleConfirmationReturnDialogToggle}
-            title={"Do you want to return this label?"}
+            title={`Do you want to return the label of Shipment #${selectedShipment?.shipmentNumber}?`}
             confirmButtonCallback={() => {
-              console.log("hehe");
+              returnShipment();
             }}
-            shipment={selectedShipment}
           />
+          {selectedShipment && (
+            <Dialog
+              fullWidth
+              open={printLabelDialogOpen}
+              maxWidth="md"
+              onClose={handlePrintLabelDialogToggle}
+              onBackdropClick={handlePrintLabelDialogToggle}
+              key={"print-shipping-label"}
+            >
+              <DialogTitle>
+                <IconButton
+                  size="small"
+                  onClick={handlePrintLabelDialogToggle}
+                  sx={{ position: "absolute", right: "1rem", top: "1rem" }}
+                >
+                  <Close />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <PrintShippingLabel shipment={selectedShipment} />
+              </DialogContent>
+            </Dialog>
+          )}
         </Card>
       </Grid>
     </Grid>

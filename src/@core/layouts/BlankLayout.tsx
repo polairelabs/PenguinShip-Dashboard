@@ -1,8 +1,6 @@
-// ** MUI Imports
 import { styled } from "@mui/material/styles";
 import Box, { BoxProps } from "@mui/material/Box";
 
-// ** Types
 import { BlankLayoutProps } from "./types";
 
 // Styled component for Blank Layout component

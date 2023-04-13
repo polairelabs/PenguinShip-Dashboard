@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -26,12 +26,17 @@ import PackageModal from "../../../components/packages/packagesModal";
 import { Box, Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
 import { Delete, Pencil } from "mdi-material-ui";
+import { AbilityContext } from "../../../layouts/components/acl/Can";
 
 interface CellType {
   row: Package;
 }
 
 const PackagesList = () => {
+  const ability = useContext(AbilityContext);
+  const enableUpdateButton = ability?.can("update", "entity");
+  const enableDeleteButton = ability?.can("delete", "entity");
+
   const store = useSelector((state: RootState) => state.packages);
   const [open, setOpen] = useState<boolean>(false);
   const [packageToEdit, setPackageToEdit] = useState<Package | undefined>(
@@ -155,12 +160,18 @@ const PackagesList = () => {
             }}
           >
             <Tooltip title="Edit" disableInteractive={true}>
-              <IconButton onClick={() => handleUpdate(row)}>
+              <IconButton
+                disabled={!enableUpdateButton}
+                onClick={() => handleUpdate(row)}
+              >
                 <Pencil />
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete" disableInteractive={true}>
-              <IconButton onClick={() => handleDelete(row.id)}>
+              <IconButton
+                disabled={!enableDeleteButton}
+                onClick={() => handleDelete(row.id)}
+              >
                 <Delete />
               </IconButton>
             </Tooltip>

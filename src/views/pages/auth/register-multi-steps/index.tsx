@@ -13,13 +13,17 @@ import StepBillingDetails from "src/views/pages/auth/register-multi-steps/StepBi
 import StepperCustomDot from "src/views/forms/form-wizard/StepperCustomDot";
 
 import StepperWrapper from "src/@core/styles/mui/stepper";
-import { createAccount, fetchMemberships } from "../../../../store/auth";
+import {
+  clearAccountCreationStatus,
+  clearCreateAccountError,
+  createAccount
+} from "../../../../store/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store";
 import { AccountData } from "../../../../types/apps/NavashipTypes";
 import BaseApi from "../../../../api/api";
 import { Link } from "@mui/material";
-import VerificationModal from "../../../../components/verificationToken/verificationModal";
+import toast from "react-hot-toast";
 
 const steps = [
   {
@@ -36,9 +40,6 @@ const steps = [
   }
 ];
 
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-
 const RegisterMultiSteps = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [formData, setFormData] = useState<AccountData>({
@@ -50,33 +51,61 @@ const RegisterMultiSteps = () => {
     phoneNumber: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    membershipProductLink: "",
-    stripePriceId: ""
+    confirmPassword: ""
   });
-  const store = useSelector((state: RootState) => state.auth);
   const [successOpen, setSuccessOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
+  const [selectedMembershipId, setSelectedMembershipId] = useState("");
+
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const [selectedMembershipId, setSelectedMembershipId] = useState("");
+
+  const authStore = useSelector((state: RootState) => state.auth);
 
   const handleNext = async (selectedMembershipId?: string) => {
     if (activeStep === 2 && selectedMembershipId) {
-      // TODO: If registration doesn't work we need to handle the error and not go to checkout
-      dispatch(
-        createAccount({ ...formData, stripePriceId: selectedMembershipId })
-      ).then((response) => {
-        BaseApi.createCheckoutSession(
-          selectedMembershipId,
-          response?.payload.stripeCustomerId
-        ).then((data) => {
-          router.push(data.checkout_url);
-        });
-      });
+      setSelectedMembershipId(selectedMembershipId);
+      const createAccountAction = createAccount({ ...formData });
+      await dispatch(createAccountAction);
+      return; // Next page handled by useEffect
     }
     setActiveStep(activeStep + 1);
   };
+
+  useEffect(() => {
+    // Handle next page from shipment to rates (Once shipment object in the store changes)
+    if (authStore.accountCreationStatus === "SUCCESS") {
+      toast.success(
+        "Success! A confirmation email has been sent!",
+        {
+          position: "top-center"
+        }
+      );
+      BaseApi.createCheckoutSession(
+        selectedMembershipId,
+        authStore.createAccountPayload.id
+      )
+        .then((checkoutSessionResponse) => {
+          router.push(checkoutSessionResponse.checkout_url);
+        })
+        .catch((e) => {
+          toast.error(`Error generating payment link`, {
+            position: "top-center"
+          });
+        });
+      setActiveStep(activeStep + 1);
+    } else if (authStore.accountCreationStatus === "ERROR") {
+      toast.error(
+        `${authStore.createAccountError ?? "Error creating account"}`,
+        {
+          position: "top-center"
+        }
+      );
+      dispatch(clearCreateAccountError());
+    }
+
+    dispatch(clearAccountCreationStatus());
+  }, [authStore.accountCreationStatus, selectedMembershipId]);
 
   useEffect(() => {
     const { query } = router;
@@ -88,14 +117,6 @@ const RegisterMultiSteps = () => {
       setCanceledOpen(true);
     }
   }, [router.query]);
-
-  const handleSuccessClose = () => {
-    setSuccessOpen(false);
-  };
-
-  const handleCanceledClose = () => {
-    setCanceledOpen(false);
-  };
 
   const handlePrev = () => {
     if (activeStep !== 0) {
@@ -131,13 +152,7 @@ const RegisterMultiSteps = () => {
         );
       case 2:
         return (
-          <StepBillingDetails
-            handleChange={handleChange}
-            formData={formData}
-            handlePrev={handlePrev}
-            handleNext={handleNext}
-            membershipId={setSelectedMembershipId}
-          />
+          <StepBillingDetails handlePrev={handlePrev} handleNext={handleNext} />
         );
 
       default:
@@ -148,6 +163,7 @@ const RegisterMultiSteps = () => {
   const renderContent = () => {
     return getStepContent(activeStep);
   };
+
   return (
     <>
       {successOpen && (
@@ -158,9 +174,7 @@ const RegisterMultiSteps = () => {
       {canceledOpen && (
         <div>
           Payment cancelled.{" "}
-          <Link href="/register">
-            Click here if you would like to register again.
-          </Link>
+          <Link href="/login">Click here if you would like to login.</Link>
         </div>
       )}
       {!successOpen && !canceledOpen && (
@@ -184,18 +198,13 @@ const RegisterMultiSteps = () => {
                       </div>
                     </div>
                   </StepLabel>
-                  <VerificationModal
-                    open={false}
-                    onClose={() => alert("cool")}
-                    onValidate={() => alert("validate")}
-                  />
                 </Step>
               ))}
             </Stepper>
           </StepperWrapper>
 
           {renderContent()}
-          <Typography variant="body2" sx={{ mr: 2, mt: 2 }}>
+          <Typography variant="body2" sx={{ mr: 2, mt: 8 }}>
             Already have an account ? <Link href="/login">Go to login</Link>
           </Typography>
         </>
@@ -203,4 +212,5 @@ const RegisterMultiSteps = () => {
     </>
   );
 };
+
 export default RegisterMultiSteps;

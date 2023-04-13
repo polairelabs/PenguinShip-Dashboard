@@ -12,7 +12,6 @@ export type UseBgColorType = {
 };
 
 const UseBgColor = () => {
-  // ** Hooks
   const theme = useTheme();
 
   return {

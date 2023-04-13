@@ -11,20 +11,29 @@ export type ACLObj = {
   subject: string;
 };
 
-/**
- * Please define your own Ability rules according to your app requirements.
- * We have just shown Admin and Client rules for demo purpose where
- * admin can manage everything and client can just visit ACL page
- */
-const defineRulesFor = (role: string, subject: string) => {
-  const { can, rules } = new AbilityBuilder(AppAbility);
+export enum Role {
+  ADMIN = "ADMIN",
+  USER = "USER",
+  UNPAID_USER = "UNPAID_USER",
+  NEW_USER = "NEW_USER"
+}
 
-  if (role === "ADMIN") {
+const defineRulesFor = (role: string, subject: string) => {
+  const { can, cannot, rules } = new AbilityBuilder(AppAbility);
+  if (role === Role.ADMIN) {
     can("manage", "all");
-  } else if (role === "USER") {
+  } else if (role === Role.USER) {
     can("manage", "all");
-  } else {
-    can(["read", "create", "update", "delete"], subject);
+    cannot(["read"], "admin");
+  } else if (role === Role.UNPAID_USER) {
+    can("manage", "all");
+    cannot(["read"], "admin");
+    cannot(["read"], "shipment-add");
+    // entity is equal to shipment, address and package
+    cannot(["create", "delete", "update"], "entity");
+  } else if (role === Role.NEW_USER) {
+    cannot(["read", "create", "update", "delete"], subject);
+    can(["read"], "init");
   }
 
   return rules;

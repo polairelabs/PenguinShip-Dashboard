@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 // ** Hooks Import
 import { useAuth } from "src/hooks/useAuth";
+import authConfig from "../../../configs/auth";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -23,7 +24,10 @@ const AuthGuard = (props: AuthGuardProps) => {
         return;
       }
 
-      if (auth.user === null && !window.localStorage.getItem("userData")) {
+      if (
+        auth.user === null &&
+        !window.localStorage.getItem(authConfig.storageUserDataKey)
+      ) {
         if (router.asPath !== "/") {
           router.replace({
             pathname: "/login",

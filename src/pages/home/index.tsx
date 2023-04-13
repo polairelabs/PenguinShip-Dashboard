@@ -6,7 +6,7 @@ import ShipmentStatisticsCard from "../../views/dashboard/ShipmentStatisticsCard
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
-import { fetchDashboardStatistics } from "../../store/auth";
+import { fetchDashboardStats } from "../../store/auth";
 import ActivityTimeline from "../../views/dashboard/ActivityTimeline";
 import { useAuth } from "../../hooks/useAuth";
 import { CurrencyUsd, InformationOutline } from "mdi-material-ui";
@@ -15,13 +15,13 @@ import PackageVariantClosed from "mdi-material-ui/PackageVariantClosed";
 import { IconButton } from "@mui/material";
 import { capitalizeFirstLetterOnly } from "../../utils";
 import { styled } from "@mui/material/styles";
+import { Role } from "../../configs/acl";
 
 const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
   const statistics = useSelector(
     (state: RootState) => state.auth.dashboardStatistics
   );
-
   const auth = useAuth();
 
   const StyledGrid = styled(Grid)(({ theme }) => ({
@@ -43,7 +43,7 @@ const Home = () => {
   }));
 
   useEffect(() => {
-    dispatch(fetchDashboardStatistics());
+    dispatch(fetchDashboardStats());
   }, []);
 
   return (
@@ -70,17 +70,34 @@ const Home = () => {
                 </Typography>
                 <Typography variant="body2">
                   <IconButton aria-label="info">
-                    <InformationOutline color="info" />
+                    <InformationOutline
+                      color={
+                        auth?.user?.role === Role.USER ||
+                        auth.user?.role === Role.ADMIN
+                          ? "info"
+                          : "error"
+                      }
+                    />
                   </IconButton>
-                  {statistics.currentMonthShipmentCreated > 0
-                    ? `You have created ${statistics.currentMonthShipmentCreated} out of ${statistics.maxShipmentCreatedLimit} allowed shipments for this month`
-                    : `You can create up to ${
-                        statistics.maxShipmentCreatedLimit ?? 0
-                      } shipments per month`}
+                  {auth.user?.role === Role.USER ||
+                  auth.user?.role === Role.ADMIN
+                    ? statistics.currentMonthShipmentCreated > 0
+                      ? `You have created ${statistics.currentMonthShipmentCreated} out of ${statistics.maxShipmentCreatedLimit} allowed shipments for this month`
+                      : `You can create up to ${
+                          statistics.maxShipmentCreatedLimit ?? 0
+                        } shipments per month`
+                    : auth.user?.role === Role.UNPAID_USER &&
+                      "No subscription active. Go to user settings to choose a new plan"}
                 </Typography>
                 <Typography variant="body2">
                   <IconButton aria-label="info">
-                    <InformationOutline color="warning" />
+                    <InformationOutline
+                      color={
+                        statistics.totalShipmentsDraftCount === 0
+                          ? "info"
+                          : "warning"
+                      }
+                    />
                   </IconButton>
                   {statistics.totalShipmentsDraftCount === 0
                     ? "No shipments in draft"
@@ -118,12 +135,13 @@ const Home = () => {
       </Grid>
       <Grid item xs={12} sm={6} md={2} sx={{ order: 0 }}>
         <CardStatsVertical
-          stats={statistics.totalPackagesCount}
-          color="info"
+          stats={statistics.totalPackagesCount ?? 0}
+          color="secondary"
           title="Parcels created"
           icon={<PackageVariantClosed />}
           subtitle={"Total parcels created"}
-          infoIcon={false}
+          infoIcon={true}
+          tooltip={"Current amount of parcels in inventory"}
         />
       </Grid>
       <Grid item sm={6} xs={12}>

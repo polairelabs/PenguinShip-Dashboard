@@ -43,6 +43,7 @@ function handleError(error: unknown): ApiError {
       messages: [axiosResponse.data.message]
     };
   }
+
   const { data: errorResponse } = (error as any).response;
   if (instanceOfApiErrorResponse(errorResponse)) {
     return {
@@ -67,23 +68,9 @@ export const BaseApi = {
     }
   },
 
-  async post(url: string, body: object) {
+  async post(url: string, body: object | null) {
     try {
       const response = await httpRequest.post(url, body);
-      return Promise.resolve(response.data);
-    } catch (error) {
-      return Promise.reject(handleError(error));
-    }
-  },
-
-  async createCheckoutSession(priceId: string, stripeCustomerId: string) {
-    try {
-      const response = await httpRequest.post(
-        "/subscriptions/create-checkout-session/?price=" +
-          priceId +
-          "&customerId=" +
-          stripeCustomerId
-      );
       return Promise.resolve(response.data);
     } catch (error) {
       return Promise.reject(handleError(error));
@@ -102,6 +89,44 @@ export const BaseApi = {
   async delete(url: string) {
     try {
       const response = await httpRequest.delete(url);
+      return Promise.resolve(response.data);
+    } catch (error) {
+      return Promise.reject(handleError(error));
+    }
+  },
+
+  async createCheckoutSession(subscriptionId: string, userId: string) {
+    try {
+      const baseUrl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname;
+      const response = await httpRequest.post(
+        "/subscriptions/create-checkout-session/?subscriptionId=" +
+          subscriptionId +
+          "&userId=" +
+          userId +
+          "&baseUrl=" +
+          baseUrl
+      );
+      return Promise.resolve(response.data);
+    } catch (error) {
+      return Promise.reject(handleError(error));
+    }
+  },
+
+  async retrieveImageFromProxy(shipmentId: number) {
+    try {
+      const response = await httpRequest.get(
+        `/image-proxy/postage-label/${shipmentId}`,
+        {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "image/png"
+          }
+        }
+      );
       return Promise.resolve(response.data);
     } catch (error) {
       return Promise.reject(handleError(error));

@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, SyntheticEvent } from "react";
+import { ReactNode, SyntheticEvent, useRef } from "react";
 
 // ** Next Imports
 import Link from "next/link";
@@ -26,6 +26,10 @@ import { useSettings } from "src/@core/hooks/useSettings";
 
 // ** Demo Imports
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2";
+import { forgotPassword } from "../../store/auth";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { toast } from "react-hot-toast";
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(
@@ -77,16 +81,30 @@ const LinkStyled = styled("a")(({ theme }) => ({
 }));
 
 const ForgotPassword = () => {
-  // ** Hooks
   const theme = useTheme();
   const { settings } = useSettings();
 
-  // ** Vars
   const { skin } = settings;
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const emailRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    const email = emailRef?.current?.value ?? "";
+    const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+    const isEmailValid = emailRegex.test(email);
+    if (isEmailValid) {
+      await dispatch(forgotPassword(email));
+      toast.success("A password reset link was sent to your email", {
+        position: "top-center"
+      });
+    } else {
+      toast.error("Please enter a valid email address", {
+        position: "top-center"
+      });
+    }
   };
 
   const imageSource =
@@ -230,6 +248,7 @@ const ForgotPassword = () => {
             <form noValidate autoComplete="off" onSubmit={handleSubmit}>
               <TextField
                 autoFocus
+                inputRef={emailRef}
                 type="email"
                 label="Email"
                 sx={{ display: "flex", mb: 4 }}

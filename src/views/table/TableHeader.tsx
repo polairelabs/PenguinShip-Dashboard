@@ -1,6 +1,8 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { Alert } from "@mui/material";
+import { useContext } from "react";
+import { AbilityContext } from "../../layouts/components/acl/Can";
 
 interface TableHeaderProps {
   toggle: () => void;
@@ -8,8 +10,13 @@ interface TableHeaderProps {
   informationAlertMessage?: string;
 }
 
-const TableHeader = (props: TableHeaderProps) => {
-  const { toggle, toggleLabel, informationAlertMessage } = props;
+const TableHeader = ({
+  toggle,
+  toggleLabel,
+  informationAlertMessage
+}: TableHeaderProps) => {
+  const ability = useContext(AbilityContext);
+  const enableCreateButton = ability?.can("create", "entity");
 
   return (
     <Box
@@ -35,7 +42,12 @@ const TableHeader = (props: TableHeaderProps) => {
           marginLeft: "auto"
         }}
       >
-        <Button sx={{ mb: 2 }} onClick={toggle} variant="contained">
+        <Button
+          disabled={!enableCreateButton}
+          sx={{ mb: 2 }}
+          onClick={toggle}
+          variant="contained"
+        >
           {toggleLabel}
         </Button>
       </Box>

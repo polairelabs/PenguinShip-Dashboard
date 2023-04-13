@@ -36,13 +36,19 @@ const PurchaseLabelMessage = ({
     <Grid my={2}>
       {selectedRate ? (
         <Typography variant="body2">
-          {"You're going to be charged "}
-          <Typography variant="body2" fontWeight="bold" component="span">
-            ${getTotalRate()}
-          </Typography>
-          {" via "}
-          {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending with{" "}
-          {auth.user?.subscriptionDetail.cardLastFourDigits}
+          {auth.user?.subscriptionDetail.cardType ? (
+            <>
+              {"You're going to be charged "}
+              <Typography variant="body2" fontWeight="bold" component="span">
+                ${getTotalRate()}
+              </Typography>
+              {" via "}
+              {auth.user?.subscriptionDetail.cardType?.toUpperCase()} ending
+              with {auth.user?.subscriptionDetail.cardLastFourDigits}
+            </>
+          ) : (
+            "No payment method defined. Go to user settings to set payment method"
+          )}
         </Typography>
       ) : (
         <Box>&nbsp;</Box>

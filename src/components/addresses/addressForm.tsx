@@ -378,14 +378,14 @@ const AddressForm = ({
             </FormHelperText>
           )}
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControlLabel
-            control={<Checkbox />}
-            label={
-              <Typography variant="body2">Mark as default address</Typography>
-            }
-          />
-        </Grid>
+        {/*<Grid item xs={12} sm={6}>*/}
+        {/*  <FormControlLabel*/}
+        {/*    control={<Checkbox />}*/}
+        {/*    label={*/}
+        {/*      <Typography variant="body2">Mark as default address</Typography>*/}
+        {/*    }*/}
+        {/*  />*/}
+        {/*</Grid>*/}
         <Grid item xs={12}>
           <Box
             sx={{

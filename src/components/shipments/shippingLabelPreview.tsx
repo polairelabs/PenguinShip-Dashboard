@@ -27,7 +27,7 @@ interface ShippingLabelProps {
   hideTitle?: boolean;
 }
 
-const ShippingLabel = ({
+const ShippingLabelPreview = ({
   sourceAddress,
   deliveryAddress,
   parcel,
@@ -189,4 +189,4 @@ const ShippingLabel = ({
   );
 };
 
-export default ShippingLabel;
+export default ShippingLabelPreview;

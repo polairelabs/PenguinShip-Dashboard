@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -6,8 +6,6 @@ import Grid from "@mui/material/Grid";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import PencilOutline from "mdi-material-ui/PencilOutline";
-import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -28,12 +26,17 @@ import { Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
 import CustomChip from "../../../@core/components/mui/chip";
 import { Delete, Pencil } from "mdi-material-ui";
+import { AbilityContext } from "../../../layouts/components/acl/Can";
 
 interface CellType {
   row: Address;
 }
 
 const AddressesList = () => {
+  const ability = useContext(AbilityContext);
+  const enableUpdateButton = ability?.can("update", "entity");
+  const enableDeleteButton = ability?.can("delete", "entity");
+
   const store = useSelector((state: RootState) => state.addresses);
   const [open, setOpen] = useState<boolean>(false);
   const [addressToEdit, setAddressToEdit] = useState<Address | undefined>(
@@ -163,12 +166,18 @@ const AddressesList = () => {
             }}
           >
             <Tooltip title="Edit">
-              <IconButton onClick={() => handleUpdate(row)}>
+              <IconButton
+                disabled={!enableUpdateButton}
+                onClick={() => handleUpdate(row)}
+              >
                 <Pencil />
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
-              <IconButton onClick={() => handleDelete(row.id)}>
+              <IconButton
+                disabled={!enableDeleteButton}
+                onClick={() => handleDelete(row.id)}
+              >
                 <Delete />
               </IconButton>
             </Tooltip>

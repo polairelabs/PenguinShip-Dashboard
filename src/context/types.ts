@@ -1,4 +1,4 @@
-import { SubscriptionDetail } from "../types/apps/NavashipTypes";
+import { AccountData, SubscriptionDetail } from "../types/apps/NavashipTypes";
 
 export type ErrCallbackType = (err: { [key: string]: string }) => void;
 
@@ -7,24 +7,17 @@ export type LoginParams = {
   password: string;
 };
 
-export type RegisterParams = {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-};
-
 export type User = {
-  id: number;
+  id: string;
   role: string;
   email: string;
   firstName: string;
   lastName: string;
-  enabled: boolean;
   subscriptionDetail: SubscriptionDetail;
 };
 
 export type AuthValuesType = {
+  accessToken: string | undefined;
   loading: boolean;
   setLoading: (value: boolean) => void;
   logout: () => void;
@@ -33,5 +26,5 @@ export type AuthValuesType = {
   setUser: (value: User | null) => void;
   setIsInitialized: (value: boolean) => void;
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
-  register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void;
+  updateUserData: (errorCallback?: ErrCallbackType) => void;
 };

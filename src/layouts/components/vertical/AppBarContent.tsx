@@ -15,9 +15,12 @@ interface Props {
   saveSettings: (values: Settings) => void;
 }
 
-const AppBarContent = (props: Props) => {
-  const { hidden, settings, saveSettings, toggleNavVisibility } = props;
-
+const AppBarContent = ({
+  hidden,
+  settings,
+  saveSettings,
+  toggleNavVisibility
+}: Props) => {
   return (
     <Box
       sx={{

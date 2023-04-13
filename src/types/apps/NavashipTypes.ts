@@ -1,5 +1,5 @@
 // Api response interfaces and whatever else
-import { fetchDashboardStatistics } from "../../store/auth";
+import { fetchDashboardStats } from "../../store/auth";
 
 export interface Package {
   id: number;
@@ -44,7 +44,8 @@ export interface Shipment {
   addresses: ShipmentAddress[];
   parcel: Package;
   status: ShipmentStatus;
-  easyPostStatus: string;
+  easypostStatus: string;
+  deliveryDate: Date;
   rate: Rate;
   createdAt: Date;
   updatedAt: Date;
@@ -54,6 +55,7 @@ export interface Shipment {
   persons: Person[];
   insured: boolean;
   insuranceAmount?: string;
+  shipmentNumber: number;
 }
 
 // Response from Shipment buy endpoint
@@ -99,11 +101,20 @@ export interface Person {
 }
 
 export interface Membership {
+  id: string;
   name: string;
   description: string;
-  stripePriceId: string;
   currency: string;
   unitAmount: number;
+  maxLimit: number;
+  // Populated when admin request
+  stripePriceId: string;
+  shipmentHandlingFee: number;
+}
+
+export interface MembershipAdminResponse extends Membership {
+  stripePriceId: string;
+  handlingFee: number;
 }
 
 export interface AccountData {
@@ -116,8 +127,12 @@ export interface AccountData {
   email: string;
   password: string;
   confirmPassword: string;
-  membershipProductLink: string;
-  stripePriceId: string;
+}
+
+export interface PasswordReset {
+  password: string;
+  confirmPassword: string;
+  token: string; // passwordResetJWt
 }
 
 export interface SubscriptionDetail {
@@ -149,18 +164,22 @@ export interface ActivityLog {
   messageType: ActivityMessageType;
   createdAt: Date;
   shipment: Shipment;
+  easypostStatus: string;
 }
 
 export enum ShipmentStatus {
   DRAFT = "DRAFT",
-  PURCHASED = "PURCHASED"
+  PURCHASED = "PURCHASED",
+  REFUND_PENDING = "REFUND_PENDING",
+  REFUND_PROCESSED = "REFUND_PROCESSED"
 }
 
 export enum ActivityMessageType {
   NEW = "NEW",
   STATUS_UPDATE = "STATUS_UPDATE",
   PURCHASE = "PURCHASE",
-  RETURN = "RETURN",
+  RETURN_STARTED = "RETURN_STARTED",
+  RETURN_PROCESSED = "RETURN_PROCESSED",
   NONE = "NONE"
 }
 

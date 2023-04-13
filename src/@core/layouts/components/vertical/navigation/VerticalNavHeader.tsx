@@ -1,24 +1,18 @@
-// ** React Import
 import { ReactNode } from "react";
 
-// ** Next Import
 import Link from "next/link";
 
-// ** MUI Imports
 import IconButton from "@mui/material/IconButton";
 import Box, { BoxProps } from "@mui/material/Box";
 import { styled, useTheme } from "@mui/material/styles";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 
-// ** Icons
 import Close from "mdi-material-ui/Close";
 import CircleOutline from "mdi-material-ui/CircleOutline";
 import RecordCircleOutline from "mdi-material-ui/RecordCircleOutline";
 
-// ** Type Import
 import { Settings } from "src/@core/context/settingsContext";
 
-// ** Configs
 import themeConfig from "src/configs/themeConfig";
 
 interface Props {
@@ -34,7 +28,6 @@ interface Props {
   verticalNavMenuBranding?: (props?: any) => ReactNode;
 }
 
-// ** Styled Components
 const MenuHeaderWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -59,7 +52,6 @@ const StyledLink = styled("a")({
 });
 
 const VerticalNavHeader = (props: Props) => {
-  // ** Props
   const {
     hidden,
     navHover,
@@ -73,7 +65,6 @@ const VerticalNavHeader = (props: Props) => {
     verticalNavMenuBranding: userVerticalNavMenuBranding
   } = props;
 
-  // ** Hooks & Vars
   const theme = useTheme();
   const { navCollapsed } = settings;
 

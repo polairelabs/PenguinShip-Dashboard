@@ -10,42 +10,55 @@ import {
 const INSURANCE_FEE_PERCENTAGE = 0.5;
 
 const convertToPdf = (
-  imageUrl: string,
+  dataUrl: string,
   imageWidth: number,
   imageHeight: number
 ) => {
-  const pdf = new jsPDF();
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
+  const inchesToPt = (inches: number) => inches * 72;
+  const pageWidth = inchesToPt(4);
+  const pageHeight = inchesToPt(6);
 
-  const aspectRatio = imageWidth / imageHeight;
-  const imgWidthOnPage = pageWidth * 0.6;
-  const imgHeightOnPage = imgWidthOnPage / aspectRatio;
+  // Create a PDF with custom dimensions (4" x 6")
+  const pdf = new jsPDF({ format: [pageWidth, pageHeight] });
+
+  // Calculate the aspect ratio of the image and the page
+  const imageAspectRatio = imageWidth / imageHeight;
+  const pageAspectRatio = pageWidth / pageHeight;
+
+  let imgWidthOnPage = pageWidth;
+  let imgHeightOnPage = pageHeight;
+
+  // Calculate dimensions that maintain the aspect ratio and fill the page
+  if (imageAspectRatio > pageAspectRatio) {
+    imgHeightOnPage = pageWidth / imageAspectRatio;
+  } else {
+    imgWidthOnPage = pageHeight * imageAspectRatio;
+  }
 
   // Centers the image on the page
   const x = (pageWidth - imgWidthOnPage) / 2;
   const y = (pageHeight - imgHeightOnPage) / 2;
 
-  pdf.addImage(imageUrl, "PNG", x, y, imgWidthOnPage, imgHeightOnPage);
+  pdf.addImage(dataUrl, "PNG", x, y, imgWidthOnPage, imgHeightOnPage);
   return pdf;
 };
 
 export const convertAndDownloadImageToPdf = (
-  imageUrl: string,
+  dataUrl: string,
   imageWidth: number,
   imageHeight: number,
   filename: string
 ) => {
-  const pdf = convertToPdf(imageUrl, imageWidth, imageHeight);
+  const pdf = convertToPdf(dataUrl, imageWidth, imageHeight);
   pdf.save(`${filename}.pdf`);
 };
 
 export const printPdf = (
-  imageUrl: string,
+  dataUrl: string,
   imageWidth: number,
   imageHeight: number
 ) => {
-  const pdf = convertToPdf(imageUrl, imageWidth, imageHeight);
+  const pdf = convertToPdf(dataUrl, imageWidth, imageHeight);
   const pdfData = pdf.output("arraybuffer");
   const blob = new Blob([pdfData], { type: "application/pdf" });
   const url = URL.createObjectURL(blob);

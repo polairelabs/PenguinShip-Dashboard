@@ -1,10 +1,7 @@
-// ** React Imports
 import { ReactNode, useState } from "react";
 
-// ** Next Imports
 import Link from "next/link";
 
-// ** MUI Components
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
@@ -22,30 +19,22 @@ import MuiFormControlLabel, {
   FormControlLabelProps
 } from "@mui/material/FormControlLabel";
 
-// ** Icons Imports
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 
-// ** Third Party Imports
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-// ** Hooks
 import { useAuth } from "src/hooks/useAuth";
-import useBgColor from "src/@core/hooks/useBgColor";
 import { useSettings } from "src/@core/hooks/useSettings";
 
-// ** Configs
 import themeConfig from "src/configs/themeConfig";
 
-// ** Layout Import
 import BlankLayout from "src/@core/layouts/BlankLayout";
 
-// ** Demo Imports
 import FooterIllustrationsV2 from "src/views/pages/auth/FooterIllustrationsV2";
 
-// ** Styled Components
 const LoginIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   padding: theme.spacing(20),
   paddingRight: "0 !important",
@@ -119,14 +108,11 @@ interface FormData {
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  // ** Hooks
   const auth = useAuth();
   const theme = useTheme();
-  const bgClasses = useBgColor();
   const { settings } = useSettings();
   const hidden = useMediaQuery(theme.breakpoints.down("md"));
 
-  // ** Vars
   const { skin } = settings;
 
   const {
@@ -354,6 +340,7 @@ const LoginPage = () => {
               </FormControl>
               <Box
                 sx={{
+                  mt: 2,
                   mb: 4,
                   display: "flex",
                   alignItems: "center",
@@ -361,7 +348,6 @@ const LoginPage = () => {
                   justifyContent: "space-between"
                 }}
               >
-                <FormControlLabel control={<Checkbox />} label="Remember Me" />
                 <Link passHref href="/forgot-password">
                   <LinkStyled>Forgot Password?</LinkStyled>
                 </Link>

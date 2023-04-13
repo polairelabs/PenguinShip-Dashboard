@@ -43,17 +43,13 @@ const BadgeContentSpan = styled("span")(({ theme }) => ({
 }));
 
 const UserDropdown = (props: Props) => {
-  // ** Props
   const { settings } = props;
 
-  // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
-  // ** Hooks
   const router = useRouter();
   const { logout } = useAuth();
 
-  // ** Vars
   const { direction } = settings;
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
@@ -192,15 +188,6 @@ const UserDropdown = (props: Props) => {
           <Box sx={styles}>
             <CogOutline sx={{ mr: 2 }} />
             Settings
-          </Box>
-        </MenuItem>
-        <MenuItem
-          sx={{ p: 0 }}
-          onClick={() => handleDropdownClose("/pages/pricing")}
-        >
-          <Box sx={styles}>
-            <CurrencyUsd sx={{ mr: 2 }} />
-            Pricing
           </Box>
         </MenuItem>
         <MenuItem

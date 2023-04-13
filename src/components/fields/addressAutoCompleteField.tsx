@@ -1,9 +1,11 @@
 import { useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { TextField, Box, Autocomplete } from "@mui/material";
+import React, { ChangeEvent, useState } from "react";
+import { Autocomplete, Box, TextField } from "@mui/material";
+import { AddressDetails } from "../addresses/addressForm";
 import PlaceResult = google.maps.places.PlaceResult;
-import { AddressDetails } from "../addresses/addressForm"; // TODO move this elsewhere
+import { useSettings } from "../../@core/hooks/useSettings";
+
 type Libraries = (
   | "drawing"
   | "geometry"
@@ -74,16 +76,30 @@ const PlacesAutoCompleteComboBox = ({
   error,
   street1Value
 }) => {
+  const { settings } = useSettings();
+
   const {
     ready,
     value,
     setValue,
     suggestions: { status, data },
     clearSuggestions
-  } = usePlacesAutocomplete();
+  } = usePlacesAutocomplete({
+    requestOptions: {
+      // Define your options object with the countries in the desired order
+      componentRestrictions: { country: ["us", "ca"] }
+    }
+  });
 
   const populateAddressFields = async (option) => {
     if (!option) {
+      setAddressDetails({
+        street1: "",
+        city: "",
+        country: "",
+        zip: "",
+        state: ""
+      });
       return;
     }
     setValue(option.structured_formatting.main_text, false);
@@ -108,16 +124,15 @@ const PlacesAutoCompleteComboBox = ({
       if (!streetNumber && !route) {
         street1 = addressDetailsObj?.neighborhood;
       } else {
-        // add space
         street1 = `${streetNumber} ${route}`;
       }
 
       const newAddressDetails: AddressDetails = {
         street1,
-        city: addressDetailsObj.locality,
-        country: addressDetailsObj.country,
-        zip: addressDetailsObj.postal_code,
-        state: addressDetailsObj.administrative_area_level_1,
+        city: addressDetailsObj.locality ?? "",
+        country: addressDetailsObj.country ?? "",
+        zip: addressDetailsObj.postal_code ?? "",
+        state: addressDetailsObj.administrative_area_level_1 ?? "",
         street2: addressDetails.street2 ?? ""
       };
 
@@ -157,16 +172,52 @@ const PlacesAutoCompleteComboBox = ({
           error={error}
         />
       )}
-      renderOption={(props, option) => (
-        <Box
-          component="li"
-          {...props}
-          key={option.place_id}
-          onClick={() => populateAddressFields(option)}
-        >
-          {option.description}
-        </Box>
-      )}
+      renderOption={(props, option) => {
+        const isLastOption = data.indexOf(option) === data.length - 1;
+        const optionElement = (
+          <Box
+            component="li"
+            {...props}
+            key={option.place_id}
+            onClick={() => populateAddressFields(option)}
+          >
+            {option.description}
+          </Box>
+        );
+
+        if (isLastOption) {
+          const googleLogoElement = (
+            <Box
+              component="li"
+              key="google-logo"
+              p={2}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                marginRight: "6px"
+              }}
+            >
+              <img
+                src={
+                  settings.mode == "light"
+                    ? "/images/misc/google-logo.png"
+                    : "/images/misc/google-logo-white.png"
+                }
+                alt="Google"
+                style={{
+                  marginLeft: "4px",
+                  width: "60px",
+                  height: "auto"
+                }}
+              />
+            </Box>
+          );
+          return [optionElement, googleLogoElement];
+        }
+
+        return optionElement;
+      }}
     />
   );
 };

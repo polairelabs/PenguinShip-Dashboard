@@ -1,8 +1,6 @@
-// ** React Imports
 import { useState, MouseEvent, ChangeEvent } from "react";
 import * as yup from "yup";
 
-// ** MUI Components
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -14,14 +12,12 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 
-// ** Icon Imports
 import Icon from "src/@core/components/icon";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AddressDetails } from "../../../../components/addresses/addressForm";
 import { FormHelperText } from "@mui/material";
 
-interface State {
+export interface PasswordFieldsVisibility {
   showPassword: boolean;
   showConfirmPassword: boolean;
 }
@@ -33,11 +29,12 @@ const schema = yup.object().shape({
     .required("Email is required"),
   password: yup
     .string()
-    .min(6)
-    .required()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password can a have a maximum of 128 characters")
+    .required("Password is required")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-      "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+      "Must Contain at least 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
     ),
   confirmPassword: yup
     .string()
@@ -59,8 +56,7 @@ const StepAccountDetails = ({
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleNext: () => void;
 }) => {
-  // ** States
-  const [values, setValues] = useState<State>({
+  const [values, setValues] = useState<PasswordFieldsVisibility>({
     showPassword: false,
     showConfirmPassword: false
   });
@@ -87,6 +83,7 @@ const StepAccountDetails = ({
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
   };
+
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -94,6 +91,7 @@ const StepAccountDetails = ({
   const handleClickShowConfirmPassword = () => {
     setValues({ ...values, showConfirmPassword: !values.showConfirmPassword });
   };
+
   const handleMouseDownConfirmPassword = (
     event: MouseEvent<HTMLButtonElement>
   ) => {

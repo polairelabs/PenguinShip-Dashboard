@@ -12,8 +12,7 @@ import TimelineConnector from "@mui/lab/TimelineConnector";
 import MuiTimeline from "@mui/lab/Timeline";
 import {
   ActivityLog,
-  ActivityMessageType,
-  Shipment
+  ActivityMessageType
 } from "../../types/apps/NavashipTypes";
 import {
   dateToHumanReadableFormat,
@@ -38,43 +37,100 @@ interface ActivityTimeLineProps {
 }
 
 const ActivityTimeline = ({ activityLogs }: ActivityTimeLineProps) => {
-  const getDotColor = (messageType: ActivityMessageType) => {
+  const getDotColor = (activityLog: ActivityLog) => {
     let color;
+    const messageType = activityLog.messageType;
     if (messageType == ActivityMessageType.NEW) {
       color = "primary";
     } else if (messageType == ActivityMessageType.PURCHASE) {
       color = "success";
     } else if (messageType == ActivityMessageType.STATUS_UPDATE) {
-      color = "error";
+      color = "warning";
+      if (activityLog.easypostStatus === "DELIVERED") {
+        color = "info";
+      }
     }
     return color;
   };
 
-  const getSubMessage = (
-    shipment: Shipment,
-    messageType: ActivityMessageType
-  ) => {
-    let subMessage = "";
-    if (messageType == ActivityMessageType.NEW) {
-      const recipientAddress = getRecipientAddress(shipment);
-      subMessage = `Shipping to: ${
-        recipientAddress.street1
-      }, ${getRecipientInfo(shipment)}, ${recipientAddress.zip}, ${
-        recipientAddress.country
-      }`;
-    }
-
-    if (messageType == ActivityMessageType.PURCHASE) {
-      subMessage = `Rate was purchased from ${shipment?.rate?.carrier} for $${shipment?.rate?.rate}`;
-    }
+  const getMessageTitle = (activityLog: ActivityLog) => {
+    const messageType = activityLog.messageType;
+    const shipment = activityLog.shipment;
+    const easypostStatus = activityLog.easypostStatus;
 
     if (messageType == ActivityMessageType.STATUS_UPDATE) {
-      if (shipment.easyPostStatus == "IN_TRANSIT") {
-        // TODO once status gets done in easypost webhook
+      if (easypostStatus === "PRE_TRANSIT") {
+        return `Shipment #${shipment.shipmentNumber} is getting ready for Transit`;
+      } else if (easypostStatus === "IN_TRANSIT") {
+        return `Shipment #${shipment.shipmentNumber} is in Transit`;
+      } else if (easypostStatus === "OUT_FOR_DELIVERY") {
+        return `Shipment #${shipment.shipmentNumber} is Out for Delivery`;
+      } else if (easypostStatus === "DELIVERED") {
+        return `Shipment #${shipment.shipmentNumber} was Delivered!`;
+      }
+    } else {
+      return activityLog.message;
+    }
+  };
+
+  const getSubMessageComponent = (activityLog: ActivityLog) => {
+    const messageType = activityLog.messageType;
+    const shipment = activityLog.shipment;
+    const easypostStatus = activityLog.easypostStatus;
+
+    const recipientAddress = getRecipientAddress(shipment);
+
+    if (messageType === ActivityMessageType.NEW) {
+      return (
+        <span>
+          Shipping to: {recipientAddress.street1}, {getRecipientInfo(shipment)},{" "}
+          {recipientAddress.zip}, {recipientAddress.country}
+        </span>
+      );
+    }
+
+    if (messageType === ActivityMessageType.PURCHASE) {
+      return (
+        <span>
+          Purchased{" "}
+          <strong>
+            {shipment?.rate?.carrier}{" "}
+            {splitStringByCapitalCase(shipment?.rate?.service)}
+          </strong>{" "}
+          rate for <strong>${shipment?.rate?.rate}</strong>
+        </span>
+      );
+    }
+
+    if (messageType === ActivityMessageType.RETURN_STARTED) {
+      return <span>Trying to cancel Shipment</span>;
+    }
+
+    if (messageType === ActivityMessageType.RETURN_PROCESSED) {
+      return (
+        <span>
+          Shipping label refund processed and credited to your account
+        </span>
+      );
+    }
+
+    if (messageType === ActivityMessageType.STATUS_UPDATE) {
+      if (easypostStatus === "PRE_TRANSIT") {
+        return <span>Carrier is notified and awaiting the package</span>;
+      } else if (easypostStatus === "IN_TRANSIT") {
+        return (
+          <span>Package is in transit and moving towards its destination</span>
+        );
+      } else if (easypostStatus === "OUT_FOR_DELIVERY") {
+        return (
+          <span>Package is out for delivery and should arrive shortly</span>
+        );
+      } else if (easypostStatus === "DELIVERED") {
+        return <span>Package has been successfully delivered</span>;
       }
     }
 
-    return subMessage;
+    return null;
   };
 
   return (
@@ -91,9 +147,11 @@ const ActivityTimeline = ({ activityLogs }: ActivityTimeLineProps) => {
       <CardContent>
         <Timeline sx={{ my: 0, py: 0 }}>
           {activityLogs?.map((activityLog) => (
-            <TimelineItem>
+            <TimelineItem
+              key={activityLog.shipment.id + "_" + activityLog.createdAt}
+            >
               <TimelineSeparator>
-                <TimelineDot color={getDotColor(activityLog.messageType)} />
+                <TimelineDot color={getDotColor(activityLog) ?? "error"} />
                 <TimelineConnector />
               </TimelineSeparator>
               <TimelineContent
@@ -115,14 +173,14 @@ const ActivityTimeline = ({ activityLogs }: ActivityTimeLineProps) => {
                   <Typography
                     sx={{ mr: 2, fontWeight: 600, color: "text.primary" }}
                   >
-                    {activityLog.message}
+                    {getMessageTitle(activityLog)}
                   </Typography>
                   <Typography variant="caption" sx={{ color: "text.disabled" }}>
                     {dateToHumanReadableFormat(activityLog.createdAt)}
                   </Typography>
                 </Box>
                 <Typography variant="body2">
-                  {getSubMessage(activityLog.shipment, activityLog.messageType)}
+                  {getSubMessageComponent(activityLog)}
                 </Typography>
               </TimelineContent>
             </TimelineItem>

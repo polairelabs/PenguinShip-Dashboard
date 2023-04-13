@@ -1,10 +1,7 @@
-// ** React Imports
-import { useState, SyntheticEvent, Fragment } from "react";
+import { Fragment, SyntheticEvent, useContext, useState } from "react";
 
-// ** Next Import
 import { useRouter } from "next/router";
 
-// ** MUI Imports
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import Badge from "@mui/material/Badge";
@@ -14,27 +11,21 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
-// ** Icons Imports
 import CogOutline from "mdi-material-ui/CogOutline";
-import CurrencyUsd from "mdi-material-ui/CurrencyUsd";
-import EmailOutline from "mdi-material-ui/EmailOutline";
 import LogoutVariant from "mdi-material-ui/LogoutVariant";
-import AccountOutline from "mdi-material-ui/AccountOutline";
-import MessageOutline from "mdi-material-ui/MessageOutline";
 import HelpCircleOutline from "mdi-material-ui/HelpCircleOutline";
 
-// ** Context
 import { useAuth } from "src/hooks/useAuth";
 
-// ** Type Imports
 import { Settings } from "src/@core/context/settingsContext";
 import { capitalizeFirstLetterOnly } from "../../utils";
+import { FileDocumentEditOutline, ShieldAccountOutline } from "mdi-material-ui";
+import { AbilityContext } from "./acl/Can";
 
 interface Props {
   settings: Settings;
 }
 
-// ** Styled Components
 const BadgeContentSpan = styled("span")(({ theme }) => ({
   width: 8,
   height: 8,
@@ -44,17 +35,11 @@ const BadgeContentSpan = styled("span")(({ theme }) => ({
 }));
 
 const UserDropdown = (props: Props) => {
-  // ** Props
+  const ability = useContext(AbilityContext);
   const { settings } = props;
-
-  // ** States
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-
-  // ** Hooks
   const router = useRouter();
   const { user, logout } = useAuth();
-
-  // ** Vars
   const { direction } = settings;
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
@@ -176,24 +161,35 @@ const UserDropdown = (props: Props) => {
         {/*    Inbox*/}
         {/*  </Box>*/}
         {/*</MenuItem>*/}
-        {/*<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>*/}
-        {/*  <Box sx={styles}>*/}
-        {/*    <MessageOutline sx={{ mr: 2 }} />*/}
-        {/*    Chat*/}
-        {/*  </Box>*/}
-        {/*</MenuItem>*/}
+        {ability?.can("read", "admin") ? (
+          <MenuItem
+            sx={{ p: 0 }}
+            onClick={() => handleDropdownClose("/admin/edit-memberships")}
+          >
+            <Box sx={styles}>
+              <ShieldAccountOutline sx={{ mr: 2 }} />
+              Admin Panel
+            </Box>
+          </MenuItem>
+        ) : null}
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles} onClick={() => handleSettings()}>
             <CogOutline sx={{ mr: 2 }} />
-            Settings
+            User Settings
           </Box>
         </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <MenuItem sx={{ p: 0 }} onClick={() => {}}>
           <Box sx={styles}>
-            <HelpCircleOutline sx={{ mr: 2 }} />
-            FAQ
+            <FileDocumentEditOutline sx={{ mr: 2 }} />
+            Submit a claim
           </Box>
         </MenuItem>
+        {/*<MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose("/faq")}>*/}
+        {/*  <Box sx={styles}>*/}
+        {/*    <HelpCircleOutline sx={{ mr: 2 }} />*/}
+        {/*    FAQ*/}
+        {/*  </Box>*/}
+        {/*</MenuItem>*/}
         <Divider />
         <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
           <LogoutVariant
