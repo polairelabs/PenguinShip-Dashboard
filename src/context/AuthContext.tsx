@@ -83,28 +83,14 @@ const AuthProvider = ({ children }: Props) => {
         authConfig.storageUserDataKey
       );
       if (userInfo) {
-        // Get from the endpoint and not the local storage
-        // setLoading(true);
-        // await axios
-        //   .get(authConfig.meEndpoint, {
-        //     headers: {
-        //       Authorization: storedToken
-        //     }
-        //   })
-        //   .then(async response => {
-        //     setLoading(false)
-        //     setUser({ ...response.data.userData })
-        //   })
-        //   .catch(() => {
-        //     localStorage.removeItem('userData')
-        //     localStorage.removeItem('refreshToken')
-        //     localStorage.removeItem('accessToken')
-        //     setUser(null)
-        //     setLoading(false)
-        //   })
-        const user: User = JSON.parse(userInfo);
-        setUser({ ...user });
-        setLoading(false);
+        if (process.env.NEXT_PUBLIC_STAGE === "prod") {
+          // Added prod check because don't wanna logout in dev each time
+          refreshAccessToken(true);
+        } else {
+          const user: User = JSON.parse(userInfo);
+          setUser({ ...user });
+          setLoading(false);
+        }
       } else {
         setLoading(false);
       }

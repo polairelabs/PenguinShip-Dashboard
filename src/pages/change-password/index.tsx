@@ -157,6 +157,10 @@ const ChangePassword = () => {
   );
 
   useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
     const { query } = router;
     if (query.token) {
       setFormData({ ...formData, token: query.token as string });
