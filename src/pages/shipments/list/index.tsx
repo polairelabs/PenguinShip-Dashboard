@@ -182,26 +182,19 @@ const ShipmentsList = () => {
       }
     },
     {
-      minWidth: 150,
+      minWidth: 170,
       field: "status",
       headerName: "Status",
       renderCell: ({ row }: CellType) => {
-        // status can either come from easypost or navaship api (if easypost status is unknown use the navaship status)
-        // Status in easypost is unknown until it is scanned by the carrier
-        // const status =
-        //   row?.navashipShipmentStatus !== "DRAFT"
-        //     ? row?.easypostShipmentStatus === "unknown"
-        //       ? row?.navashipShipmentStatus
-        //       : row?.easypostShipmentStatus
-        //     : row?.navashipShipmentStatus;
-        const status = row.status;
+        // status can either come from easypost or api (if easypost status is unknown use the api status)
+        const status = row?.easypostStatus ?? row.status;
         const statusColors = {
           purchased: "primary",
           delivered: "success",
           draft: "info",
           unknown: "info"
         };
-        const statusColor = statusColors[status?.toLowerCase()];
+        const statusColor = statusColors[status?.toLowerCase()] ?? "warning";
 
         return (
           <Link
@@ -295,7 +288,9 @@ const ShipmentsList = () => {
               variant="body2"
               sx={{ color: "text.primary", fontWeight: 600 }}
             >
-              {dateToHumanReadableFormatWithDayOfWeek(row?.createdAt)}
+              {dateToHumanReadableFormatWithDayOfWeek(
+                row?.deliveryDate ?? row?.createdAt
+              )}
             </Typography>
           </Box>
         );
@@ -321,29 +316,45 @@ const ShipmentsList = () => {
                 // visibility: hoveredRow == row.id ? "visible" : "hidden"
               }}
             >
-              {row.status == ShipmentStatus.PURCHASED && (
-                <Tooltip title="Print label" disableInteractive={true}>
-                  <IconButton
-                    onClick={() => {
-                      setSelectedShipment(row);
-                      setPrintLabelDialogOpen(true);
-                    }}
-                  >
-                    <Printer />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {row.status == ShipmentStatus.PURCHASED && (
-                <Tooltip title="Return label" disableInteractive={true}>
-                  <IconButton
-                    onClick={() => {
-                      handleReturnLabel(row);
-                    }}
-                  >
-                    <Undo />
-                  </IconButton>
-                </Tooltip>
-              )}
+              {row.status !== ShipmentStatus.DRAFT &&
+                row.status !== ShipmentStatus.REFUND_PROCESSED && (
+                  <Tooltip title="Print label" disableInteractive={true}>
+                    <IconButton
+                      onClick={() => {
+                        setSelectedShipment(row);
+                        setPrintLabelDialogOpen(true);
+                      }}
+                    >
+                      <Printer />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              {row.easypostStatus
+                ? (row.easypostStatus === "PRE_TRANSIT" ||
+                    row.easypostStatus === "CANCELLED" ||
+                    row.easypostStatus === "FAILED" ||
+                    row.easypostStatus === "FAILURE") && (
+                    <Tooltip title="Return label" disableInteractive={true}>
+                      <IconButton
+                        onClick={() => {
+                          handleReturnLabel(row);
+                        }}
+                      >
+                        <Undo />
+                      </IconButton>
+                    </Tooltip>
+                  )
+                : row.status === ShipmentStatus.PURCHASED && (
+                    <Tooltip title="Return label" disableInteractive={true}>
+                      <IconButton
+                        onClick={() => {
+                          handleReturnLabel(row);
+                        }}
+                      >
+                        <Undo />
+                      </IconButton>
+                    </Tooltip>
+                  )}
               {row.status === ShipmentStatus.DRAFT && (
                 <Tooltip title="Buy rate" disableInteractive={true}>
                   <IconButton onClick={() => handleBuyRate(row)}>
@@ -464,7 +475,6 @@ const ShipmentsList = () => {
             confirmButtonCallback={() => {
               returnShipment();
             }}
-            shipment={selectedShipment}
           />
           {selectedShipment && (
             <Dialog

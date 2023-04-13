@@ -44,7 +44,8 @@ export interface Shipment {
   addresses: ShipmentAddress[];
   parcel: Package;
   status: ShipmentStatus;
-  easyPostStatus: string;
+  easypostStatus: string;
+  deliveryDate: Date;
   rate: Rate;
   createdAt: Date;
   updatedAt: Date;
@@ -163,18 +164,22 @@ export interface ActivityLog {
   messageType: ActivityMessageType;
   createdAt: Date;
   shipment: Shipment;
+  easypostStatus: string;
 }
 
 export enum ShipmentStatus {
   DRAFT = "DRAFT",
-  PURCHASED = "PURCHASED"
+  PURCHASED = "PURCHASED",
+  REFUND_PENDING = "REFUND_PENDING",
+  REFUND_PROCESSED = "REFUND_PROCESSED"
 }
 
 export enum ActivityMessageType {
   NEW = "NEW",
   STATUS_UPDATE = "STATUS_UPDATE",
   PURCHASE = "PURCHASE",
-  RETURN = "RETURN",
+  RETURN_STARTED = "RETURN_STARTED",
+  RETURN_PROCESSED = "RETURN_PROCESSED",
   NONE = "NONE"
 }
 

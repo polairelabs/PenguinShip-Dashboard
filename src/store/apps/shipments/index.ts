@@ -78,9 +78,23 @@ export const deleteShipment = createAsyncThunk(
 
 export const refundShipment = createAsyncThunk(
   "shipments/refundShipment",
-  async (shipmentId: number, { getState, dispatch, rejectWithValue }) => {
+  async (
+    shipmentId: number,
+    { getState, dispatch, rejectWithValue }: Redux
+  ) => {
     try {
-      return await BaseApi.post(`shipments/refund/${shipmentId}`, null);
+      const response = await BaseApi.post(
+        `shipments/refund/${shipmentId}`,
+        null
+      );
+      const state = getState();
+      const params = {
+        offset: state.shipments.offset,
+        size: state.shipments.size,
+        order: "desc"
+      };
+      dispatch(fetchShipments(params));
+      return response;
     } catch (error) {
       let apiError = error as ApiError;
       return rejectWithValue(apiError.messages?.[0] ?? "Server error");

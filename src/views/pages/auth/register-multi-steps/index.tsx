@@ -23,7 +23,6 @@ import { AppDispatch, RootState } from "../../../../store";
 import { AccountData } from "../../../../types/apps/NavashipTypes";
 import BaseApi from "../../../../api/api";
 import { Link } from "@mui/material";
-import VerificationDialog from "../../../../components/dialog/verificationDialog";
 import toast from "react-hot-toast";
 
 const steps = [
@@ -77,7 +76,7 @@ const RegisterMultiSteps = () => {
     // Handle next page from shipment to rates (Once shipment object in the store changes)
     if (authStore.accountCreationStatus === "SUCCESS") {
       toast.success(
-        "Success! A verification email has been sent to your email address ",
+        "Success! A confirmation email has been sent!",
         {
           position: "top-center"
         }
@@ -199,11 +198,6 @@ const RegisterMultiSteps = () => {
                       </div>
                     </div>
                   </StepLabel>
-                  <VerificationDialog
-                    open={false}
-                    onClose={() => alert("cool")}
-                    onValidate={() => alert("validate")}
-                  />
                 </Step>
               ))}
             </Stepper>

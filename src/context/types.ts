@@ -26,5 +26,5 @@ export type AuthValuesType = {
   setUser: (value: User | null) => void;
   setIsInitialized: (value: boolean) => void;
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
-  updateUser: (errorCallback?: ErrCallbackType) => void;
+  updateUserData: (errorCallback?: ErrCallbackType) => void;
 };

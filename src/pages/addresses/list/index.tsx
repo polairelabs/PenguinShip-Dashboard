@@ -6,8 +6,6 @@ import Grid from "@mui/material/Grid";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import PencilOutline from "mdi-material-ui/PencilOutline";
-import DeleteOutline from "mdi-material-ui/DeleteOutline";
 
 import { useDispatch, useSelector } from "react-redux";
 

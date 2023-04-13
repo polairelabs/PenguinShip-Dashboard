@@ -147,7 +147,6 @@ const ChangePassword = () => {
     defaultValues,
     mode: "onChange",
     resolver: async (data, context, options) => {
-      console.log("formData", formData);
       // @ts-ignore
       return yupResolver(schema)(formData, context, options);
     }
@@ -161,6 +160,8 @@ const ChangePassword = () => {
     const { query } = router;
     if (query.token) {
       setFormData({ ...formData, token: query.token as string });
+    } else {
+      router.push("/login");
     }
   }, [router.query]);
 
@@ -171,12 +172,9 @@ const ChangePassword = () => {
       });
       router.push("/login");
     } else if (changePasswordStatus === "ERROR") {
-      toast.error(
-        "Expired / Invalid password reset link. Please request a new one",
-        {
-          position: "top-center"
-        }
-      );
+      toast.error("Expired password reset link. Please request a new one", {
+        position: "top-center"
+      });
     }
     dispatch(clearChangePasswordStatus());
   }, [changePasswordStatus]);

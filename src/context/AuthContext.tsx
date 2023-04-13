@@ -15,7 +15,7 @@ const defaultProvider: AuthValuesType = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   setIsInitialized: () => Boolean,
-  updateUser: () => Promise.resolve()
+  updateUserData: () => Promise.resolve()
 };
 
 const AuthContext = createContext(defaultProvider);
@@ -35,10 +35,6 @@ const AuthProvider = ({ children }: Props) => {
   );
 
   const router = useRouter();
-
-  // useEffect(() => {
-  //   console.log("accessToken is", accessToken);
-  // }, [accessToken]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -67,8 +63,7 @@ const AuthProvider = ({ children }: Props) => {
         let axiosError = error as AxiosError;
         if (axiosError.response?.status == 401) {
           // Time to use the refresh token
-          handleRefreshTokenRefresh();
-          // handleLogout();
+          refreshAccessToken();
         }
         return Promise.reject(error);
       }
@@ -147,18 +142,30 @@ const AuthProvider = ({ children }: Props) => {
     });
   };
 
-  const updateUserInformation = (errorCallback?: ErrCallbackType) => {
+  const updateUserInformation = () => {
+    refreshAccessToken(true);
+  };
+
+  const requestUpdatedUserInfo = (errorCallback?: ErrCallbackType) => {
     httpRequest
-      .get(authConfig.userInformationEndpoint)
+      .get(authConfig.userInformationEndpoint, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
       .then(async (res) => {
         setUser({ ...res.data.user });
       })
       .catch((err) => {
+        console.log("Error requesting new user data", err);
         if (errorCallback) errorCallback(err);
       });
   };
 
-  const handleRefreshTokenRefresh = () => {
+  // Exchanges refresh token in secure httponly cookie to receive new access token as to not log out the user
+  const refreshAccessToken = (
+    requestNewUserInfo = false
+  ) => {
     // Sends refresh token in cookie to get new access token
     if (process.env.NEXT_PUBLIC_STAGE === "dev") {
       console.log("Dev mode - Don't request new access token. Logging out");
@@ -171,6 +178,10 @@ const AuthProvider = ({ children }: Props) => {
       .then((res) => {
         console.log("Got new access token", res.data);
         setAccessToken(res.data.access_token);
+        if (requestNewUserInfo) {
+          // Setting new user info (e.g. on subscription change)
+          requestUpdatedUserInfo();
+        }
       })
       .catch(() => handleLogout());
   };
@@ -192,7 +203,7 @@ const AuthProvider = ({ children }: Props) => {
     setIsInitialized,
     login: handleLogin,
     logout: handleLogout,
-    updateUser: updateUserInformation
+    updateUserData: updateUserInformation
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

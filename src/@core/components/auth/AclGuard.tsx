@@ -56,6 +56,11 @@ const AclGuard = (props: AclGuardProps) => {
     return null;
   }
 
+  if (router.pathname === "/confirm-account") {
+    // Always render this page
+    return <>{children}</>;
+  }
+
   // Render Not Authorized component if the current package has limited access
   return (
     <BlankLayout>
