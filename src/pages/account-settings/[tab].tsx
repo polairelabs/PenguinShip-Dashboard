@@ -27,7 +27,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const res = await BaseApi.get("/subscriptions/memberships");
+  const res = await BaseApi.get("/subscriptions/");
   const data: Membership[] = res;
 
   return {
