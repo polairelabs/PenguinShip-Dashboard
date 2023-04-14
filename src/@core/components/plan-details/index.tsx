@@ -7,14 +7,8 @@ import Box, { BoxProps } from "@mui/material/Box";
 // ** Icons Imports
 import CircleOutline from "mdi-material-ui/CircleOutline";
 
-// ** Util Import
-import { hexToRGBA } from "src/@core/utils/hex-to-rgba";
-
-// ** Custom Components Imports
-import CustomChip from "src/@core/components/mui/chip";
-
 // ** Types
-import { PricingPlanProps } from "./types";
+import { Membership } from "../../../types/apps/NavashipTypes";
 
 // ** Styled Component for the wrapper of whole component
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -30,60 +24,16 @@ const BoxFeature = styled(Box)<BoxProps>(({ theme }) => ({
     marginTop: theme.spacing(3.5)
   }
 }));
-
-const PlanDetails = (props: PricingPlanProps) => {
-  // ** Props
-  const { plan, data } = props;
-
-  const renderFeatures = () => {
-    return data?.planBenefits.map((item: string, index: number) => (
-      <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
-        <CircleOutline
-          sx={{ fontSize: "0.75rem", mr: 2, color: "text.secondary" }}
-        />
-        <Typography variant="body2">{item}</Typography>
-      </Box>
-    ));
-  };
+interface Props {
+  data: Membership | null
+}
+const PlanDetails = (props: Props) => {
+  const { data } = props;
 
   return (
-    <BoxWrapper
-      sx={{
-        border: (theme) =>
-          !data?.popularPlan
-            ? `1px solid ${theme.palette.divider}`
-            : `1px solid ${hexToRGBA(theme.palette.primary.main, 0.5)}`
-      }}
-    >
-      {data?.popularPlan ? (
-        <CustomChip
-          skin="light"
-          label="Popular"
-          color="primary"
-          sx={{
-            top: 11,
-            right: 12,
-            height: 20,
-            position: "absolute",
-            "& .MuiChip-label": {
-              px: 1.75,
-              fontWeight: 600,
-              fontSize: "0.75rem"
-            }
-          }}
-        />
-      ) : null}
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <img
-          width={data?.imgWidth}
-          src={`${data?.imgSrc}`}
-          height={data?.imgHeight}
-          alt={`${data?.title.toLowerCase()}-plan-img`}
-        />
-      </Box>
+    <BoxWrapper>
       <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h5">{data?.title}</Typography>
-        <Typography variant="body2">{data?.subtitle}</Typography>
+        <Typography variant="h5">{data?.name}</Typography>
         <Box sx={{ mt: 4.4, mb: 9.2, position: "relative" }}>
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Typography
@@ -100,29 +50,27 @@ const PlanDetails = (props: PricingPlanProps) => {
                 lineHeight: 1.17
               }}
             >
-              {plan === "monthly"
-                ? data?.monthlyPrice
-                : data?.yearlyPlan.perMonth}
+              {data?.unitAmount}
             </Typography>
             <Typography variant="body2" sx={{ mb: 1.6, alignSelf: "flex-end" }}>
               /month
             </Typography>
           </Box>
-          {plan !== "monthly" && data?.monthlyPrice !== 0 ? (
-            <Typography
-              variant="body2"
-              sx={{ left: 0, right: 0, position: "absolute" }}
-            >{`USD ${data?.yearlyPlan.totalAnnual}/year`}</Typography>
-          ) : null}
         </Box>
       </Box>
-      <BoxFeature>{renderFeatures()}</BoxFeature>
+      <BoxFeature>
+        <Box  sx={{ display: "flex", alignItems: "center" }}>
+          <CircleOutline
+            sx={{ fontSize: "0.75rem", mr: 2, color: "text.secondary" }}
+          />
+          <Typography variant="body2">{data?.description}</Typography>
+        </Box>
+      </BoxFeature>
       <Button
         fullWidth
-        color={data?.currentPlan ? "success" : "primary"}
-        variant={data?.popularPlan ? "contained" : "outlined"}
+        color={localStorage.getItem("currentPlan") ? "success" : "primary"}
       >
-        {data?.currentPlan ? "Your Current Plan" : "Upgrade"}
+        {localStorage.getItem("currentPlan") ? "Your Current Plan" : "Upgrade"}
       </Button>
     </BoxWrapper>
   );
