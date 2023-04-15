@@ -135,7 +135,7 @@ const AuthProvider = ({ children }: Props) => {
     refreshAccessToken(true);
   };
 
-  const requestUpdatedUserInfo = (errorCallback?: ErrCallbackType) => {
+  const requestUpdatedUserInfo = (accessToken: string) => {
     const userInformationEndpoint = authConfig.userInformationEndpoint as string;
     httpRequest
       .get(userInformationEndpoint, {
@@ -148,7 +148,7 @@ const AuthProvider = ({ children }: Props) => {
       })
       .catch((err) => {
         console.log("Error requesting new user data", err);
-        if (errorCallback) errorCallback(err);
+        handleLogout();
       });
   };
 
@@ -165,13 +165,14 @@ const AuthProvider = ({ children }: Props) => {
 
     const refreshTokenEndpoint = authConfig.refreshTokenEndpoint as string;
     axios
-      .get(refreshTokenEndpoint, { withCredentials: true })
+      .get(refreshTokenEndpoint)
       .then((res) => {
         console.log("Got new access token", res.data);
-        setAccessToken(res.data.access_token);
+        const accessToken = res.data.access_token;
+        setAccessToken(accessToken);
         if (requestNewUserInfo) {
           // Setting new user info (e.g. on subscription change)
-          requestUpdatedUserInfo();
+          requestUpdatedUserInfo(accessToken);
         }
       })
       .catch(() => handleLogout());
