@@ -164,11 +164,11 @@ const AuthProvider = ({ children }: Props) => {
     }
 
     const refreshTokenEndpoint = authConfig.refreshTokenEndpoint as string;
-    fetch(refreshTokenEndpoint, { credentials: "include" })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Got new access token", data);
-        const accessToken = data.access_token;
+    axios
+      .get(refreshTokenEndpoint, { withCredentials: true })
+      .then((res) => {
+        console.log("Got new access token", res.data);
+        const accessToken = res.data.access_token;
         setAccessToken(accessToken);
         if (requestNewUserInfo) {
           // Setting new user info (e.g. on subscription change)
