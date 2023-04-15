@@ -102,9 +102,8 @@ const AuthProvider = ({ children }: Props) => {
     params: LoginParams,
     errorCallback?: ErrCallbackType
   ) => {
-    const loginEndpoint = authConfig.loginEndpoint as string;
     axios
-      .post(loginEndpoint, params)
+      .post(authConfig.loginEndpoint, params)
       .then(async (res) => {
         // Set the access token in memory
         setAccessToken(res.data.access_token);
@@ -123,8 +122,7 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const handleLogout = () => {
-    const logoutEndpoint = authConfig.logoutEndpoint as string;
-    axios.post(logoutEndpoint).then(async (res) => {
+    axios.post(authConfig.logoutEndpoint).then(async (res) => {
       resetAuthValues();
       router.push("/login");
       setLoading(false);
@@ -136,9 +134,8 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   const requestUpdatedUserInfo = (accessToken: string) => {
-    const userInformationEndpoint = authConfig.userInformationEndpoint as string;
     httpRequest
-      .get(userInformationEndpoint, {
+      .get(authConfig.userInformationEndpoint, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -163,9 +160,8 @@ const AuthProvider = ({ children }: Props) => {
       return;
     }
 
-    const refreshTokenEndpoint = authConfig.refreshTokenEndpoint as string;
     axios
-      .get(refreshTokenEndpoint, { withCredentials: true })
+      .post(authConfig.refreshTokenEndpoint, null, { withCredentials: true })
       .then((res) => {
         console.log("Got new access token", res.data);
         const accessToken = res.data.access_token;
