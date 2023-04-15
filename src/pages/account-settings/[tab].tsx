@@ -27,15 +27,30 @@ export const getStaticPaths: GetStaticPaths = () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }: GetStaticPropsContext) => {
-  const res = await BaseApi.get("/subscriptions/");
-  const data: Membership[] = res;
-
-  return {
-    props: {
-      tab: params?.tab,
-      apiPricingPlanData: data
+  try {
+    const res = await BaseApi.get("/subscriptions/");
+    const data: Membership[] = res.data;
+    // Check if the data is defined and not empty.
+    if (!data || data.length === 0) {
+      return {
+        notFound: true,
+      };
     }
-  }
+    return {
+      props: {
+        tab: params?.tab,
+        apiPricingPlanData: data
+      }
+    }
+  } catch (error) {
+  console.error('Error fetching data:', error);
+
+  // Return notFound if there's an error fetching data.
+  return {
+    notFound: true,
+  };
+}
+
 }
 
 export default AccountSettingsTab
