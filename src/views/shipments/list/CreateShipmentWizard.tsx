@@ -13,7 +13,7 @@ import CardContent from "@mui/material/CardContent";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import StepperCustomDot from "./StepperCustomDot";
 
