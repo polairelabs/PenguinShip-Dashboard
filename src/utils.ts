@@ -89,8 +89,7 @@ export const dateToHumanReadableFormat = (date: Date) => {
 };
 
 export const dateToHumanReadableFormatWithDayOfWeek = (date: Date) => {
-  const dateObj = new Date(date);
-  return dateObj.toDateString() + ", " + dateObj.toLocaleTimeString();
+  return date.toDateString() + ", " + date.toLocaleTimeString();
 };
 
 export const calculateInsuranceFee = (insuranceAmount: string) => {

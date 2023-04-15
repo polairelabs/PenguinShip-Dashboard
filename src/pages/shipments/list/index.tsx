@@ -278,7 +278,7 @@ const ShipmentsList = () => {
       headerName: "Date",
       type: "date",
       valueGetter: (params: GridValueGetterParams) => {
-        return params.row.updatedAt;
+        return new Date(params.row.updatedAt);
       },
       renderCell: ({ row }: CellType) => {
         return (
