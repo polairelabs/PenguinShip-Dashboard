@@ -1,15 +1,15 @@
 // ** MUI Imports
-import Grid from '@mui/material/Grid'
+import Grid from "@mui/material/Grid";
 
 // ** Custom Components Imports
-import PlanDetails from 'src/@core/components/plan-details'
+import PlanDetails from "src/@core/components/plan-details";
 
 // ** Types
-import { PricingPlanType } from 'src/@core/components/plan-details/types'
+import { PricingPlanType } from "src/@core/components/plan-details/types";
 import { Membership } from "../../../types/apps/NavashipTypes";
 
 interface Props {
-  data: Membership[] | null
+  data: Membership[] | null;
 }
 
 const PricingPlans = (props: Props) => {
@@ -24,7 +24,7 @@ const PricingPlans = (props: Props) => {
         </Grid>
       ))}
     </Grid>
-  )
-}
+  );
+};
 
-export default PricingPlans
+export default PricingPlans;

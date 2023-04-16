@@ -25,7 +25,7 @@ const BoxFeature = styled(Box)<BoxProps>(({ theme }) => ({
   }
 }));
 interface Props {
-  data: Membership | null
+  data: Membership | null;
 }
 const PlanDetails = (props: Props) => {
   const { data } = props;
@@ -59,7 +59,7 @@ const PlanDetails = (props: Props) => {
         </Box>
       </Box>
       <BoxFeature>
-        <Box  sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <CircleOutline
             sx={{ fontSize: "0.75rem", mr: 2, color: "text.secondary" }}
           />

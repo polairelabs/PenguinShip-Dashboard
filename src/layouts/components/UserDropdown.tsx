@@ -13,7 +13,6 @@ import Typography from "@mui/material/Typography";
 
 import CogOutline from "mdi-material-ui/CogOutline";
 import LogoutVariant from "mdi-material-ui/LogoutVariant";
-import HelpCircleOutline from "mdi-material-ui/HelpCircleOutline";
 
 import { useAuth } from "src/hooks/useAuth";
 

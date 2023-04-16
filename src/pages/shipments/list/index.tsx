@@ -182,17 +182,21 @@ const ShipmentsList = () => {
       }
     },
     {
-      minWidth: 170,
+      minWidth: 180,
       field: "status",
       headerName: "Status",
       renderCell: ({ row }: CellType) => {
         // status can either come from easypost or api (if easypost status is unknown use the api status)
-        const status = row?.easypostStatus ?? row.status;
+        const status =
+          row.status == ShipmentStatus.REFUND_PROCESSED
+            ? row.status
+            : row?.easypostStatus ?? row.status;
         const statusColors = {
           purchased: "primary",
           delivered: "success",
           draft: "info",
-          unknown: "info"
+          unknown: "info",
+          refund_processed: "success"
         };
         const statusColor = statusColors[status?.toLowerCase()] ?? "warning";
 
@@ -289,7 +293,7 @@ const ShipmentsList = () => {
               sx={{ color: "text.primary", fontWeight: 600 }}
             >
               {dateToHumanReadableFormatWithDayOfWeek(
-                row?.deliveryDate ?? row?.createdAt
+                row?.deliveryDate ?? row?.updatedAt
               )}
             </Typography>
           </Box>

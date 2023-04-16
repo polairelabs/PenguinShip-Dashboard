@@ -75,12 +75,9 @@ const RegisterMultiSteps = () => {
   useEffect(() => {
     // Handle next page from shipment to rates (Once shipment object in the store changes)
     if (authStore.accountCreationStatus === "SUCCESS") {
-      toast.success(
-        "Success! A confirmation email has been sent!",
-        {
-          position: "top-center"
-        }
-      );
+      toast.success("Success! A confirmation email has been sent!", {
+        position: "top-center"
+      });
       BaseApi.createCheckoutSession(
         selectedMembershipId,
         authStore.createAccountPayload.id

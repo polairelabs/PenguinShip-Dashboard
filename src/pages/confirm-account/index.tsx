@@ -13,7 +13,9 @@ const ConfirmAccount = () => {
   const auth = useAuth();
 
   const dispatch = useDispatch<AppDispatch>();
-  const confirmEmailStatus = useSelector((state: RootState) => state.auth.confirmEmailStatus);
+  const confirmEmailStatus = useSelector(
+    (state: RootState) => state.auth.confirmEmailStatus
+  );
 
   useEffect(() => {
     const { query } = router;

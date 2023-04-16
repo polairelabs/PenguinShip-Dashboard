@@ -109,14 +109,15 @@ const ActivityTimeline = ({ activityLogs }: ActivityTimeLineProps) => {
     if (messageType === ActivityMessageType.RETURN_PROCESSED) {
       return (
         <span>
-          Shipping label refund processed and credited to your account
+          Shipping label refund processed and credited to your account. It may
+          take a few days to appear
         </span>
       );
     }
 
     if (messageType === ActivityMessageType.STATUS_UPDATE) {
       if (easypostStatus === "PRE_TRANSIT") {
-        return <span>Carrier is notified and awaiting the package</span>;
+        return <span>Carrier was notified and awaiting the package</span>;
       } else if (easypostStatus === "IN_TRANSIT") {
         return (
           <span>Package is in transit and moving towards its destination</span>

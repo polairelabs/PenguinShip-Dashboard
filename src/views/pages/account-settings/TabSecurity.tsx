@@ -1,11 +1,11 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode } from "react";
 
 // ** MUI Imports
-import Grid from '@mui/material/Grid'
+import Grid from "@mui/material/Grid";
 
 // ** Demo Components
-import ChangePasswordCard from 'src/views/pages/account-settings/security/ChangePasswordCard'
+import ChangePasswordCard from "src/views/pages/account-settings/security/ChangePasswordCard";
 
 const TabSecurity = () => {
   return (
@@ -14,6 +14,6 @@ const TabSecurity = () => {
         <ChangePasswordCard />
       </Grid>
     </Grid>
-  )
-}
-export default TabSecurity
+  );
+};
+export default TabSecurity;

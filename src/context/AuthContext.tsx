@@ -137,8 +137,8 @@ const AuthProvider = ({ children }: Props) => {
     httpRequest
       .get(authConfig.userInformationEndpoint, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+          Authorization: `Bearer ${accessToken}`
+        }
       })
       .then(async (res) => {
         setUser({ ...res.data.user });
@@ -150,9 +150,7 @@ const AuthProvider = ({ children }: Props) => {
   };
 
   // Exchanges refresh token in secure httponly cookie to receive new access token as to not log out the user
-  const refreshAccessToken = (
-    requestNewUserInfo = false
-  ) => {
+  const refreshAccessToken = (requestNewUserInfo = false) => {
     // Sends refresh token in cookie to get new access token
     if (process.env.NEXT_PUBLIC_STAGE === "dev") {
       console.log("Dev mode - Don't request new access token. Logging out");
