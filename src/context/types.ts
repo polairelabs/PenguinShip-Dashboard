@@ -17,7 +17,7 @@ export type User = {
 };
 
 export type AuthValuesType = {
-  // accessToken: string | undefined;
+  accessToken: string | undefined;
   loading: boolean;
   setLoading: (value: boolean) => void;
   logout: () => void;
@@ -26,5 +26,5 @@ export type AuthValuesType = {
   setUser: (value: User | null) => void;
   setIsInitialized: (value: boolean) => void;
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void;
-  // updateUserData: (errorCallback?: ErrCallbackType) => void;
+  updateUserData: (errorCallback?: ErrCallbackType) => void;
 };
