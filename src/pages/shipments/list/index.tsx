@@ -182,7 +182,7 @@ const ShipmentsList = () => {
       }
     },
     {
-      minWidth: 180,
+      minWidth: 170,
       field: "status",
       headerName: "Status",
       renderCell: ({ row }: CellType) => {
