@@ -19,12 +19,10 @@ const ConfirmAccount = () => {
 
   useEffect(() => {
     const { query } = router;
-    console.log("from the confirm page", query);
     if (query.token) {
-      console.log("Oh yayaya");
       dispatch(confirmEmail(query.token as string));
       if (window.localStorage.getItem(authConfig.storageUserDataKey)) {
-        auth.updateUserData();
+        // auth.updateUserData();
         router.push("/home");
       } else {
         router.push("/login");
