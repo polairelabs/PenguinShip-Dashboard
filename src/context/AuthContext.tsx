@@ -153,11 +153,11 @@ const AuthProvider = ({ children }: Props) => {
   const refreshAccessToken = (requestNewUserInfo = false) => {
     // Sends refresh token in cookie to get new access token
     console.log("Using refresh token!!");
-    // if (process.env.NEXT_PUBLIC_STAGE === "dev") {
-    //   console.log("Dev mode - Don't request new access token. Logging out");
-    //   handleLogout();
-    //   return;
-    // }
+    if (process.env.NEXT_PUBLIC_STAGE === "dev") {
+      console.log("Dev mode - Don't request new access token. Logging out");
+      handleLogout();
+      return;
+    }
 
     axios
       .post(authConfig.refreshTokenEndpoint, null, { withCredentials: true })
