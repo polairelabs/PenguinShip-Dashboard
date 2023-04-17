@@ -116,7 +116,6 @@ const AuthProvider = ({ children }: Props) => {
         const returnUrl = router.query.returnUrl;
         const redirectURL = returnUrl && returnUrl !== "/" ? returnUrl : "/";
         await router.replace(redirectURL as string);
-        refreshAccessToken(true);
       })
       .catch((err) => {
         if (errorCallback) errorCallback(err);
@@ -154,11 +153,11 @@ const AuthProvider = ({ children }: Props) => {
   // Exchanges refresh token in secure httponly cookie to receive new access token as to not log out the user
   const refreshAccessToken = (requestNewUserInfo = false) => {
     // Sends refresh token in cookie to get new access token
-    // if (process.env.NEXT_PUBLIC_STAGE === "dev") {
-    //   console.log("Dev mode - Don't request new access token. Logging out");
-    //   handleLogout();
-    //   return;
-    // }
+    if (process.env.NEXT_PUBLIC_STAGE === "dev") {
+      console.log("Dev mode - Don't request new access token. Logging out");
+      handleLogout();
+      return;
+    }
 
     axios
       .post(authConfig.refreshTokenEndpoint, null, { withCredentials: true })
