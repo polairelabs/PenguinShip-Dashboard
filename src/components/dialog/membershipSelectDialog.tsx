@@ -39,12 +39,13 @@ const MembershipSelectDialog = () => {
     if (query.success === "true") {
       // Show success message
       setSuccessOpen(true);
-      if (process.env.NEXT_PUBLIC_STAGE === "dev") {
-        auth.logout();
-        return;
-      }
+      // if (process.env.NEXT_PUBLIC_STAGE === "dev") {
+      //   auth.logout();
+      //   return;
+      // }
       // Update user information
-      auth.updateUserData();
+      // auth.updateUserData();
+      auth.logout();
       router.replace("/");
     } else if (query.canceled === "true") {
       toast.error("Payment was cancelled", {
