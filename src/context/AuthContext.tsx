@@ -40,11 +40,10 @@ const AuthProvider = ({ children }: Props) => {
     if (!accessToken) {
       return;
     }
-
+    axios.defaults.withCredentials = true
     // SETTING AXIOS INTERCEPTORS HERE (once access token is present)
     const reqInterceptor = httpRequest.interceptors.request.use(
       async (config) => {
-        config.withCredentials = true;
         if (accessToken) {
           // @ts-ignore
           config.headers.Authorization = `Bearer ${accessToken}`;
