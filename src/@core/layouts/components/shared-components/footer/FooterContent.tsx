@@ -19,7 +19,7 @@ const FooterContent = () => {
         </Box>
         {` by `}
         <Link target="_blank" href="https://polairelabs.com">
-          Polairelabs
+          Polaire Labs
         </Link>
       </Typography>
     </Box>
